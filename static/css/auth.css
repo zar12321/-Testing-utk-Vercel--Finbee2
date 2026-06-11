@@ -263,3 +263,103 @@ user-select:none;
 
 
 }
+
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+
+@media (max-width: 768px){
+
+    .auth-card{
+
+        width:90%;
+
+        padding:30px 25px;
+
+        border-radius:20px;
+    }
+
+    .auth-header{
+
+        gap:10px;
+
+        margin-bottom:25px;
+    }
+
+    .logo{
+
+        font-size:30px;
+    }
+
+    .auth-header h1{
+
+        font-size:28px;
+    }
+
+    .form-group input,
+    .form-group select{
+
+        height:50px;
+
+        font-size:15px;
+    }
+
+    .btn-login{
+
+        height:50px;
+
+        font-size:16px;
+    }
+
+    .auth-links{
+
+        margin-top:18px;
+    }
+
+    .auth-links a{
+
+        font-size:14px;
+    }
+
+    .toggle-password{
+
+        font-size:16px;
+    }
+
+}
+
+@media (max-width: 480px){
+
+    .auth-card{
+
+        width:95%;
+
+        padding:20px;
+    }
+
+    .logo{
+
+        font-size:26px;
+    }
+
+    .auth-header h1{
+
+        font-size:22px;
+    }
+
+    .form-group input,
+    .form-group select{
+
+        height:45px;
+
+        font-size:14px;
+    }
+
+    .btn-login{
+
+        height:45px;
+
+        font-size:15px;
+    }
+
+}
