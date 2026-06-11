@@ -1,4 +1,17 @@
-# core/constants.py
+# =====================================================
+# APPLICATION
+# =====================================================
+
+APP_NAME = "FinBee"
+
+APP_VERSION = "1.0.0"
+
+APP_DESCRIPTION = (
+    "Personal Finance Management Platform"
+)
+
+DEBUG = False
+
 
 # =====================================================
 # TRANSACTION
@@ -32,6 +45,20 @@ CATEGORY_EDUCATION = "Education"
 CATEGORY_HEALTH = "Health"
 CATEGORY_ENTERTAINMENT = "Entertainment"
 
+SUPPORTED_CATEGORIES = [
+    CATEGORY_TOPUP,
+    CATEGORY_SALARY,
+    CATEGORY_ALLOWANCE,
+    CATEGORY_FOOD,
+    CATEGORY_TRANSPORT,
+    CATEGORY_BILLS,
+    CATEGORY_SHOPPING,
+    CATEGORY_EDUCATION,
+    CATEGORY_HEALTH,
+    CATEGORY_ENTERTAINMENT,
+    DEFAULT_CATEGORY
+]
+
 
 # =====================================================
 # PAYMENT
@@ -50,6 +77,8 @@ SUPPORTED_IMPORT_EXTENSIONS = [
     ".xls"
 ]
 
+MAX_IMPORT_FILE_SIZE_MB = 10
+
 
 # =====================================================
 # AI
@@ -66,6 +95,8 @@ SUPPORTED_AI_PROVIDERS = [
     AI_PROVIDER_GROQ,
     AI_PROVIDER_OLLAMA
 ]
+
+DEFAULT_AI_PROVIDER = AI_PROVIDER_GEMINI
 
 FINANCIAL_AI_SYSTEM_PROMPT = """
 Kamu adalah asisten finansial pribadi berbasis data.
@@ -125,11 +156,13 @@ SUPPORTED_DATE_FORMATS = [
     "%d/%m/%Y %H:%M:%S"
 ]
 
+
 # =====================================================
 # CURRENCY
 # =====================================================
 
 CURRENCY_SYMBOL = "Rp"
+
 
 # =====================================================
 # VALIDATION
@@ -140,3 +173,18 @@ MAX_PASSWORD_LENGTH = 128
 
 MAX_NAME_LENGTH = 100
 MAX_LOGIN_IDENTIFIER_LENGTH = 50
+
+
+# =====================================================
+# PAGINATION
+# =====================================================
+
+DEFAULT_PAGE_SIZE = 20
+MAX_PAGE_SIZE = 100
+
+
+# =====================================================
+# SESSION
+# =====================================================
+
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
