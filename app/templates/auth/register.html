@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}
+Register - FinBee
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-body p-4">
+
+                    <h2 class="text-center mb-4">
+                        📝 Register Akun
+                    </h2>
+
+                    <form
+                        method="post"
+                        action="/auth/register"
+                    >
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Nama Lengkap
+                            </label>
+
+                            <input
+                                type="text"
+                                name="nama"
+                                class="form-control"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Email / Username
+                            </label>
+
+                            <input
+                                type="text"
+                                name="login_identifier"
+                                class="form-control"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Login Type
+                            </label>
+
+                            <select
+                                name="login_type"
+                                class="form-select"
+                            >
+                                <option value="email">
+                                    Email
+                                </option>
+
+                                <option value="username">
+                                    Username
+                                </option>
+                            </select>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Password
+                            </label>
+
+                            <input
+                                type="password"
+                                name="password"
+                                class="form-control"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Konfirmasi Password
+                            </label>
+
+                            <input
+                                type="password"
+                                name="confirm_password"
+                                class="form-control"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+
+                                <div class="mb-3">
+
+                                    <label class="form-label">
+                                        Umur
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        name="umur"
+                                        class="form-control"
+                                    >
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <div class="mb-3">
+
+                                    <label class="form-label">
+                                        Pekerjaan
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="pekerjaan"
+                                        class="form-control"
+                                    >
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100"
+                        >
+                            Register
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

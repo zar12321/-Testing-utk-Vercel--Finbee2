@@ -1,4 +1,4 @@
-# app/schemas/profile.py
+# app/schemas/transaction.py
 
 from datetime import datetime
 from typing import Optional
@@ -8,73 +8,119 @@ from pydantic import Field
 
 
 # =====================================================
-# PROFILE RESPONSE
+# CREATE TRANSACTION
 # =====================================================
 
-class ProfileResponse(BaseModel):
+class TransactionCreateRequest(BaseModel):
 
-    user_id: int
+    category_id: int
 
-    nama: str
+    tanggal_transaksi: datetime
 
-    login_identifier: str
+    transaction_type: str
 
-    login_type: str
+    tujuan_transaksi: str = Field(
+        ...,
+        min_length=1,
+        max_length=255
+    )
 
-    umur: Optional[int] = None
+    keterangan: Optional[str] = None
 
-    pekerjaan: Optional[str] = None
-
-    created_at: Optional[datetime] = None
-
-
-# =====================================================
-# UPDATE PROFILE REQUEST
-# =====================================================
-
-class ProfileUpdateRequest(BaseModel):
-
-    nama: str = Field(
+    payment_method: str = Field(
         ...,
         min_length=1,
         max_length=100
     )
 
-    umur: Optional[int] = Field(
-        default=None,
-        ge=0,
-        le=120
+    amount: float = Field(
+        ...,
+        gt=0
     )
 
-    pekerjaan: Optional[str] = Field(
-        default=None,
+    raw_category: Optional[str] = None
+
+
+# =====================================================
+# UPDATE TRANSACTION
+# =====================================================
+
+class TransactionUpdateRequest(BaseModel):
+
+    category_id: int
+
+    tanggal_transaksi: datetime
+
+    transaction_type: str
+
+    tujuan_transaksi: str = Field(
+        ...,
+        min_length=1,
+        max_length=255
+    )
+
+    keterangan: Optional[str] = None
+
+    payment_method: str = Field(
+        ...,
+        min_length=1,
         max_length=100
     )
 
-
-# =====================================================
-# CHANGE PASSWORD REQUEST
-# =====================================================
-
-class ChangePasswordRequest(BaseModel):
-
-    current_password: str
-
-    new_password: str = Field(
+    amount: float = Field(
         ...,
-        min_length=8,
-        max_length=128
+        gt=0
     )
 
+    raw_category: Optional[str] = None
+
 
 # =====================================================
-# PROFILE RESPONSE MESSAGE
+# DELETE TRANSACTION
 # =====================================================
 
-class ProfileUpdateResponse(BaseModel):
+class TransactionDeleteRequest(BaseModel):
+
+    transaction_id: int
+
+
+# =====================================================
+# TRANSACTION RESPONSE
+# =====================================================
+
+class TransactionResponse(BaseModel):
+
+    transaction_id: int
+
+    user_id: int
+
+    category_id: Optional[int] = None
+
+    category_name: Optional[str] = None
+
+    tanggal_transaksi: datetime
+
+    transaction_type: str
+
+    tujuan_transaksi: str
+
+    keterangan: Optional[str] = None
+
+    payment_method: str
+
+    amount: float
+
+    source: Optional[str] = None
+
+    raw_category: Optional[str] = None
+
+
+# =====================================================
+# GENERAL RESPONSE
+# =====================================================
+
+class TransactionActionResponse(BaseModel):
 
     success: bool
 
     message: str
-
-    profile: Optional[ProfileResponse] = None

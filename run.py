@@ -1,121 +1,110 @@
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
-from fastapi import Form
+# run.py
 
-app = FastAPI()
+import uvicorn
+
+from fastapi import (
+    FastAPI
+)
+
+from fastapi.staticfiles import (
+    StaticFiles
+)
+
+from fastapi.responses import (
+    RedirectResponse
+)
+
+from starlette.middleware.sessions import (
+    SessionMiddleware
+)
+
+from app.routers.auth import (
+    router as auth_router
+)
+
+from app.routers.dashboard import (
+    router as dashboard_router
+)
+
+from app.routers.transaction import (
+    router as transaction_router
+)
+
+from app.routers.profile import (
+    router as profile_router
+)
+
+from app.routers.analysis import (
+    router as analysis_router
+)
+
+from app.routers.ai import (
+    router as ai_router
+)
 
 
-@app.get("/", response_class=HTMLResponse)
-def login_page():
+app = FastAPI(
+    title="FinBee",
+    version="1.0.0"
+)
 
-    return """
-    <html>
-    <head>
-        <title>FinBee Login</title>
+# =====================================================
+# SESSION
+# =====================================================
 
-        <style>
+app.add_middleware(
+    SessionMiddleware,
+    secret_key="finbee-secret-key"
+)
 
-        body{
-            background:#0f172a;
-            color:white;
-            font-family:Arial;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
-        }
+# =====================================================
+# STATIC FILES
+# =====================================================
 
-        .card{
-            width:400px;
-            background:#1e293b;
-            padding:30px;
-            border-radius:20px;
-        }
+app.mount(
+    "/static",
+    StaticFiles(
+        directory="static"
+    ),
+    name="static"
+)
 
-        input{
-            width:100%;
-            padding:12px;
-            margin-top:10px;
-            margin-bottom:20px;
-            border:none;
-            border-radius:10px;
-        }
+# =====================================================
+# ROUTERS
+# =====================================================
 
-        button{
-            width:100%;
-            padding:12px;
-            border:none;
-            border-radius:10px;
-            font-weight:bold;
-            background:#fbbf24;
-        }
+app.include_router(auth_router)
 
-        </style>
+app.include_router(dashboard_router)
 
-    </head>
+app.include_router(transaction_router)
 
-    <body>
+app.include_router(profile_router)
 
-        <div class="card">
+app.include_router(analysis_router)
 
-            <h1>🐝 FinBee Login</h1>
+app.include_router(ai_router)
 
-            <form action="/login" method="post">
+# =====================================================
+# ROOT
+# =====================================================
 
-                <input
-                    name="username"
-                    placeholder="Username"
-                >
+@app.get("/")
+def root():
 
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                >
+    return RedirectResponse(
+        url="/auth/login"
+    )
 
-                <button type="submit">
-                    Masuk
-                </button>
+# =====================================================
+# RUN SERVER
+# =====================================================
 
-            </form>
+if __name__ == "__main__":
 
-        </div>
-
-    </body>
-    </html>
-    """
-
-@app.post("/login", response_class=HTMLResponse)
-def login(
-    username: str = Form(...),
-    password: str = Form(...)
-):
-
-    if (
-        username == "admin"
-        and
-        password == "123456"
-    ):
-        return """
-        <h1>
-            Login Berhasil 🎉
-        </h1>
-
-        <p>
-            Selamat datang Admin
-        </p>
-        """
-
-    return """
-    <h1>
-        Login Gagal ❌
-    </h1>
-
-    <p>
-        Username atau Password salah
-    </p>
-
-    <a href="/">
-        Kembali ke Login
-    </a>
-    """
+    uvicorn.run(
+        "run:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True
+    )

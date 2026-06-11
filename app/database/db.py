@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 import pandas as pd
 
+import bcrypt
 
 # =====================================================
 # HEALTH CHECK
@@ -258,3 +259,411 @@ def delete_all_transactions(
     db.commit()
 
     return result.rowcount
+
+# =====================================================
+# GET TRANSACTIONS BY USER ID
+# =====================================================
+
+def get_transactions_by_user_id(
+    db: Session,
+    user_id: int
+):
+
+    return load_transactions(
+        db=db,
+        user_id=user_id
+    )
+
+# =====================================================
+# UPDATE TRANSACTION
+# =====================================================
+
+def update_transaction(
+    db: Session,
+    transaction_id: int,
+    user_id: int,
+    category_id: int,
+    tanggal_transaksi,
+    transaction_type: str,
+    tujuan_transaksi: str,
+    keterangan: str,
+    payment_method: str,
+    amount: float,
+    raw_category: str | None = None
+):
+
+    result = db.execute(
+        text("""
+            UPDATE transactions
+            SET
+                category_id = :category_id,
+                tanggal_transaksi = :tanggal_transaksi,
+                transaction_type = :transaction_type,
+                tujuan_transaksi = :tujuan_transaksi,
+                keterangan = :keterangan,
+                payment_method = :payment_method,
+                amount = :amount,
+                raw_category = :raw_category
+            WHERE transaction_id = :transaction_id
+            AND user_id = :user_id
+        """),
+        {
+            "transaction_id": transaction_id,
+            "user_id": user_id,
+            "category_id": category_id,
+            "tanggal_transaksi": tanggal_transaksi,
+            "transaction_type": transaction_type,
+            "tujuan_transaksi": tujuan_transaksi,
+            "keterangan": keterangan,
+            "payment_method": payment_method,
+            "amount": amount,
+            "raw_category": raw_category
+        }
+    )
+
+    db.commit()
+
+    return result.rowcount
+
+# =====================================================
+# IMPORT TRANSACTIONS
+# =====================================================
+
+def insert_imported_transactions(
+    db: Session,
+    user_id: int,
+    imported_df
+):
+
+    categories_df = load_categories(db)
+
+    category_map = dict(
+        zip(
+            categories_df["category_name"],
+            categories_df["category_id"]
+        )
+    )
+
+    query = text("""
+        INSERT INTO transactions
+        (
+            user_id,
+            category_id,
+            tanggal_transaksi,
+            transaction_type,
+            tujuan_transaksi,
+            keterangan,
+            payment_method,
+            amount,
+            source,
+            raw_category
+        )
+        VALUES
+        (
+            :user_id,
+            :category_id,
+            :tanggal_transaksi,
+            :transaction_type,
+            :tujuan_transaksi,
+            :keterangan,
+            :payment_method,
+            :amount,
+            :source,
+            :raw_category
+        )
+    """)
+
+    for _, row in imported_df.iterrows():
+
+        category_name = str(
+            row["category_name"]
+        ).strip()
+
+        category_id = category_map.get(
+            category_name
+        )
+
+        if category_id is None:
+
+            category_id = category_map.get(
+                "Other"
+            )
+
+        db.execute(
+            query,
+            {
+                "user_id": user_id,
+                "category_id": category_id,
+                "tanggal_transaksi": row["tanggal_transaksi"],
+                "transaction_type": row["transaction_type"],
+                "tujuan_transaksi": row["tujuan_transaksi"],
+                "keterangan": row["keterangan"],
+                "payment_method": row["payment_method"],
+                "amount": float(row["amount"]),
+                "source": "import_file",
+                "raw_category": row.get(
+                    "raw_category",
+                    category_name
+                )
+            }
+        )
+
+    db.commit()
+
+# =====================================================
+# PASSWORD
+# =====================================================
+
+def hash_password(
+    password: str
+):
+
+    return bcrypt.hashpw(
+        password.encode("utf-8"),
+        bcrypt.gensalt()
+    ).decode("utf-8")
+
+
+def check_password(
+    password: str,
+    password_hash: str
+):
+
+    return bcrypt.checkpw(
+        password.encode("utf-8"),
+        password_hash.encode("utf-8")
+    )
+
+# =====================================================
+# REGISTER USER
+# =====================================================
+
+def register_user(
+    db: Session,
+    nama: str,
+    login_identifier: str,
+    login_type: str,
+    password: str,
+    umur: int,
+    pekerjaan: str
+):
+
+    password_hash = hash_password(
+        password
+    )
+
+    result = db.execute(
+        text("""
+            INSERT INTO users
+            (
+                nama,
+                login_identifier,
+                login_type,
+                password_hash,
+                umur,
+                pekerjaan
+            )
+            VALUES
+            (
+                :nama,
+                :login_identifier,
+                :login_type,
+                :password_hash,
+                :umur,
+                :pekerjaan
+            )
+            RETURNING user_id
+        """),
+        {
+            "nama": nama,
+            "login_identifier": login_identifier,
+            "login_type": login_type,
+            "password_hash": password_hash,
+            "umur": umur,
+            "pekerjaan": pekerjaan
+        }
+    )
+
+    db.commit()
+
+    return result.fetchone()
+
+# =====================================================
+# LOGIN USER
+# =====================================================
+
+def login_user_by_identifier(
+    db: Session,
+    login_identifier: str
+):
+
+    result = db.execute(
+        text("""
+            SELECT
+                user_id,
+                nama,
+                login_identifier,
+                login_type,
+                password_hash
+            FROM users
+            WHERE login_identifier = :login_identifier
+            LIMIT 1
+        """),
+        {
+            "login_identifier":
+                login_identifier.strip().lower()
+        }
+    )
+
+    return result.fetchone()
+
+# =====================================================
+# RESET PASSWORD
+# =====================================================
+
+def reset_user_password(
+    db: Session,
+    login_identifier: str,
+    new_password: str
+):
+
+    password_hash = hash_password(
+        new_password
+    )
+
+    result = db.execute(
+        text("""
+            UPDATE users
+            SET password_hash = :password_hash
+            WHERE login_identifier = :login_identifier
+        """),
+        {
+            "login_identifier": login_identifier,
+            "password_hash": password_hash
+        }
+    )
+
+    db.commit()
+
+    return result.rowcount
+
+# =====================================================
+# GET USER BY ID
+# =====================================================
+
+def get_user_by_id(
+    db: Session,
+    user_id: int
+):
+
+    result = db.execute(
+        text("""
+            SELECT
+                user_id,
+                nama,
+                login_identifier,
+                login_type,
+                umur,
+                pekerjaan,
+                created_at
+            FROM users
+            WHERE user_id = :user_id
+            LIMIT 1
+        """),
+        {
+            "user_id": user_id
+        }
+    )
+
+    return result.fetchone()
+
+# =====================================================
+# LOAD MONTHLY PLAN
+# =====================================================
+
+def load_monthly_plan(
+    db: Session,
+    user_id: int,
+    bulan: int,
+    tahun: int
+):
+
+    result = db.execute(
+        text("""
+            SELECT
+                plan_id,
+                user_id,
+                bulan,
+                tahun,
+                pemasukan_bulanan,
+                target_bulanan
+            FROM monthly_plans
+            WHERE user_id = :user_id
+            AND bulan = :bulan
+            AND tahun = :tahun
+            LIMIT 1
+        """),
+        {
+            "user_id": user_id,
+            "bulan": bulan,
+            "tahun": tahun
+        }
+    )
+
+    return result.fetchone()
+
+# =====================================================
+# SAVE MONTHLY PLAN
+# =====================================================
+
+def save_monthly_plan(
+    db: Session,
+    user_id: int,
+    bulan: int,
+    tahun: int,
+    target_bulanan: float,
+    pemasukan_bulanan: float = 0
+):
+
+    db.execute(
+        text("""
+            INSERT INTO monthly_plans
+            (
+                user_id,
+                bulan,
+                tahun,
+                pemasukan_bulanan,
+                target_bulanan
+            )
+            VALUES
+            (
+                :user_id,
+                :bulan,
+                :tahun,
+                :pemasukan_bulanan,
+                :target_bulanan
+            )
+            ON CONFLICT
+            (
+                user_id,
+                bulan,
+                tahun
+            )
+            DO UPDATE SET
+                pemasukan_bulanan =
+                    EXCLUDED.pemasukan_bulanan,
+                target_bulanan =
+                    EXCLUDED.target_bulanan,
+                updated_at =
+                    CURRENT_TIMESTAMP
+        """),
+        {
+            "user_id": user_id,
+            "bulan": bulan,
+            "tahun": tahun,
+            "pemasukan_bulanan": pemasukan_bulanan,
+            "target_bulanan": target_bulanan
+        }
+    )
+
+    db.commit()

@@ -1,7 +1,10 @@
+from sqlalchemy.orm import Session
+
 from app.database.db import (
     register_user,
     login_user_by_identifier,
-    reset_user_password
+    reset_user_password,
+    check_password
 )
 
 from utils.validation import (
@@ -17,6 +20,7 @@ class AuthService:
 
     @staticmethod
     def register(
+        db: Session,
         nama: str,
         login_identifier: str,
         login_type: str,
@@ -31,15 +35,12 @@ class AuthService:
             raise ValueError(message)
 
         if login_type.lower() == "email":
-
-            valid_login, message = (
-                validate_email(login_identifier)
+            valid_login, message = validate_email(
+                login_identifier
             )
-
         else:
-
-            valid_login, message = (
-                validate_username(login_identifier)
+            valid_login, message = validate_username(
+                login_identifier
             )
 
         if not valid_login:
@@ -62,7 +63,8 @@ class AuthService:
         if not valid_confirm:
             raise ValueError(message)
 
-        user = register_user(
+        return register_user(
+            db=db,
             nama=nama,
             login_identifier=login_identifier,
             login_type=login_type,
@@ -71,28 +73,36 @@ class AuthService:
             pekerjaan=pekerjaan
         )
 
-        return user
-
     @staticmethod
     def login(
+        db: Session,
         login_identifier: str,
         password: str
     ):
 
         user = login_user_by_identifier(
-            login_identifier=login_identifier,
-            password=password
+            db=db,
+            login_identifier=login_identifier
         )
 
         if user is None:
             raise ValueError(
-                "Username/email atau password salah."
+                "Username/email tidak ditemukan."
+            )
+
+        if not check_password(
+            password,
+            user.password_hash
+        ):
+            raise ValueError(
+                "Password salah."
             )
 
         return user
 
     @staticmethod
     def reset_password(
+        db: Session,
         login_identifier: str,
         new_password: str,
         confirm_password: str
@@ -117,12 +127,13 @@ class AuthService:
         if not valid_confirm:
             raise ValueError(message)
 
-        updated_rows = reset_user_password(
+        affected_rows = reset_user_password(
+            db=db,
             login_identifier=login_identifier,
             new_password=new_password
         )
 
-        if updated_rows == 0:
+        if affected_rows == 0:
             raise ValueError(
                 "User tidak ditemukan."
             )

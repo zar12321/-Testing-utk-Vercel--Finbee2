@@ -1,74 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% extends "base.html" %}
 
-    <meta charset="UTF-8">
+{% block title %}
+Login - FinBee
+{% endblock %}
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+{% block content %}
 
-    <title>FinBee Login</title>
+<div class="container py-5">
 
-    <link
-        rel="stylesheet"
-        href="/static/css/auth.css"
-    >
+    <div class="row justify-content-center">
 
-</head>
+        <div class="col-md-5">
 
-<body>
+            <div class="card shadow">
 
-    <div class="login-container">
+                <div class="card-body p-4">
 
-        <div class="login-card">
+                    <h2 class="text-center mb-4">
+                        🐝 FinBee Login
+                    </h2>
 
-            <h1>🐝 FinBee</h1>
+                    <form
+                        method="post"
+                        action="/auth/login"
+                    >
 
-            <p class="subtitle">
-                Smart Personal Finance Assistant
-            </p>
+                        <div class="mb-3">
 
-            <form>
+                            <label class="form-label">
+                                Email / Username
+                            </label>
 
-                <label>
-                    Email atau Username
-                </label>
+                            <input
+                                type="text"
+                                name="login_identifier"
+                                class="form-control"
+                                required
+                            >
 
-                <input
-                    type="text"
-                    placeholder="Masukkan email atau username"
-                >
+                        </div>
 
-                <label>
-                    Password
-                </label>
+                        <div class="mb-3">
 
-                <input
-                    type="password"
-                    placeholder="Masukkan password"
-                >
+                            <label class="form-label">
+                                Password
+                            </label>
 
-                <button type="submit">
-                    Masuk
-                </button>
+                            <input
+                                type="password"
+                                name="password"
+                                class="form-control"
+                                required
+                            >
 
-            </form>
+                        </div>
+                        
 
-            <div class="divider"></div>
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100"
+                        >
+                            Login
+                        </button>
 
-            <a href="#">
-                Lupa Password?
-            </a>
+                    </form>
 
-            <a href="#">
-                Belum punya akun? Register
-            </a>
+                    <hr>
+
+                    <div class="text-center">
+
+                        <a href="/auth/register">
+                            Register
+                        </a>
+
+                        |
+
+                        <a href="/auth/reset-password">
+                            Reset Password
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
 
-</body>
-</html>
+</div>
+
+{% endblock %}

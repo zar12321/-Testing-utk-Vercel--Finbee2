@@ -1,13 +1,19 @@
+# app/services/transaction_service.py
+
+from sqlalchemy.orm import Session
+
 from app.database.db import (
     load_transactions,
     load_categories,
     insert_transaction,
     insert_imported_transactions,
     update_transaction,
-    delete_transactions
+    delete_transaction
 )
 
-from utils.validation import validate_amount
+from utils.validation import (
+    validate_amount
+)
 
 from core.constants import (
     SUPPORTED_TRANSACTION_TYPES
@@ -17,27 +23,38 @@ from core.constants import (
 class TransactionService:
 
     @staticmethod
-    def get_transactions():
+    def get_transactions(
+        db: Session,
+        user_id: int
+    ):
 
-        return load_transactions()
+        return load_transactions(
+            db=db,
+            user_id=user_id
+        )
 
     @staticmethod
-    def get_categories():
+    def get_categories(
+        db: Session
+    ):
 
-        return load_categories()
+        return load_categories(
+            db=db
+        )
 
     @staticmethod
     def create_transaction(
-        user_id,
-        category_id,
+        db: Session,
+        user_id: int,
+        category_id: int,
         tanggal_transaksi,
-        transaction_type,
-        tujuan_transaksi,
-        keterangan,
-        payment_method,
-        amount,
-        source="manual",
-        raw_category=None
+        transaction_type: str,
+        tujuan_transaksi: str,
+        keterangan: str,
+        payment_method: str,
+        amount: float,
+        source: str = "manual",
+        raw_category: str | None = None
     ):
 
         if transaction_type not in SUPPORTED_TRANSACTION_TYPES:
@@ -53,6 +70,7 @@ class TransactionService:
             raise ValueError(message)
 
         insert_transaction(
+            db=db,
             user_id=user_id,
             category_id=category_id,
             tanggal_transaksi=tanggal_transaksi,
@@ -69,7 +87,8 @@ class TransactionService:
 
     @staticmethod
     def import_transactions(
-        user_id,
+        db: Session,
+        user_id: int,
         imported_df
     ):
 
@@ -84,6 +103,7 @@ class TransactionService:
             )
 
         insert_imported_transactions(
+            db=db,
             user_id=user_id,
             imported_df=imported_df
         )
@@ -92,16 +112,17 @@ class TransactionService:
 
     @staticmethod
     def edit_transaction(
-        transaction_id,
-        user_id,
-        category_id,
+        db: Session,
+        transaction_id: int,
+        user_id: int,
+        category_id: int,
         tanggal_transaksi,
-        transaction_type,
-        tujuan_transaksi,
-        keterangan,
-        payment_method,
-        amount,
-        raw_category=None
+        transaction_type: str,
+        tujuan_transaksi: str,
+        keterangan: str,
+        payment_method: str,
+        amount: float,
+        raw_category: str | None = None
     ):
 
         if transaction_type not in SUPPORTED_TRANSACTION_TYPES:
@@ -117,6 +138,7 @@ class TransactionService:
             raise ValueError(message)
 
         affected_rows = update_transaction(
+            db=db,
             transaction_id=transaction_id,
             user_id=user_id,
             category_id=category_id,
@@ -138,13 +160,15 @@ class TransactionService:
 
     @staticmethod
     def remove_transaction(
-        transaction_id,
-        user_id
+        db: Session,
+        transaction_id: int,
+        user_id: int
     ):
 
-        affected_rows = delete_transactions(
-            [transaction_id],
-            user_id
+        affected_rows = delete_transaction(
+            db=db,
+            transaction_id=transaction_id,
+            user_id=user_id
         )
 
         if affected_rows == 0:

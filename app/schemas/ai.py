@@ -11,6 +11,12 @@ from pydantic import Field
 
 class AIChatRequest(BaseModel):
 
+    provider: str
+
+    model_name: str
+
+    api_key: str | None = None
+
     message: str = Field(
         min_length=1,
         max_length=5000
