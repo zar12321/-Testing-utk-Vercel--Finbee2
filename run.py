@@ -1,27 +1,77 @@
 from fastapi import FastAPI
-from fastapi import Request
-
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
-app.mount(
-    "/static",
-    StaticFiles(directory="static"),
-    name="static"
-)
 
-templates = Jinja2Templates(
-    directory="app/templates"
-)
+@app.get("/", response_class=HTMLResponse)
+def login_page():
+    return """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>FinBee Login</title>
+        <style>
+            body{
+                background:#0f172a;
+                color:white;
+                font-family:Arial;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                height:100vh;
+            }
 
-@app.get("/")
-def login_page(request: Request):
+            .card{
+                width:400px;
+                padding:30px;
+                border-radius:20px;
+                background:#1e293b;
+            }
 
-    return templates.TemplateResponse(
-        "auth/login.html",
-        {
-            "request": request
-        }
-    )
+            input{
+                width:100%;
+                padding:12px;
+                margin-top:10px;
+                margin-bottom:20px;
+                border:none;
+                border-radius:10px;
+            }
+
+            button{
+                width:100%;
+                padding:12px;
+                border:none;
+                border-radius:10px;
+                background:linear-gradient(
+                    90deg,
+                    #f59e0b,
+                    #fbbf24
+                );
+                font-weight:bold;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="card">
+            <h1>🐝 FinBee</h1>
+
+            <input
+                placeholder="Email atau Username"
+            >
+
+            <input
+                type="password"
+                placeholder="Password"
+            >
+
+            <button>
+                Masuk
+            </button>
+
+        </div>
+
+    </body>
+    </html>
+    """
