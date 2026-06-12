@@ -195,66 +195,80 @@ def get_total_transaction(
 
 def get_avg_transaction(
     db: Session,
-    user_id: int, 
+    user_id: int,
     month: int | None = None,
     year: int | None = None
 ) -> float:
 
     df = load_dashboard_transactions(
         db=db,
-        user_id=user_id, 
-        month=month, 
+        user_id=user_id,
+        month=month,
         year=year
     )
 
     if df.empty:
         return 0.0
 
+    expense_df = df[
+        df["transaction_type"] == "expense"
+    ]
+
+    if expense_df.empty:
+        return 0.0
+
     return float(
-        df["amount"].mean()
+        expense_df["amount"].mean()
     )
 
 # =====================================================
 # AVG DAILY
 # =====================================================
+from datetime import datetime
+import calendar
 
 def get_avg_daily(
     db: Session,
-    user_id: int, 
+    user_id: int,
     month: int | None = None,
     year: int | None = None
 ) -> float:
 
     df = load_dashboard_transactions(
         db=db,
-        user_id=user_id, 
-        month=month, 
+        user_id=user_id,
+        month=month,
         year=year
     )
 
     if df.empty:
         return 0.0
 
-    df = df.copy()
+    expense_df = df[
+        df["transaction_type"] == "expense"
+    ]
 
-    df["tanggal_transaksi"] = pd.to_datetime(
-        df["tanggal_transaksi"]
-    )
+    if expense_df.empty:
+        return 0.0
 
+    total_expense = expense_df["amount"].sum()
 
-    total_amount = df["amount"].sum()
+    today = datetime.today()
 
-    total_days = (
-        df["tanggal_transaksi"].max()
-        -
-        df["tanggal_transaksi"].min()
-    ).days + 1
+    if (
+        month == today.month and
+        year == today.year
+    ):
+        total_days = today.day
 
-    if total_days <= 0:
-        total_days = 1
+    else:
+        total_days = calendar.monthrange(
+            year,
+            month
+        )[1]
 
     return float(
-        total_amount / total_days
+        total_expense / total_days
     )
 
 # =====================================================
@@ -456,9 +470,14 @@ def get_dashboard_summary(
 
     total_transaction = len(df)
 
-    avg_transaction = float(
-        df["amount"].mean()
-    )
+    expense_df = df[
+        df["transaction_type"] == "expense"
+    ]
+    avg_transaction = 0.0
+    if not expense_df.empty:
+        avg_transaction = float(
+            expense_df["amount"].mean()
+        )
 
     total_days = (
         df["tanggal_transaksi"].max()
@@ -469,15 +488,15 @@ def get_dashboard_summary(
     if total_days <= 0:
         total_days = 1
 
-    avg_daily = float(
-        df["amount"].sum()
-        / total_days
-    )
+    avg_daily = 0.0
+    if not expense_df.empty:
+        avg_daily = float(
+            expense_df["amount"].sum()
+            / total_days
+        )
 
     saving_rate = 0.0
-
     if income > 0:
-
         saving_rate = (
             (
                 income

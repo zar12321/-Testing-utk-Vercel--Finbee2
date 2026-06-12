@@ -1,0 +1,56 @@
+.transaction-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.transaction-header {
+    padding: 32px;
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #FFD54A,
+            #FFB300
+        );
+
+    color: #111;
+}
+
+.transaction-header h1 {
+    margin-bottom: 8px;
+}
+
+.transaction-top {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 24px;
+}
+
+.card {
+
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 24px;
+
+    box-shadow:
+        0 8px 30px
+        rgba(
+            0,
+            0,
+            0,
+            0.08
+        );
+}
+
+.brand-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}

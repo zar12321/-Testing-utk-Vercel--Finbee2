@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="/static/css/transaction.css"
+>
+{% endblock %}
+
+{% block content %}
+
+<div class="transaction-page">
+
+    <div class="transaction-header">
+
+        <h1>
+            Transaction Center
+        </h1>
+
+        <p>
+            Kelola transaksi manual maupun import file.
+        </p>
+
+    </div>
+
+    <div class="transaction-top">
+
+        <div class="card">
+
+            <h3>
+                Input Transaksi Manual
+            </h3>
+
+        </div>
+
+        <div class="card">
+
+            <h3>
+                Import CSV / Excel
+            </h3>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h3>
+            Preview Data Asli
+        </h3>
+
+    </div>
+
+    <div class="card">
+
+        <h3>
+            Preview Data Cleaning
+        </h3>
+
+    </div>
+
+    <div class="card">
+
+        <h3>
+            Import Summary
+        </h3>
+
+    </div>
+
+    <div class="card">
+
+        <h3>
+            Riwayat Transaksi
+        </h3>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -8,6 +8,7 @@ from fastapi import (
     APIRouter,
     Depends,
     File,
+    Request, 
     UploadFile,
     HTTPException
 )
@@ -37,11 +38,18 @@ from core.import_file import (
     auto_clean_financial_file
 )
 
+from fastapi.templating import (
+    Jinja2Templates
+)
+
 router = APIRouter(
     prefix="/transactions",
     tags=["Transactions"]
 )
 
+templates = Jinja2Templates(
+    directory="app/templates"
+)
 
 # =====================================================
 # GET ALL TRANSACTIONS
@@ -251,3 +259,23 @@ async def import_transactions(
             status_code=400,
             detail=str(e)
         )
+
+# =====================================================
+# TRANSACTION PAGE
+# =====================================================
+
+@router.get("/page")
+def transaction_page(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+
+    return templates.TemplateResponse(
+        request=request,
+        name="transaction/transaction.html",
+        context={
+            "request": request,
+            "user_name": current_user["nama"]
+        }
+    )
