@@ -95,13 +95,16 @@ def login_process(
 
     except Exception as e:
 
+        print("LOGIN ERROR:", e)
+
         return templates.TemplateResponse(
             request=request,
             name="auth/login.html",
             context={
-                "request": request
+                "request": request,
+                "error": str(e)
             }
-        )   
+        )
 
 
 # =====================================================
