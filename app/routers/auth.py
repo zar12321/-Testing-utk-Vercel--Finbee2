@@ -167,13 +167,19 @@ def register_process(
             status_code=status.HTTP_303_SEE_OTHER
         )
 
-    except Exception as e:
+    except ValueError as e:
 
         return templates.TemplateResponse(
-            request=request,
-            name="auth/register.html",
-            context={
-                "request": request
+            "auth/register.html",
+            {
+                "request": request,
+                "error": str(e),
+
+                "nama": nama,
+                "login_identifier": login_identifier,
+                "umur": umur,
+                "pekerjaan": pekerjaan,
+                "login_type": login_type
             }
         )
 

@@ -59,15 +59,14 @@ class AuthService:
                 password,
                 confirm_password
             )
-        )
-
-        if pekerjaan:
-            if not re.match(r"^[A-Za-z\s]+$", pekerjaan):
-                raise ValueError("Pekerjaan hanya boleh berisi huruf")
-                
+        )       
 
         if not valid_confirm:
             raise ValueError(message)
+        
+        if pekerjaan:
+            if not re.match(r"^[A-Za-z\s]+$", pekerjaan):
+                raise ValueError("Pekerjaan hanya boleh berisi huruf")
 
         return register_user(
             db=db,

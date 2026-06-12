@@ -40,6 +40,12 @@
             </h1>
 
         </div>
+        
+        {% if error %}
+        <div class="error-box">
+            {{ error }}
+        </div>
+        {% endif %}
 
         <form
             method="POST"
@@ -52,6 +58,7 @@
                 <input
                     type="text"
                     name="nama"
+                    value="{{ nama if nama else '' }}"
                     placeholder="Nama Lengkap"
                     required
                 >
@@ -63,6 +70,7 @@
                 <input
                     type="text"
                     name="login_identifier"
+                    value="{ login_identifier if login_identifier else '' }"
                     placeholder="Email atau Username"
                     required
                 >
@@ -132,6 +140,7 @@
                     <input
                         type="number"
                         name="umur"
+                        value="{ umur if umur else '' }"
                         placeholder="Umur"
                     >
 
@@ -142,6 +151,7 @@
                     <input
                         type="text"
                         name="pekerjaan"
+                        value="{ pekerjaan if pekerjaan else '' }"
                         placeholder="Pekerjaan"
                     >
 
@@ -198,7 +208,7 @@
 
     const usernameInput = document.querySelector('input[name="login_identifier"]');
     const usernameMsg = document.createElement("div");
-    usernameMsg.style.fontSize = "12px";
+    usernameMsg.style.fontSize = "14px";
     usernameMsg.style.marginTop = "5px";
     usernameInput.parentNode.appendChild(usernameMsg);
 
@@ -258,6 +268,22 @@
 
     pass.addEventListener("input", checkPassword);
     confirmPass.addEventListener("input", checkPassword);
+
+    const pekerjaanInput =
+    document.getElementById("pekerjaan");
+
+    pekerjaanInput.addEventListener(
+        "input",
+        function () {
+
+            this.value =
+                this.value.replace(
+                    /[^A-Za-z\s]/g,
+                    ""
+                );
+
+        }
+    );
 
 </script>
 
