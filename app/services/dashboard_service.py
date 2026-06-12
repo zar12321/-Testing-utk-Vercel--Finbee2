@@ -408,81 +408,131 @@ def get_monthly_summary(
     )
 
 # =====================================================
-# DASHBOARD METRICS
+# DASHBOARD DATAFRAME SUMMARY
 # =====================================================
 
-def get_dashboard_metrics(
-    db: Session,
-    user_id: int, 
-    month: int | None=None, 
-    year: int | None=None
+def get_dashboard_summary(
+    df: pd.DataFrame
 ):
+
+    if df.empty:
+
+        return {
+            "income": 0.0,
+            "expense": 0.0,
+            "topup": 0.0,
+            "balance": 0.0,
+            "total_transaction": 0,
+            "avg_transaction": 0.0,
+            "avg_daily": 0.0,
+            "saving_rate": 0.0
+        }
+
+    income = float(
+        df.loc[
+            df["transaction_type"] == "income",
+            "amount"
+        ].sum()
+    )
+
+    expense = float(
+        df.loc[
+            df["transaction_type"] == "expense",
+            "amount"
+        ].sum()
+    )
+
+    topup = float(
+        df.loc[
+            df["transaction_type"] == "topup",
+            "amount"
+        ].sum()
+    )
+
+    balance = calculate_balance(
+        income,
+        expense
+    )
+
+    total_transaction = len(df)
+
+    avg_transaction = float(
+        df["amount"].mean()
+    )
+
+    total_days = (
+        df["tanggal_transaksi"].max()
+        -
+        df["tanggal_transaksi"].min()
+    ).days + 1
+
+    if total_days <= 0:
+        total_days = 1
+
+    avg_daily = float(
+        df["amount"].sum()
+        / total_days
+    )
+
+    saving_rate = 0.0
+
+    if income > 0:
+
+        saving_rate = (
+            (
+                income
+                -
+                expense
+            )
+            /
+            income
+        ) * 100
+
+    return {
+        "income": income,
+        "expense": expense,
+        "topup": topup,
+        "balance": balance,
+        "total_transaction": total_transaction,
+        "avg_transaction": avg_transaction,
+        "avg_daily": avg_daily,
+        "saving_rate": saving_rate
+    }
+
+# =====================================================
+# DASHBOARD METRICS
+# =====================================================
+def get_dashboard_metrics(
+    df: pd.DataFrame
+):
+
+    summary = get_dashboard_summary(df)
 
     return {
 
         "total_income":
-            get_total_income(
-                db=db,
-                user_id=user_id, 
-                month=month, 
-                year=year
-            ),
+            summary["income"],
 
         "total_expense":
-            get_total_expense(
-                db=db,
-                user_id=user_id,
-                month=month, 
-                year=year
-            ),
+            summary["expense"],
 
         "total_topup":
-            get_total_topup(
-                db=db,
-                user_id=user_id, 
-                month=month, 
-                year=year
-            ),
+            summary["topup"],
 
         "balance":
-            get_current_balance(
-                db=db,
-                user_id=user_id, 
-                month=month, 
-                year=year
-            ),
+            summary["balance"],
 
         "total_transaction":
-            get_total_transaction(
-                db=db,
-                user_id=user_id, 
-                month=month, 
-                year=year
-            ),
+            summary["total_transaction"],
 
         "avg_transaction":
-            get_avg_transaction(
-                db=db,
-                user_id=user_id, 
-                month=month, 
-                year=year
-            ),
+            summary["avg_transaction"],
 
         "avg_daily":
-            get_avg_daily(
-                db=db,
-                user_id=user_id, 
-                month=month, 
-                year=year
-            ),
+            summary["avg_daily"],
 
         "saving_rate":
-            get_saving_rate(
-                db=db,
-                user_id=user_id, 
-                month=month, 
-                year=year
-            )
+            summary["saving_rate"]
     }
 
 # =====================================================
@@ -490,36 +540,21 @@ def get_dashboard_metrics(
 # =====================================================
 
 def get_financial_health(
-    db: Session,
-    user_id: int,
-    month: int | None = None,
-    year: int | None = None
+    df: pd.DataFrame
 ):
 
-    income = get_total_income(
-        db=db,
-        user_id=user_id,
-        month=month,
-        year=year
-    )
+    summary = get_dashboard_summary(df)
 
-    expense = get_total_expense(
-        db=db,
-        user_id=user_id,
-        month=month,
-        year=year
-    )
+    income = summary["income"]
 
-    saving_rate = get_saving_rate(
-        db=db,
-        user_id=user_id,
-        month=month,
-        year=year
-    )
+    expense = summary["expense"]
+
+    saving_rate = summary["saving_rate"]
 
     expense_ratio = 0
 
     if income > 0:
+
         expense_ratio = (
             expense / income
         ) * 100
@@ -527,6 +562,7 @@ def get_financial_health(
     if saving_rate >= 20:
 
         status = "Sehat"
+
         icon = "🟢"
 
         message = (
@@ -536,6 +572,7 @@ def get_financial_health(
     elif saving_rate >= 0:
 
         status = "Waspada"
+
         icon = "🟡"
 
         message = (
@@ -545,6 +582,7 @@ def get_financial_health(
     else:
 
         status = "Bahaya"
+
         icon = "🔴"
 
         message = (
@@ -577,18 +615,8 @@ def get_financial_health(
 # =====================================================
 
 def get_monthly_snapshot(
-    db: Session,
-    user_id: int,
-    month: int | None = None,
-    year: int | None = None
+    df: pd.DataFrame
 ):
-
-    df = load_dashboard_transactions(
-        db=db,
-        user_id=user_id,
-        month=month,
-        year=year
-    )
 
     if df.empty:
 
@@ -597,18 +625,19 @@ def get_monthly_snapshot(
             "top_expense": None
         }
 
+    # ====================================
     # INCOME TERBESAR
+    # ====================================
 
     income_df = df[
-        df["transaction_type"]
-        == "income"
+        df["transaction_type"] == "income"
     ]
 
     top_income = None
 
     if not income_df.empty:
 
-        grouped = (
+        grouped_income = (
             income_df
             .groupby("category_name")["amount"]
             .sum()
@@ -618,22 +647,25 @@ def get_monthly_snapshot(
         )
 
         top_income = {
-            "category": grouped.index[0],
-            "amount": float(grouped.iloc[0])
+            "category": grouped_income.index[0],
+            "amount": float(
+                grouped_income.iloc[0]
+            )
         }
 
+    # ====================================
     # EXPENSE TERBESAR
+    # ====================================
 
     expense_df = df[
-        df["transaction_type"]
-        == "expense"
+        df["transaction_type"] == "expense"
     ]
 
     top_expense = None
 
     if not expense_df.empty:
 
-        grouped = (
+        grouped_expense = (
             expense_df
             .groupby("category_name")["amount"]
             .sum()
@@ -643,8 +675,10 @@ def get_monthly_snapshot(
         )
 
         top_expense = {
-            "category": grouped.index[0],
-            "amount": float(grouped.iloc[0])
+            "category": grouped_expense.index[0],
+            "amount": float(
+                grouped_expense.iloc[0]
+            )
         }
 
     return {
@@ -652,78 +686,53 @@ def get_monthly_snapshot(
         "top_income": top_income,
 
         "top_expense": top_expense
-    }   
+    }
+
 # =============================
 # SPENDING ALERTS
 # =============================
+
 def get_spending_alert(
-    db: Session,
-    user_id: int,
-    month: int | None = None,
-    year: int | None = None
+    df: pd.DataFrame
 ):
 
     alerts = []
 
-    df = load_dashboard_transactions(
-        db=db,
-        user_id=user_id,
-        month=month,
-        year=year
-    )
+    summary = get_dashboard_summary(df)
+
+    income = summary["income"]
+
+    expense = summary["expense"]
+
+    saving_rate = summary["saving_rate"]
+
+    topup = summary["topup"]
 
     if df.empty:
 
-        alerts.append({
+        return [{
             "status": "info",
             "icon": "📊",
             "title": "Belum Ada Data",
             "message": "Belum terdapat transaksi pada periode ini."
-        })
-
-        return alerts
-
-    income = get_total_income(
-        db=db,
-        user_id=user_id,
-        month=month,
-        year=year
-    )
-
-    expense = get_total_expense(
-        db=db,
-        user_id=user_id,
-        month=month,
-        year=year
-    )
-
-    saving_rate = get_saving_rate(
-        db=db,
-        user_id=user_id,
-        month=month,
-        year=year
-    )
+        }]
 
     # ====================================
     # ALERT 1
-    # Pengeluaran > Pemasukan
     # ====================================
 
     if income > 0 and expense > income:
-
-        deficit = expense - income
 
         alerts.append({
             "status": "danger",
             "icon": "🚨",
             "title": "Pengeluaran Melebihi Pemasukan",
             "message":
-                f"Defisit sebesar Rp {deficit:,.0f}"
+                f"Defisit sebesar Rp {(expense - income):,.0f}"
         })
 
     # ====================================
     # ALERT 2
-    # Saving Rate Rendah
     # ====================================
 
     if income > 0 and saving_rate < 10:
@@ -741,11 +750,6 @@ def get_spending_alert(
     ]
 
     if not expense_df.empty:
-
-        # ====================================
-        # ALERT 3
-        # Kategori Terbesar
-        # ====================================
 
         category_summary = (
             expense_df
@@ -774,11 +778,6 @@ def get_spending_alert(
                     f"Menyumbang {percentage:.1f}% dari total pengeluaran."
             })
 
-        # ====================================
-        # ALERT 4
-        # Transaksi Kecil Berulang
-        # ====================================
-
         small_transactions = expense_df[
             expense_df["amount"] <= 25000
         ]
@@ -792,11 +791,6 @@ def get_spending_alert(
                 "message":
                     f"Terdapat {len(small_transactions)} transaksi di bawah Rp 25.000."
             })
-
-        # ====================================
-        # ALERT 5
-        # Merchant / Deskripsi Terbanyak
-        # ====================================
 
         if "description" in expense_df.columns:
 
@@ -826,15 +820,7 @@ def get_spending_alert(
 
     # ====================================
     # ALERT 6
-    # Top Up Tinggi
     # ====================================
-
-    topup = get_total_topup(
-        db=db,
-        user_id=user_id,
-        month=month,
-        year=year
-    )
 
     if income > 0:
 
@@ -851,10 +837,6 @@ def get_spending_alert(
                 "message":
                     f"Top up mencapai {topup_ratio:.1f}% dari pemasukan."
             })
-
-    # ====================================
-    # Jika Tidak Ada Alert
-    # ====================================
 
     if not alerts:
 

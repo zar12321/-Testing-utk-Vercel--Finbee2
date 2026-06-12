@@ -53,37 +53,28 @@ def dashboard_page(
     month_int = int(month) if month else None
     year_int = int(year) if year else None
 
-    metrics = dashboard_service.get_dashboard_metrics(
-        db=db,
-        user_id=current_user["user_id"], 
-        month=month_int, 
-        year=year_int
-    )
-
-    financial_health = (
-    dashboard_service.get_financial_health(
+    df = dashboard_service.load_dashboard_transactions(
         db=db,
         user_id=current_user["user_id"],
         month=month_int,
         year=year_int
+    )
+
+    metrics = dashboard_service.get_dashboard_metrics(
+        df
+    )
+
+    financial_health = (
+    dashboard_service.get_financial_health(
+        df
     ))
 
     monthly_snapshot = (
-        dashboard_service.get_monthly_snapshot(
-            db=db,
-            user_id=current_user["user_id"],
-            month=month_int,
-            year=year_int
-        )
+        df
     )
 
     spending_alert = (
-        dashboard_service.get_spending_alert(
-            db=db,
-            user_id=current_user["user_id"],
-            month=month_int,
-            year=year_int
-        )
+        df
     )
 
     months = [
