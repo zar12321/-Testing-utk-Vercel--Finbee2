@@ -15,13 +15,13 @@
 
 <div class="metrics-grid">
 
-    <div id='metric-balanced'>
+    <div id='metric-balance'>
         {% set title = "Saldo Saat Ini" %}
         {% set value = metrics.balance %}
         {% include "partials/metric_card.html" %}
     </div>
 
-    <div id="'metric-total-income">
+    <div id="metric-total-income">
         {% set title = "Total Pemasukan" %}
         {% set value = metrics.total_income %}
         {% include "partials/metric_card.html" %}
@@ -81,5 +81,6 @@
 
 {% block extra_js %}
 <script src="/static/js/dashboard.js"></script>
+{% endblock %}
 
 {% endblock %}
