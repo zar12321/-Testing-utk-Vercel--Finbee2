@@ -1,5 +1,6 @@
 from fastapi import (
     APIRouter,
+    Request,
     Depends
 )
 
@@ -11,6 +12,9 @@ from app.dependencies.current_user import (
     get_current_user
 )
 
+from fastapi.templating import (
+    Jinja2Templates)
+
 from app.services import dashboard_service
 
 
@@ -18,6 +22,28 @@ router = APIRouter(
     prefix="/dashboard",
     tags=["Dashboard"]
 )
+
+templates = Jinja2Templates(
+    directory="app/templates"
+)
+
+# =====================================================
+# DASHBOARD Page
+# =====================================================
+@router.get("")
+def dashboard_page(
+    request: Request, 
+    current_user = Depends(get_current_user)
+):
+    return templates.TemplateResponse(
+        request=request, 
+        name="dashboard/dashboard.html", 
+        context={
+            "request": request, 
+            "user_name": current_user.nama
+        }
+    )
+
 
 # =====================================================
 # DASHBOARD Metrics

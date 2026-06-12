@@ -1,0 +1,97 @@
+<nav class="navbar">
+
+    <div class="navbar-left">
+
+        <a
+            href="/dashboard"
+            class="navbar-brand"
+        >
+
+            <span class="brand-icon">
+                🐝
+            </span>
+
+            <span class="brand-text">
+                FinBee
+            </span>
+
+        </a>
+
+    </div>
+
+
+    <div class="navbar-center">
+
+        <a
+            href="/dashboard"
+            class="nav-link"
+        >
+            Dashboard
+        </a>
+
+        <a
+            href="/transaction"
+            class="nav-link"
+        >
+            Transactions
+        </a>
+
+        <a
+            href="/analysis"
+            class="nav-link"
+        >
+            Analytics
+        </a>
+
+        <a
+            href="/ai/chatbot"
+            class="nav-link"
+        >
+            AI Assistant
+        </a>
+
+    </div>
+
+
+    <div class="navbar-right">
+
+        <button
+            class="notification-btn"
+            type="button"
+        >
+            🔔
+        </button>
+
+        <div class="profile-menu">
+
+            <div class="profile-avatar">
+
+                {{ request.session.get("user_name","U")[0] }}
+
+            </div>
+
+            <div class="profile-info">
+
+                <span class="profile-name">
+
+                    {{ request.session.get("user_name","User") }}
+
+                </span>
+
+                <span class="profile-role">
+
+                    FinBee User
+
+                </span>
+
+            </div>
+
+            <span class="profile-arrow">
+                ▼
+            </span>
+
+        </div>
+
+    </div>
+
+</nav>
