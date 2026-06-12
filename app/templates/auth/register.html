@@ -77,8 +77,6 @@
                 value="username"
             >
 
-
-
             <div class="form-group">
 
                 <input
@@ -90,9 +88,6 @@
                 >
 
             </div>
-
-
-
 
             <div class="form-group">
 
@@ -115,12 +110,7 @@
             </div>
 
 
-
-
-
-            <div class="form-group password-wrapper">
-
-
+            <div class="form-group password-wrapper"> 
                 <input
                     type="password"
                     id="password"
@@ -128,33 +118,19 @@
                     placeholder="Password"
                     required
                 >
-
-
                 <span
                     class="toggle-password"
                     onclick="togglePassword('password', this)"
                 >
                     👁️
                 </span>
-
-
-            </div>
-
-
-            <div 
+                <div 
                 id="passwordMsg"
                 class="validation-msg"
-            ></div>
-
-
-
-
-
-
+                ></div>
+            </div>
 
             <div class="form-group password-wrapper">
-
-
                 <input
                     type="password"
                     id="confirmPassword"
@@ -162,51 +138,29 @@
                     placeholder="Konfirmasi Password"
                     required
                 >
-
-
                 <span
                     class="toggle-password"
                     onclick="togglePassword('confirmPassword', this)"
                 >
                     👁️
                 </span>
-
-
-            </div>
-
-
-
-            <div 
+                <div 
                 id="confirmMsg"
                 class="validation-msg"
-            ></div>
-
-
-
-
-
-
+                ></div>
+            </div>
 
             <div class="double-input">
-
-
                 <div class="form-group">
-
                     <input
                         type="number"
                         name="umur"
                         value="{{ umur if umur else '' }}"
                         placeholder="Umur"
                     >
-
                 </div>
 
-
-
-
                 <div class="form-group">
-
-
                     <input
                         type="text"
                         id="pekerjaan"
@@ -214,50 +168,17 @@
                         value="{{ pekerjaan if pekerjaan else '' }}"
                         placeholder="Pekerjaan"
                     >
-
-
                 </div>
-
-
             </div>
-
-
-
-
-
 
             <button
                 type="submit"
                 class="btn-login"
             >
-
                 Register
-
             </button>
 
-
-
-
-
-            {% if error %}
-
-            <div class="error-box-register">
-
-                Tidak dapat melakukan registrasi.
-                Silakan periksa kembali isian Anda.
-
-            </div>
-
-            {% endif %}
-
-
-
-
         </form>
-
-
-
-
 
 
         <div class="auth-links">
@@ -576,7 +497,44 @@ pekerjaan.addEventListener(
     }
 );
 
+document.querySelector("form")
+.addEventListener("submit", function(e){
 
+    let valid = true;
+
+    if(password.value.length < 8){
+
+        passwordMsg.style.color = "red";
+
+        passwordMsg.innerHTML =
+            "✗ Password minimal 8 karakter";
+
+        valid = false;
+    }
+
+    if(password.value !== confirmPassword.value){
+
+        confirmMsg.style.color = "red";
+
+        confirmMsg.innerHTML =
+            "✗ Password tidak sama";
+
+        valid = false;
+    }
+
+    if(
+        usernameMsg.innerHTML.includes(
+            "tidak dapat digunakan"
+        )
+    ){
+        valid = false;
+    }
+
+    if(!valid){
+        e.preventDefault();
+    }
+
+});
 
 </script>
 
