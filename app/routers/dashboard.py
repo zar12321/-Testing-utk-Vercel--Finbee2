@@ -70,12 +70,14 @@ def dashboard_page(
     ))
 
     monthly_snapshot = (
+    dashboard_service.get_monthly_snapshot(
         df
-    )
+    ))
 
     spending_alert = (
+    dashboard_service.get_spending_alert(
         df
-    )
+    ))
 
     months = [
         (i, get_month_name(i))
