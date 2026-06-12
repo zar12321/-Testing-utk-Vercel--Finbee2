@@ -42,12 +42,14 @@ templates = Jinja2Templates(
 def login_page(
     request: Request
 ):
+    success = request.query_params.get("success")
 
     return templates.TemplateResponse(
         request=request,
         name="auth/login.html",
         context={
-            "request": request
+            "request": request, 
+            "success": success
         }
     )
 
@@ -156,7 +158,7 @@ def register_process(
         )
 
         return RedirectResponse(
-            url="/auth/login",
+            url="/auth/login?success=1",
             status_code=status.HTTP_303_SEE_OTHER
         )
 
