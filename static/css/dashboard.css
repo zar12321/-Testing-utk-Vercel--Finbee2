@@ -1,48 +1,3 @@
-.hero-card{
-    background: linear-gradient(
-        135deg,
-        #0B1F4D,
-        #162F6B
-    );
-
-    border-radius: 24px;
-
-    padding: 40px;
-
-    margin-bottom: 24px;
-
-    color: white;
-
-    box-shadow:
-    0 10px 30px rgba(
-        0,
-        0,
-        0,
-        .15
-    );
-}
-
-.hero-subtitle{
-    color:#F6C324;
-
-    font-size:.8rem;
-
-    font-weight:700;
-
-    letter-spacing:2px;
-}
-
-.hero-card h1{
-    margin-top:12px;
-    margin-bottom:10px;
-
-    font-size:2.5rem;
-}
-
-.hero-card p{
-    color:#D6DCEF;
-}
-
 .metrics-grid{
 
     display:grid;
@@ -456,4 +411,106 @@
     margin: 0;
 
     color: #475569;
+}
+
+.hero-card{
+    background: linear-gradient(
+        135deg,
+        #0B1F4D,
+        #162F6B
+    );
+
+    border-radius: 24px;
+
+    padding: 40px;
+
+    margin-bottom: 24px;
+
+    color: white;
+
+    box-shadow:
+    0 10px 30px rgba(
+        0,
+        0,
+        0,
+        .15
+    );
+}
+
+.hero-subtitle{
+    color:#F6C324;
+
+    font-size:.8rem;
+
+    font-weight:700;
+
+    letter-spacing:2px;
+}
+
+.hero-card h1{
+    margin-top:12px;
+    margin-bottom:10px;
+
+    font-size:2.5rem;
+}
+
+.hero-card p{
+    color:#D6DCEF;
+}
+
+.hero-description {
+    margin-bottom: 24px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.hero-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 46px;
+    padding: 0 20px;
+
+    text-decoration: none;
+
+    border-radius: 14px;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    transition: all 0.25s ease;
+}
+
+/* Tombol putih */
+.hero-btn-primary {
+    background: #ffffff;
+    color: #102c6b;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,0.10);
+}
+
+.hero-btn-primary:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,0.18);
+}
+
+/* Tombol transparan */
+.hero-btn-secondary {
+    background: rgba(255,255,255,0.12);
+
+    color: white;
+
+    border: 1px solid rgba(255,255,255,0.25);
+}
+
+.hero-btn-secondary:hover {
+    background: rgba(255,255,255,0.20);
 }
