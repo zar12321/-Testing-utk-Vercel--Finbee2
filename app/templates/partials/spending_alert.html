@@ -4,21 +4,25 @@
         Spending Alert
     </h3>
 
-    {% for alert in spending_alert %}
+    <div id="spending-alert-container">
 
-    <div class="alert-item {{ alert.status }}">
+        {% for alert in spending_alert %}
 
-        <h4>
-            {{ alert.icon }}
-            {{ alert.title }}
-        </h4>
+        <div class="alert-item {{ alert.status }}">
 
-        <p>
-            {{ alert.message }}
-        </p>
+            <h4>
+                {{ alert.icon }}
+                {{ alert.title }}
+            </h4>
+
+            <p>
+                {{ alert.message }}
+            </p>
+
+        </div>
+
+        {% endfor %}
 
     </div>
-
-    {% endfor %}
 
 </div>

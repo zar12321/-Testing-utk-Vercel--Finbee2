@@ -4,25 +4,25 @@
         Financial Health
     </h3>
 
-    <div class="health-status">
-
+    <div
+        id="health-status"
+        class="health-status"
+    >
         {{ financial_health.icon }}
-
         {{ financial_health.status }}
-
     </div>
 
-    <p>
+    <p id="health-saving-rate">
         Saving Rate:
         {{ financial_health.saving_rate }}%
     </p>
 
-    <p>
+    <p id="health-expense-ratio">
         Expense Ratio:
         {{ financial_health.expense_ratio }}%
     </p>
 
-    <span>
+    <span id="health-message">
         {{ financial_health.message }}
     </span>
 

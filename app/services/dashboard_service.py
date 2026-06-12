@@ -622,7 +622,9 @@ def get_monthly_snapshot(
 
         return {
             "top_income": None,
-            "top_expense": None
+            "top_expense": None,
+            "title": "Belum Ada Data",
+            "message": "Belum terdapat transaksi pada periode ini."
         }
 
     # ====================================
@@ -681,13 +683,39 @@ def get_monthly_snapshot(
             )
         }
 
-    return {
+    # ====================================
+    # TOPUP TERBESAR Berdasarkan Tujuan Transaksi
+    # ====================================
+    topup_df = df[
+        df["transaction_type"] == "topup"
+    ]
 
-        "top_income": top_income,
+    top_topup = None
 
-        "top_expense": top_expense
-    }
+    if not topup_df.empty:
 
+        grouped_topup = (
+            topup_df
+            .groupby("tujuan_transaksi")["amount"]
+            .sum()
+            .sort_values(
+                ascending=False
+            )
+        )
+
+        top_topup = {
+            "tujuan_transaksi": grouped_topup.index[0],
+            "amount": float(
+                grouped_topup.iloc[0]
+            )
+        }
+
+        return {
+            "top_income": top_income,
+            "top_expense": top_expense, 
+            "top_topup": top_topup
+        }
+    
 # =============================
 # SPENDING ALERTS
 # =============================

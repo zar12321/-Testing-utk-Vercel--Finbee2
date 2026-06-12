@@ -1,51 +1,96 @@
-<div class="insight-card">
+<div
+    class="insight-card"
+    id="monthly-snapshot-card"
+>
 
     <h3>
         Monthly Snapshot
     </h3>
 
-    {% if monthly_snapshot.top_income %}
+    <div id="snapshot-content">
 
-    <div class="snapshot-item">
+        {% if monthly_snapshot.top_income %}
 
-        <strong>
-            Income Terbesar
-        </strong>
+        <div class="snapshot-item">
 
-        <p>
-            {{ monthly_snapshot.top_income.category }}
-        </p>
+            <strong>
+                Income Terbesar
+            </strong>
 
-        <span>
-            Rp {{ "{:,.0f}".format(
-                monthly_snapshot.top_income.amount
-            ) }}
-        </span>
+            <p>
+                {{ monthly_snapshot.top_income.category }}
+            </p>
+
+            <span>
+                Rp {{ "{:,.0f}".format(
+                    monthly_snapshot.top_income.amount
+                ) }}
+            </span>
+
+        </div>
+
+        {% endif %}
+
+        {% if monthly_snapshot.top_expense %}
+
+        <div class="snapshot-item">
+
+            <strong>
+                Expense Terbesar
+            </strong>
+
+            <p>
+                {{ monthly_snapshot.top_expense.category }}
+            </p>
+
+            <span>
+                Rp {{ "{:,.0f}".format(
+                    monthly_snapshot.top_expense.amount
+                ) }}
+            </span>
+
+        </div>
+
+        {% endif %}
+
+        {% if monthly_snapshot.top_topup %}
+
+        <div class="snapshot-item">
+
+            <strong>
+                Topup Terbesar
+            </strong>
+
+            <p>
+                {{ monthly_snapshot.top_topup.tujuan_transaksi }}
+            </p>
+
+            <span>
+                Rp {{ "{:,.0f}".format(
+                    monthly_snapshot.top_topup.amount
+                ) }}
+            </span>
+
+        </div>
+
+        {% endif %}
+
+        {% if monthly_snapshot.title %}
+
+        <div class="snapshot-empty">
+
+            <h4>
+                📊 {{ monthly_snapshot.title }}
+            </h4>
+
+            <p>
+                {{ monthly_snapshot.message }}
+            </p>
+
+        </div>
+
+        {% endif %}
 
     </div>
-
-    {% endif %}
-
-    {% if monthly_snapshot.top_expense %}
-
-    <div class="snapshot-item">
-
-        <strong>
-            Expense Terbesar
-        </strong>
-
-        <p>
-            {{ monthly_snapshot.top_expense.category }}
-        </p>
-
-        <span>
-            Rp {{ "{:,.0f}".format(
-                monthly_snapshot.top_expense.amount
-            ) }}
-        </span>
-
-    </div>
-
-    {% endif %}
 
 </div>
