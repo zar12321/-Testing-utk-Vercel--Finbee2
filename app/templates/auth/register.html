@@ -196,7 +196,71 @@
         }
     }
 
+    const usernameInput = document.querySelector('input[name="login_identifier"]');
+    const usernameMsg = document.createElement("div");
+    usernameMsg.style.fontSize = "12px";
+    usernameMsg.style.marginTop = "5px";
+    usernameInput.parentNode.appendChild(usernameMsg);
+
+    let timeout = null;
+
+    usernameInput.addEventListener("input", function () {
+
+        clearTimeout(timeout);
+
+        timeout = setTimeout(async () => {
+
+            const username = usernameInput.value;
+
+            if (username.length < 3) {
+                usernameMsg.innerHTML = "";
+                return;
+            }
+
+            const res = await fetch(`/auth/check-username?login_identifier=${username}`);
+            const data = await res.json();
+
+            if (data.available) {
+                usernameMsg.style.color = "green";
+                usernameMsg.innerHTML = "✓ Username dapat digunakan";
+            } else {
+                usernameMsg.style.color = "red";
+                usernameMsg.innerHTML = "✗ Username tidak dapat digunakan";
+            }
+
+        }, 400);
+
+    });
+
+    const pass = document.querySelector('input[name="password"]');
+    const confirmPass = document.querySelector('input[name="confirm_password"]');
+
+    const msg = document.createElement("div");
+    msg.style.fontSize = "12px";
+    msg.style.marginTop = "5px";
+    confirmPass.parentNode.appendChild(msg);
+
+    function checkPassword() {
+
+        if (confirmPass.value === "") {
+            msg.innerHTML = "";
+            return;
+        }
+
+        if (pass.value === confirmPass.value) {
+            msg.style.color = "green";
+            msg.innerHTML = "✓ Password sesuai";
+        } else {
+            msg.style.color = "red";
+            msg.innerHTML = "✗ Password tidak sama";
+        }
+    }
+
+    pass.addEventListener("input", checkPassword);
+    confirmPass.addEventListener("input", checkPassword);
+
 </script>
+
 
 
 </body>

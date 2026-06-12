@@ -177,6 +177,22 @@ def register_process(
             }
         )
 
+from app.database.connection import get_db
+from app.database.db import login_user_by_identifier
+@router.get("/check-username")
+def check_username(login_identifier: str, db: Session = Depends(get_db)):
+    user = login_user_by_identifier(db=db, login_identifier=login_identifier)
+
+    if user:
+        return {
+            "available": False, 
+            "message": "Username tidak dapat digunakan"
+        }
+    return {
+        "available": True, 
+        "message": "Username dapat digunakan"
+    }
+
 
 # =====================================================
 # RESET PASSWORD PAGE
