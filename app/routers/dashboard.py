@@ -257,3 +257,53 @@ def get_balance(
             user_id=current_user["user_id"]
         )
     }
+
+# =====================================================
+# DASHBOARD AJAX DATA
+# =====================================================
+@router.get("/data")
+def get_dashboard_data(
+    month: str | None = Query(None),
+    year: str | None = Query(None),
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+
+    month_int = int(month) if month else None
+    year_int = int(year) if year else None
+
+    df = dashboard_service.load_dashboard_transactions(
+        db=db,
+        user_id=current_user["user_id"],
+        month=month_int,
+        year=year_int
+    )
+
+    metrics = dashboard_service.get_dashboard_metrics(
+        df
+    )
+
+    financial_health = (
+        dashboard_service.get_financial_health(
+            df
+        )
+    )
+
+    monthly_snapshot = (
+        dashboard_service.get_monthly_snapshot(
+            df
+        )
+    )
+
+    spending_alert = (
+        dashboard_service.get_spending_alert(
+            df
+        )
+    )
+
+    return {
+        "metrics": metrics,
+        "financial_health": financial_health,
+        "monthly_snapshot": monthly_snapshot,
+        "spending_alert": spending_alert
+    }

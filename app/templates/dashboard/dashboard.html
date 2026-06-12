@@ -15,38 +15,53 @@
 
 <div class="metrics-grid">
 
-    {% set title = "Saldo Saat Ini" %}
-    {% set value = metrics.balance %}
-    {% include "partials/metric_card.html" %}
+    <div id='metric-balanced'>
+        {% set title = "Saldo Saat Ini" %}
+        {% set value = metrics.balance %}
+        {% include "partials/metric_card.html" %}
+    </div>
 
-    {% set title = "Total Pemasukan" %}
-    {% set value = metrics.total_income %}
-    {% include "partials/metric_card.html" %}
+    <div id="'metric-total-income">
+        {% set title = "Total Pemasukan" %}
+        {% set value = metrics.total_income %}
+        {% include "partials/metric_card.html" %}
+    </div>
 
-    {% set title = "Total Pengeluaran" %}
-    {% set value = metrics.total_expense %}
-    {% include "partials/metric_card.html" %}
+    <div id="metric-total-expense">
+        {% set title = "Total Pengeluaran" %}
+        {% set value = metrics.total_expense %}
+        {% include "partials/metric_card.html" %}
+    </div>
 
-    {% set title = "Total Top Up" %}
-    {% set value = metrics.total_topup %}
-    {% include "partials/metric_card.html" %}
+    <div id="metric-total-topup">
+        {% set title = "Total Top Up" %}
+        {% set value = metrics.total_topup %}
+        {% include "partials/metric_card.html" %}
+    </div>
 
-    {% set title = "Banyak Transaksi" %}
-    {% set value = metrics.total_transaction %}
-    {% include "partials/metric_card.html" %}
+    <div id="metric-total-transaction">
+        {% set title = "Banyak Transaksi" %}
+        {% set value = metrics.total_transaction %}
+        {% include "partials/metric_card.html" %}
+    </div>
 
-    {% set title = "Avg Transaksi" %}
-    {% set value = metrics.avg_transaction %}
-    {% include "partials/metric_card.html" %}
+    <div id="metric-avg-transaction">
+        {% set title = "Avg Transaksi" %}
+        {% set value = metrics.avg_transaction %}
+        {% include "partials/metric_card.html" %}
+    </div>
 
-    {% set title = "Avg Harian" %}
-    {% set value = metrics.avg_daily %}
-    {% include "partials/metric_card.html" %}
+    <div id="metric-avg-daily">
+        {% set title = "Avg Harian" %}
+        {% set value = metrics.avg_daily %}
+        {% include "partials/metric_card.html" %}
+    </div>
 
-    {% set title = "Saving Rate" %}
-    {% set value = metrics.saving_rate %}
-    {% include "partials/metric_card.html" %}
-
+    <div id="metric-saving-rate">
+        {% set title = "Saving Rate" %}
+        {% set value = metrics.saving_rate %}
+        {% include "partials/metric_card.html" %}
+    </div>
 
 </div>
 
@@ -63,5 +78,8 @@
     {% include "partials/spending_alert.html" %}
 
 </div>
+
+{% block extra_js %}
+<script src="/static/js/dashboard.js"></script>
 
 {% endblock %}
