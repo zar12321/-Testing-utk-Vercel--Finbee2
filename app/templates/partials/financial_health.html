@@ -1,0 +1,29 @@
+<div class="insight-card">
+
+    <h3>
+        Financial Health
+    </h3>
+
+    <div class="health-status">
+
+        {{ financial_health.icon }}
+
+        {{ financial_health.status }}
+
+    </div>
+
+    <p>
+        Saving Rate:
+        {{ financial_health.saving_rate }}%
+    </p>
+
+    <p>
+        Expense Ratio:
+        {{ financial_health.expense_ratio }}%
+    </p>
+
+    <span>
+        {{ financial_health.message }}
+    </span>
+
+</div>

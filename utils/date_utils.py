@@ -5,9 +5,9 @@ from typing import Optional
 import pandas as pd
 
 from core.constants import (
-    DATE_FORMAT,
-    DATETIME_FORMAT,
-    MONTH_FORMAT
+    DEFAULT_DATE_FORMAT,
+    DEFAULT_DATETIME_FORMAT,
+    DEFAULT_MONTH_FORMAT
 )
 
 
@@ -50,7 +50,7 @@ def format_date(
         return "-"
 
     return dt.strftime(
-        DATE_FORMAT
+        DEFAULT_DATE_FORMAT
     )
 
 
@@ -64,7 +64,7 @@ def format_datetime(
         return "-"
 
     return dt.strftime(
-        DATETIME_FORMAT
+        DEFAULT_DATETIME_FORMAT
     )
 
 
@@ -78,7 +78,7 @@ def format_month(
         return "-"
 
     return dt.strftime(
-        MONTH_FORMAT
+        DEFAULT_MONTH_FORMAT
     )
 
 

@@ -1,0 +1,75 @@
+<div class="dashboard-filters">
+
+    <div class="filter-header">
+
+        <div>
+
+            <h3>
+                Filter Dashboard
+            </h3>
+
+            <span>
+                Pilih periode untuk melihat ringkasan keuangan
+            </span>
+
+        </div>
+
+    </div>
+
+    <form
+        method="GET"
+        class="filter-form"
+    >
+
+        <div class="select-wrapper">
+
+            <select name="month">
+
+                <option value="">
+                    Semua Bulan
+                </option>
+
+                {% for value, label in months %}
+                <option
+                    value="{{ value }}"
+                    {% if selected_month == value %}selected{% endif %}
+                >
+                    {{ label }}
+                </option>
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="select-wrapper">
+
+            <select name="year">
+
+                <option value="">
+                    Semua Tahun
+                </option>
+
+                {% for year in years %}
+                <option
+                    value="{{ year }}"
+                    {% if selected_year == year %}selected{% endif %}
+                >
+                    {{ year }}
+                </option>
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <button
+            type="submit"
+            class="filter-btn"
+        >
+            Terapkan Filter
+        </button>
+
+    </form>
+
+</div>

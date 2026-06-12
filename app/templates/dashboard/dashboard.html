@@ -11,6 +11,8 @@
 
 {% include "partials/hero_card.html" %}
 
+{% include "partials/filter_dashboard.html" %}
+
 <div class="metrics-grid">
 
     {% set title = "Saldo Saat Ini" %}
@@ -28,6 +30,37 @@
     {% set title = "Total Top Up" %}
     {% set value = metrics.total_topup %}
     {% include "partials/metric_card.html" %}
+
+    {% set title = "Banyak Transaksi" %}
+    {% set value = metrics.total_transaction %}
+    {% include "partials/metric_card.html" %}
+
+    {% set title = "Avg Transaksi" %}
+    {% set value = metrics.avg_transaction %}
+    {% include "partials/metric_card.html" %}
+
+    {% set title = "Avg Harian" %}
+    {% set value = metrics.avg_daily %}
+    {% include "partials/metric_card.html" %}
+
+    {% set title = "Saving Rate" %}
+    {% set value = metrics.saving_rate %}
+    {% include "partials/metric_card.html" %}
+
+
+</div>
+
+<div class="dashboard-insights">
+
+    {% include "partials/financial_health.html" %}
+
+    {% include "partials/monthly_snapshot.html" %}
+
+</div>
+
+<div class="spending-alert-card">
+
+    {% include "partials/spending_alert.html" %}
 
 </div>
 

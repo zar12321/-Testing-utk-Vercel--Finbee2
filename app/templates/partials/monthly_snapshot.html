@@ -1,0 +1,51 @@
+<div class="insight-card">
+
+    <h3>
+        Monthly Snapshot
+    </h3>
+
+    {% if monthly_snapshot.top_income %}
+
+    <div class="snapshot-item">
+
+        <strong>
+            Income Terbesar
+        </strong>
+
+        <p>
+            {{ monthly_snapshot.top_income.category }}
+        </p>
+
+        <span>
+            Rp {{ "{:,.0f}".format(
+                monthly_snapshot.top_income.amount
+            ) }}
+        </span>
+
+    </div>
+
+    {% endif %}
+
+    {% if monthly_snapshot.top_expense %}
+
+    <div class="snapshot-item">
+
+        <strong>
+            Expense Terbesar
+        </strong>
+
+        <p>
+            {{ monthly_snapshot.top_expense.category }}
+        </p>
+
+        <span>
+            Rp {{ "{:,.0f}".format(
+                monthly_snapshot.top_expense.amount
+            ) }}
+        </span>
+
+    </div>
+
+    {% endif %}
+
+</div>

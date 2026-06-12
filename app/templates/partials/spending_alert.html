@@ -1,0 +1,24 @@
+<div class="spending-alert-card">
+
+    <h3>
+        Spending Alert
+    </h3>
+
+    {% for alert in spending_alert %}
+
+    <div class="alert-item {{ alert.status }}">
+
+        <h4>
+            {{ alert.icon }}
+            {{ alert.title }}
+        </h4>
+
+        <p>
+            {{ alert.message }}
+        </p>
+
+    </div>
+
+    {% endfor %}
+
+</div>
