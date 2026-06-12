@@ -144,7 +144,7 @@ def register_process(
     login_type: str = Form(...),
     password: str = Form(...),
     confirm_password: str = Form(...),
-    umur: int = Form(...),
+    umur: int = Form(None),
     pekerjaan: str = Form(""),
     db: Session = Depends(get_db)
 ):
@@ -167,20 +167,25 @@ def register_process(
             status_code=status.HTTP_303_SEE_OTHER
         )
 
+
     except ValueError as e:
 
         return templates.TemplateResponse(
             "auth/register.html",
             {
                 "request": request,
+
+                # pesan error untuk box
                 "error": str(e),
 
+                # mempertahankan input user
                 "nama": nama,
                 "login_identifier": login_identifier,
+                "login_type": login_type,
                 "umur": umur,
-                "pekerjaan": pekerjaan,
-                "login_type": login_type
-            }
+                "pekerjaan": pekerjaan
+            },
+            status_code=400
         )
 
 from app.database.connection import get_db
