@@ -722,6 +722,21 @@ def get_filter_options(
         }
     ).fetchall()
 
+    years = db.execute(
+        text("""
+            SELECT DISTINCT
+                EXTRACT(
+                    YEAR FROM tanggal_transaksi
+                ) AS year
+            FROM transactions
+            WHERE user_id = :user_id
+            ORDER BY year DESC
+        """),
+        {
+            "user_id": user_id
+        }
+    ).fetchall()
+
     return {
         "categories": [
             row[0]
@@ -739,6 +754,11 @@ def get_filter_options(
                 "category_name": row[1]
             }
             for row in subcategories
+        ],
+
+        "years": [
+            int(row[0])
+            for row in years
         ]
     }
 

@@ -323,55 +323,124 @@
 ========================= */
 
 .transaction-filters{
-
     display:grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(220px,1fr)
-        );
-
-    gap:12px;
-
-    margin-bottom:20px;
+    grid-template-columns:repeat(
+        auto-fit,
+        minmax(180px, 1fr)
+    );
+    gap:16px;
+    margin-bottom:24px;
 }
 
-.transaction-filters select,
-.transaction-filters input{
+.filter-card{
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+    padding:14px 16px;
 
+    display:flex;
+    flex-direction:column;
+    gap:13px;
+
+    transition:all .2s ease;
+}
+
+.filter-card:hover{
+    border-color:#cbd5e1;
+    box-shadow:
+        0 4px 12px rgba(15,23,42,.05);
+}
+
+.filter-title{
+    font-size:12px;
+    font-weight:700;
+    color:#64748b;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+}
+
+.filter-card select,
+.filter-card input{
     width:100%;
 
-    padding:12px 14px;
+    border:none;
+    outline:none;
+    background:transparent;
 
-    border:1px solid #D9E1EC;
+    font-size:15px;
+    color:#0f172a;
+}
+
+.filter-card select{
+    cursor:pointer;
+}
+
+.filter-card input::placeholder{
+    color:#94a3b8;
+}
+
+.filter-button-card{
+    display:grid !important;
+    grid-template-columns:1fr 1fr;
+
+    align-items:end;
+
+    padding:0;
+
+    border:none;
+    background:transparent;
+    box-shadow:none;
+
+    gap:12px;
+}
+
+.filter-button-card .secondary-btn{
+    border:1px solid #d9e1ec;
+
+    background:#ffffff;
+    color:#163C8C;
+}
+
+.filter-button-card:hover{
+    border:none;
+    box-shadow:none;
+}
+
+.filter-button-card button{
+    height:58px;
 
     border-radius:14px;
 
-    background:white;
+    font-size:14px;
+    font-weight:700;
 
-    color:#102A72;
+    cursor:pointer;
 
-    font-size:0.9rem;
-
-    transition:all 0.2s ease;
+    transition:all .2s ease;
 }
 
-.transaction-filters select:focus,
-.transaction-filters input:focus{
+.danger-outline-btn{
+    border:1px solid #fecaca;
 
-    outline:none;
+    background:#ffffff;
+    color:#dc2626;
+}
 
-    border-color:#163C8C;
+.danger-outline-btn:hover{
+    background:#fef2f2;
+    border-color:#fca5a5;
+}
 
-    box-shadow:
-        0 0 0 4px
-        rgba(
-            22,
-            60,
-            140,
-            0.10
-        );
+.filter-metodepembayaran-wide{
+    grid-column: span 2;
+}
+
+@media (max-width:768px){
+
+    .transaction-filters{
+        grid-template-columns:1fr;
+    }
+
 }
 
 /* =========================
@@ -666,4 +735,47 @@
 
 #import-modal table tr:hover td{
     background:rgba(59,130,246,0.04);
+}
+
+/* =========================
+   BIKIN TOMBOL EDIT DAN HAPUS UTK SETIAP DATA
+========================= */
+.action-buttons{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+}
+
+.icon-btn{
+    width:40px;
+    height:40px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    border:none;
+    border-radius:12px;
+
+    background:transparent;
+
+    cursor:pointer;
+
+    transition:all .2s ease;
+}
+
+.icon-btn img{
+    width:20px;
+    height:20px;
+
+    object-fit:contain;
+}
+
+.edit-btn:hover{
+    background:#eff6ff;
+}
+
+.delete-btn:hover{
+    background:#fef2f2;
 }

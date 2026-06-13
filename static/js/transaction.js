@@ -440,6 +440,15 @@ document.addEventListener(
                 applyFilters
             );
 
+        document
+            .getElementById(
+                "reset-filter-btn"
+            )
+            ?.addEventListener(
+                "click",
+                resetFilters
+            );
+
     }   
 );
 
@@ -538,7 +547,7 @@ async function loadFilterOptions() {
                 <option value="${year}">
                     ${year}
                 </option>
-            `
+            `;
         }
     );
 
@@ -660,6 +669,24 @@ async function applyFilters() {
 
 }
 
+function resetFilters() {
+
+    document.getElementById("filter-month").value = "";
+    document.getElementById("filter-year").value = "";
+    document.getElementById("filter-period").value = "";
+
+    document.getElementById("filter-category").value = "";
+    document.getElementById("filter-subcategory").value = "";
+
+    document.getElementById("filter-payment").value = "";
+
+    document.getElementById("filter-tujuan").value = "";
+    document.getElementById("filter-keterangan").value = "";
+
+    loadTransactions();
+
+}
+
 function renderTransactionTable(
     transactions
 ) {
@@ -736,12 +763,31 @@ function renderTransactionTable(
 
                     <td>
 
-                        <button
-                            class="delete-btn"
-                            data-id="${transaction.transaction_id}"
-                        >
-                            Hapus
-                        </button>
+                        <div class="action-buttons">
+
+                            <button
+                                class="icon-btn edit-btn"
+                                data-id="${transaction.transaction_id}"
+                                title="Edit"
+                            >
+                                <img
+                                    src="/static/images/edit.png"
+                                    alt="Edit"
+                                >
+                            </button>
+
+                            <button
+                                class="icon-btn delete-btn"
+                                data-id="${transaction.transaction_id}"
+                                title="Hapus"
+                            >
+                                <img
+                                    src="/static/images/apus.png"
+                                    alt="Hapus"
+                                >
+                            </button>
+
+                        </div>
 
                     </td>
 

@@ -203,57 +203,6 @@
     <!-- IMPORT SUMMARY -->
     <!-- ========================= -->
 
-    <div class="card">
-
-        <h3>
-            Statistik Transaksi
-        </h3>
-
-        <div class="summary-grid">
-
-            <div class="summary-item">
-
-                <span>Total Transaksi</span>
-
-                <h2 id="summary-total">
-                    0
-                </h2>
-
-            </div>
-
-            <div class="summary-item">
-
-                <span>Pemasukan</span>
-
-                <h2 id="summary-income">
-                    0
-                </h2>
-
-            </div>
-
-            <div class="summary-item">
-
-                <span>Pengeluaran</span>
-
-                <h2 id="summary-expense">
-                    0
-                </h2>
-
-            </div>
-
-            <div class="summary-item">
-
-                <span>Top Up</span>
-
-                <h2 id="summary-topup">
-                    0
-                </h2>
-
-            </div>
-
-        </div>
-
-    </div>
 
 <!-- ========================= -->
 <!-- TRANSACTION HISTORY -->
@@ -274,149 +223,110 @@
 
     <div class="transaction-filters">
 
-        <!-- Periode -->
+        <div class="filter-card">
+            <span class="filter-title">Bulan</span>
 
-        <select id="filter-month">
+            <select id="filter-month">
+                <option value="">Semua Bulan</option>
 
-            <option value="">
-                Semua Bulan
-            </option>
+                <option value="1">Januari</option>
+                <option value="2">Februari</option>
+                <option value="3">Maret</option>
+                <option value="4">April</option>
+                <option value="5">Mei</option>
+                <option value="6">Juni</option>
+                <option value="7">Juli</option>
+                <option value="8">Agustus</option>
+                <option value="9">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">Desember</option>
+            </select>
+        </div>
 
-            <option value="1">
-                Januari
-            </option>
+        <div class="filter-card">
+            <span class="filter-title">Tahun</span>
 
-            <option value="2">
-                Februari
-            </option>
+            <select id="filter-year">
+                <option value="">Semua Tahun</option>
+            </select>
+        </div>
 
-            <option value="3">
-                Maret
-            </option>
+        <div class="filter-card">
+            <span class="filter-title">Periode</span>
 
-            <option value="4">
-                April
-            </option>
+            <select id="filter-period">
+                <option value="">Semua Periode</option>
+                <option value="today">Hari Ini</option>
+                <option value="yesterday">Kemarin</option>
+                <option value="7days">7 Hari Terakhir</option>
+                <option value="30days">30 Hari Terakhir</option>
+            </select>
+        </div>
 
-            <option value="5">
-                Mei
-            </option>
+        <div class="filter-card">
+            <span class="filter-title">Kategori</span>
 
-            <option value="6">
-                Juni
-            </option>
+            <select id="filter-category">
+                <option value="">Semua Kategori</option>
+            </select>
+        </div>
 
-            <option value="7">
-                Juli
-            </option>
+        <div class="filter-card">
+            <span class="filter-title">Subkategori</span>
 
-            <option value="8">
-                Agustus
-            </option>
+            <select id="filter-subcategory">
+                <option value="">Semua Subkategori</option>
+            </select>
+        </div>
 
-            <option value="9">
-                September
-            </option>
+        <div class="filter-card filter-metodepembayaran-wide">
+            <span class="filter-title">Metode Pembayaran</span>
 
-            <option value="10">
-                Oktober
-            </option>
+            <select id="filter-payment">
+                <option value="">Semua Metode Pembayaran</option>
+            </select>
+        </div>
 
-            <option value="11">
-                November
-            </option>
+        <div class="filter-card">
+            <span class="filter-title">Tujuan Transaksi</span>
 
-            <option value="12">
-                Desember
-            </option>
+            <input
+                type="text"
+                id="filter-tujuan"
+                placeholder="Cari tujuan..."
+            >
+        </div>
 
-        </select>
+        <div class="filter-card">
+            <span class="filter-title">Keterangan</span>
 
-        <select id="filter-year">
-            <option value="">
-                Semua Tahun
-            </option>
-        </select>
+            <input
+                type="text"
+                id="filter-keterangan"
+                placeholder="Cari keterangan..."
+            >
+        </div>
 
-        <select id="filter-period">
+        <div class="filter-card filter-button-card">
 
-            <option value="">
-                Semua Periode
-            </option>
+            <button
+                id="apply-filter-btn"
+                type="button"
+                class="secondary-btn"
+            >
+                Terapkan Filter
+            </button>
 
-            <option value="today">
-                Hari Ini
-            </option>
+            <button
+                id="reset-filter-btn"
+                type="button"
+                class="danger-outlier-btn"
+            >
+                Reset Filter
+            </button>
 
-            <option value="yesterday">
-                Kemarin
-            </option>
-
-            <option value="7days">
-                7 Hari Terakhir
-            </option>
-
-            <option value="30days">
-                30 Hari Terakhir
-            </option>
-
-        </select>
-
-        <!-- Kategori -->
-
-        <select id="filter-category">
-
-            <option value="">
-                Semua Kategori
-            </option>
-
-        </select>
-
-        <!-- Subkategori -->
-
-        <select id="filter-subcategory">
-
-            <option value="">
-                Semua Subkategori
-            </option>
-
-        </select>
-
-        <!-- Metode Pembayaran -->
-
-        <select id="filter-payment">
-
-            <option value="">
-                Semua Metode Pembayaran
-            </option>
-
-        </select>
-
-        <!-- Tujuan -->
-
-        <input
-            type="text"
-            id="filter-tujuan"
-            placeholder="Cari tujuan transaksi..."
-        >
-
-        <!-- Keterangan -->
-
-        <input
-            type="text"
-            id="filter-keterangan"
-            placeholder="Cari keterangan transaksi..."
-        >
-
-        <!-- Tombol -->
-
-        <button
-            id="apply-filter-btn"
-            type="button"
-            class="secondary-btn"
-        >
-            Terapkan Filter
-        </button>
+        </div>
 
     </div>
 
@@ -461,7 +371,7 @@
                     </th>
 
                     <th>
-                        Hapus
+                        Edit/Hapus
                     </th>
 
                 </tr>
