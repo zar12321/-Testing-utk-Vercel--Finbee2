@@ -3,19 +3,26 @@ document.addEventListener(
     () => {
 
         const inputFile =
-            document.getElementById(
-                "import-file"
-            );
+            document.getElementById("import-file");
 
         const importModal =
-            document.getElementById(
-                "import-modal"
-            );
+            document.getElementById("import-modal");
 
         const closeModal =
-            document.getElementById(
-                "close-modal"
-            );
+            document.getElementById("close-modal");
+
+        // ❗ INI YANG KAMU LUPA
+        const metadataPreview =
+            document.getElementById("metadata-preview");
+
+        const rawPreview =
+            document.getElementById("raw-preview");
+
+        const cleanPreview =
+            document.getElementById("clean-preview");
+
+        const importSummary =
+            document.getElementById("import-summary");
 
         // =====================
         // FUNCTION CLOSE MODAL
@@ -97,11 +104,14 @@ document.addEventListener(
                     const sheet =
                         workbook.Sheets[sheetName];
 
-                    const json =
-                        XLSX.utils.sheet_to_json(sheet, {
-                            header: 1
-                        });
-
+                    const json = XLSX.utils.sheet_to_json(
+                        sheet,
+                        {
+                            header: 1,
+                            raw: false,
+                            dateNF: "dd/mm/yyyy"
+                        }
+                    );
                     // ambil 10 baris pertama
                     const previewData =
                         json.slice(0, 10);
@@ -110,30 +120,83 @@ document.addEventListener(
                     // RENDER TABLE
                     // =====================
 
-                    let html = `<table border="1" style="width:100%;border-collapse:collapse;">`;
+                    const headers = previewData[0] || [];
+
+                    let html = `
+                    <div
+                        style="
+                            overflow-x:auto;
+                            border-radius:16px;
+                        "
+                    >
+                        <table
+                            style="
+                                width:100%;
+                                border-collapse:collapse;
+                                white-space:nowrap;
+                                font-size:14px;
+                            "
+                        >
+                    `;
 
                     previewData.forEach((row, i) => {
 
                         html += "<tr>";
 
-                        row.forEach(cell => {
+                        for (
+                            let j = 0;
+                            j < headers.length;
+                            j++
+                        ) {
+
+                            const cell =
+                                row[j] ?? "";
 
                             if (i === 0) {
-                                html += `<th style="padding:6px;background:#eee;">${cell ?? ""}</th>`;
+
+                                html += `
+                                    <th
+                                        style="
+                                            padding:14px 16px;
+                                            text-align:left;
+                                            font-weight:600;
+                                            color:#121314;
+                                            border-bottom:1px solid #e2e8f0;
+                                            background:transparent;
+                                        "
+                                    >
+                                        ${cell}
+                                    </th>
+                                `;
+
                             } else {
-                                html += `<td style="padding:6px;">${cell ?? ""}</td>`;
+
+                                html += `
+                                    <td
+                                        style="
+                                            padding:14px 16px;
+                                            border-bottom:1px solid #f1f5f9;
+                                            color:#334155;
+                                        "
+                                    >
+                                        ${cell}
+                                    </td>
+                                `;
+
                             }
 
-                        });
+                        }
 
                         html += "</tr>";
 
                     });
 
-                    html += "</table>";
+                    html += `
+                        </table>
+                    </div>
+                    `;
 
                     rawPreview.innerHTML = html;
-
                     // =====================
                     // CLEANING (placeholder dulu)
                     // =====================

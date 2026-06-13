@@ -591,3 +591,7 @@
 .import-action{
     margin-top: 10px;
 }
+
+#import-modal table tr:hover td{
+    background:rgba(59,130,246,0.04);
+}
