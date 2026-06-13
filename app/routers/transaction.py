@@ -10,7 +10,8 @@ from fastapi import (
     File,
     Request, 
     UploadFile,
-    HTTPException
+    HTTPException, 
+    Query
 )
 
 from sqlalchemy.orm import Session
@@ -60,19 +61,41 @@ templates = Jinja2Templates(
     response_model=list[TransactionResponse]
 )
 def get_transactions(
+
+    period: str | None = Query(None),
+
+    raw_category: str | None = Query(None),
+
+    category_id: int | None = Query(None),
+
+    payment_method: str | None = Query(None),
+
+    tujuan_transaksi: str | None = Query(None),
+
+    keterangan: str | None = Query(None),
+
     db: Session = Depends(get_db),
+
     current_user=Depends(get_current_user)
 ):
 
     transactions = (
         TransactionService.get_transactions(
             db=db,
-            user_id=current_user["user_id"]
-        )
-    )
+            user_id=current_user["user_id"],
 
-    return transactions.to_dict(
-        orient="records"
+            period=period,
+
+            raw_category=raw_category,
+
+            category_id=category_id,
+
+            payment_method=payment_method,
+
+            tujuan_transaksi=tujuan_transaksi,
+
+            keterangan=keterangan
+        )
     )
 
 
@@ -278,4 +301,140 @@ def transaction_page(
             "request": request,
             "user_name": current_user["nama"]
         }
+    )
+
+# =====================================================
+# IMPORT PREVIEW
+# =====================================================
+
+@router.post("/import-preview")
+async def import_preview(
+    file: UploadFile = File(...),
+    current_user=Depends(get_current_user)
+):
+
+    try:
+
+        content = await file.read()
+
+        if file.filename.endswith(".csv"):
+
+            raw_df = pd.read_csv(
+                BytesIO(content)
+            )
+
+        elif (
+            file.filename.endswith(".xlsx")
+            or file.filename.endswith(".xls")
+        ):
+
+            raw_df = pd.read_excel(
+                BytesIO(content)
+            )
+
+        else:
+
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Format file harus "
+                    "CSV atau Excel."
+                )
+            )
+
+        cleaned_df = (
+            auto_clean_financial_file(
+                raw_df
+            )
+        )
+
+        return {
+
+            "raw_preview": (
+                raw_df
+                .head(10)
+                .fillna("")
+                .astype(str)
+                .to_dict(
+                    orient="records"
+                )
+            ),
+
+            "clean_preview": (
+                cleaned_df
+                .head(10)
+                .fillna("")
+                .astype(str)
+                .to_dict(
+                    orient="records"
+                )
+            ),
+
+            "summary": {
+
+                "total_raw_rows":
+                    len(raw_df),
+
+                "total_clean_rows":
+                    len(cleaned_df),
+
+                "removed_rows":
+                    len(raw_df)
+                    - len(cleaned_df)
+            }
+        }
+
+    except Exception as e:
+
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
+    
+# =====================================================
+# FILTER OPTIONS
+# =====================================================
+@router.get("/filter-options")
+def get_filter_options(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+
+    return TransactionService.get_filters(
+        db=db,
+        user_id=current_user["user_id"]
+    )
+
+# =====================================================
+# FILTER TRANSACTIONS
+# =====================================================
+@router.get("/filter")
+def filter_transactions(
+    db: Session = Depends(get_db), 
+    current_user = Depends(get_current_user), 
+    period: str | None = None,
+    month: int | None = None, 
+    year: int | None = None,
+    category: str | None = None,
+    subcategory_id: int | None = None,
+    payment_method: str | None = None,
+    tujuan: str | None = None,
+    keterangan: str | None = None
+):
+    transactions=(
+        TransactionService.filter_transactions(
+            db=db,
+            user_id=current_user["user_id"],
+            period=period,
+            month=month, 
+            year=year,
+            category=category,
+            subcategory_id=subcategory_id,
+            payment_method=payment_method,
+            tujuan=tujuan,
+            keterangan=keterangan
+        )
+    )
+    return transactions.to_dict(
+        orient="records"
     )

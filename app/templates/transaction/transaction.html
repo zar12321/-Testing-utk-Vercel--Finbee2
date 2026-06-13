@@ -24,11 +24,11 @@
             </span>
 
             <h1>
-                Kelola Transaksi
+                Review Transaksi
             </h1>
 
             <p>
-                Tambahkan transaksi secara manual atau import dari file CSV / Excel.
+                Lihat serta tambahkan transaksi secara manual atau import dari file CSV / Excel.
             </p>
 
         </div>
@@ -75,12 +75,24 @@
                     </label>
 
                     <select
-                        id="category-select"
-                        name="category_id"
+                        id="raw-category"
                     >
-                        <option>
+                        <option value="">
                             Pilih Kategori
                         </option>
+
+                        <option value="expense">
+                            Pengeluaran
+                        </option>
+
+                        <option value="income">
+                            Pemasukan
+                        </option>
+
+                        <option value="topup">
+                            Topup
+                        </option>
+
                     </select>
 
                 </div>
@@ -243,68 +255,224 @@
 
     </div>
 
+<!-- ========================= -->
+<!-- TRANSACTION HISTORY -->
+<!-- ========================= -->
+
+<div class="card">
+
+    <div class="table-header">
+
+        <h3>
+            Riwayat Transaksi
+        </h3>
+
+    </div>
+    <!-- ========================= -->
+    <!-- FILTERS -->
+    <!-- ========================= -->
+
+    <div class="transaction-filters">
+
+        <!-- Periode -->
+
+        <select id="filter-month">
+
+            <option value="">
+                Semua Bulan
+            </option>
+
+            <option value="1">
+                Januari
+            </option>
+
+            <option value="2">
+                Februari
+            </option>
+
+            <option value="3">
+                Maret
+            </option>
+
+            <option value="4">
+                April
+            </option>
+
+            <option value="5">
+                Mei
+            </option>
+
+            <option value="6">
+                Juni
+            </option>
+
+            <option value="7">
+                Juli
+            </option>
+
+            <option value="8">
+                Agustus
+            </option>
+
+            <option value="9">
+                September
+            </option>
+
+            <option value="10">
+                Oktober
+            </option>
+
+            <option value="11">
+                November
+            </option>
+
+            <option value="12">
+                Desember
+            </option>
+
+        </select>
+
+        <select id="filter-year">
+            <option value="">
+                Semua Tahun
+            </option>
+        </select>
+
+        <select id="filter-period">
+
+            <option value="">
+                Semua Periode
+            </option>
+
+            <option value="today">
+                Hari Ini
+            </option>
+
+            <option value="yesterday">
+                Kemarin
+            </option>
+
+            <option value="7days">
+                7 Hari Terakhir
+            </option>
+
+            <option value="30days">
+                30 Hari Terakhir
+            </option>
+
+        </select>
+
+        <!-- Kategori -->
+
+        <select id="filter-category">
+
+            <option value="">
+                Semua Kategori
+            </option>
+
+        </select>
+
+        <!-- Subkategori -->
+
+        <select id="filter-subcategory">
+
+            <option value="">
+                Semua Subkategori
+            </option>
+
+        </select>
+
+        <!-- Metode Pembayaran -->
+
+        <select id="filter-payment">
+
+            <option value="">
+                Semua Metode Pembayaran
+            </option>
+
+        </select>
+
+        <!-- Tujuan -->
+
+        <input
+            type="text"
+            id="filter-tujuan"
+            placeholder="Cari tujuan transaksi..."
+        >
+
+        <!-- Keterangan -->
+
+        <input
+            type="text"
+            id="filter-keterangan"
+            placeholder="Cari keterangan transaksi..."
+        >
+
+        <!-- Tombol -->
+
+        <button
+            id="apply-filter-btn"
+            type="button"
+            class="secondary-btn"
+        >
+            Terapkan Filter
+        </button>
+
+    </div>
 
     <!-- ========================= -->
-    <!-- TRANSACTION HISTORY -->
+    <!-- TABLE -->
     <!-- ========================= -->
 
-    <div class="card">
+    <div class="table-wrapper">
 
-        <div class="table-header">
+        <table class="transaction-table">
 
-            <h3>
-                Riwayat Transaksi
-            </h3>
+            <thead>
 
-        </div>
+                <tr>
 
-        <div class="table-wrapper">
+                    <th>
+                        Tanggal
+                    </th>
 
-            <table class="transaction-table">
+                    <th>
+                        Kategori
+                    </th>
 
-                <thead>
+                    <th>
+                        Subkategori
+                    </th>
 
-                    <tr>
+                    <th>
+                        Tujuan
+                    </th>
 
-                        <th>
-                            Tanggal
-                        </th>
+                    <th>
+                        Metode
+                    </th>
 
-                        <th>
-                            Kategori
-                        </th>
+                    <th>
+                        Nominal
+                    </th>
 
-                        <th>
-                            Tujuan
-                        </th>
+                    <th>
+                        Keterangan
+                    </th>
 
-                        <th>
-                            Metode
-                        </th>
+                    <th>
+                        Hapus
+                    </th>
 
-                        <th>
-                            Nominal
-                        </th>
+                </tr>
 
-                        <th>
-                            Keterangan
-                        </th>
+            </thead>
 
-                        <th>
-                            Hapus
-                        </th>
+            <tbody id="transaction-table-body">
 
-                    </tr>
+            </tbody>
 
-                </thead>
-
-                <tbody id="transaction-table-body">
-
-                </tbody>
-
-            </table>
-
-        </div>
+        </table>
 
     </div>
 
@@ -403,7 +571,7 @@
 
             <div
                 id="import-summary"
-                class="preview-box"
+                class="import-summary-box"
             >
             </div>
 

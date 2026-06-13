@@ -667,3 +667,289 @@ def save_monthly_plan(
     )
 
     db.commit()
+
+# =====================================================
+# FILTER OPTIONS
+# =====================================================
+
+def get_filter_options(
+    db: Session,
+    user_id: int
+):
+    categories = db.execute(
+        text("""
+            SELECT DISTINCT
+                transaction_type
+            FROM transactions
+            WHERE user_id = :user_id
+            ORDER BY transaction_type
+        """),
+        {
+            "user_id": user_id
+        }
+    ).fetchall()
+
+    payment_methods = db.execute(
+        text("""
+            SELECT DISTINCT
+                payment_method
+            FROM transactions
+            WHERE user_id = :user_id
+            AND payment_method IS NOT NULL
+            ORDER BY payment_method
+        """),
+        {
+            "user_id": user_id
+        }
+    ).fetchall()
+
+    subcategories = db.execute(
+        text("""
+            SELECT DISTINCT
+                c.category_id,
+                c.category_name
+            FROM transactions t
+            JOIN categories c
+                ON t.category_id = c.category_id
+            WHERE t.user_id = :user_id
+            ORDER BY c.category_name
+        """),
+        {
+            "user_id": user_id
+        }
+    ).fetchall()
+
+    return {
+        "categories": [
+            row[0]
+            for row in categories
+        ],
+
+        "payment_methods": [
+            row[0]
+            for row in payment_methods
+        ],
+
+        "subcategories": [
+            {
+                "category_id": row[0],
+                "category_name": row[1]
+            }
+            for row in subcategories
+        ]
+    }
+
+# =====================================================
+# FILTER TRANSACTIONS
+# =====================================================
+
+def filter_transactions(
+    db: Session,
+    user_id: int,
+    period: str | None = None,
+    month: int | None = None, 
+    year: int | None = None, 
+    category: str | None = None,
+    subcategory_id: int | None = None,
+    payment_method: str | None = None,
+    tujuan: str | None = None,
+    keterangan: str | None = None
+):
+
+    query = """
+        SELECT
+            t.transaction_id,
+            t.user_id,
+            u.nama AS user_name,
+            t.category_id,
+            c.category_name,
+            t.raw_category,
+            t.import_id,
+            t.tanggal_input,
+            t.tanggal_transaksi,
+            t.transaction_type,
+            t.tujuan_transaksi,
+            t.keterangan,
+            t.payment_method,
+            t.amount,
+            t.source,
+            t.created_at
+        FROM transactions t
+        JOIN users u
+            ON t.user_id = u.user_id
+        LEFT JOIN categories c
+            ON t.category_id = c.category_id
+        WHERE t.user_id = :user_id
+    """
+
+    params = {
+        "user_id": user_id
+    }
+
+    # =========================================
+    # PERIODE
+    # =========================================
+
+    if period == "today":
+
+        query += """
+            AND DATE(t.tanggal_transaksi)
+                = CURRENT_DATE
+        """
+
+    elif period == "yesterday":
+
+        query += """
+            AND DATE(t.tanggal_transaksi)
+                = CURRENT_DATE - INTERVAL '1 day'
+        """
+
+    elif period == "7days":
+
+        query += """
+            AND t.tanggal_transaksi >=
+                CURRENT_DATE - INTERVAL '7 day'
+        """
+
+    elif period == "30days":
+
+        query += """
+            AND t.tanggal_transaksi >=
+                CURRENT_DATE - INTERVAL '30 day'
+        """
+
+    # =========================================
+    # BULAN
+    # =========================================
+
+    if month:
+
+        query += """
+            AND EXTRACT(
+                MONTH FROM t.tanggal_transaksi
+            ) = :month
+        """
+
+        params["month"] = month
+
+
+    # =========================================
+    # TAHUN
+    # =========================================
+
+    if year:
+
+        query += """
+            AND EXTRACT(
+                YEAR FROM t.tanggal_transaksi
+            ) = :year
+        """
+
+        params["year"] = year
+
+    # =========================================
+    # KATEGORI
+    # =========================================
+
+    if category:
+
+        query += """
+            AND t.transaction_type = :category
+        """
+
+        params["category"] = category
+
+    # =========================================
+    # SUBKATEGORI
+    # =========================================
+
+    if subcategory_id:
+
+        query += """
+            AND t.category_id = :subcategory_id
+        """
+
+        params["subcategory_id"] = subcategory_id
+
+    # =========================================
+    # PAYMENT METHOD
+    # =========================================
+
+    if payment_method:
+
+        query += """
+            AND t.payment_method =
+                :payment_method
+        """
+
+        params["payment_method"] = payment_method
+
+    # =========================================
+    # TUJUAN TRANSAKSI
+    # =========================================
+
+    if tujuan:
+
+        query += """
+            AND LOWER(
+                t.tujuan_transaksi
+            )
+            LIKE LOWER(
+                :tujuan
+            )
+        """
+
+        params["tujuan"] = f"%{tujuan}%"
+
+    # =========================================
+    # KETERANGAN
+    # =========================================
+
+    if keterangan:
+
+        query += """
+            AND LOWER(
+                COALESCE(
+                    t.keterangan,
+                    ''
+                )
+            )
+            LIKE LOWER(
+                :keterangan
+            )
+        """
+
+        params["keterangan"] = f"%{keterangan}%"
+
+    # =========================================
+    # ORDER
+    # =========================================
+
+    query += """
+        ORDER BY
+            t.tanggal_transaksi DESC,
+            t.transaction_id DESC
+    """
+
+    result = db.execute(
+        text(query),
+        params
+    )
+
+    df = pd.DataFrame(
+        result.fetchall(),
+        columns=result.keys()
+    )
+
+    if not df.empty:
+
+        df["tanggal_transaksi"] = pd.to_datetime(
+            df["tanggal_transaksi"]
+        )
+
+        df["amount"] = pd.to_numeric(
+            df["amount"],
+            errors="coerce"
+        )
+
+    return df

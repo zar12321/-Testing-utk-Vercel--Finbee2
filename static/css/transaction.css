@@ -318,6 +318,61 @@
     background: #F8FAFC;
 }
 
+/* =========================
+   TRANSACTION FILTERS
+========================= */
+
+.transaction-filters{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(220px,1fr)
+        );
+
+    gap:12px;
+
+    margin-bottom:20px;
+}
+
+.transaction-filters select,
+.transaction-filters input{
+
+    width:100%;
+
+    padding:12px 14px;
+
+    border:1px solid #D9E1EC;
+
+    border-radius:14px;
+
+    background:white;
+
+    color:#102A72;
+
+    font-size:0.9rem;
+
+    transition:all 0.2s ease;
+}
+
+.transaction-filters select:focus,
+.transaction-filters input:focus{
+
+    outline:none;
+
+    border-color:#163C8C;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(
+            22,
+            60,
+            140,
+            0.10
+        );
+}
 
 /* =========================
    BADGE
@@ -533,6 +588,18 @@
     overflow:auto;
 }
 
+.import-summary-box{
+    background:#F8FAFC;
+    border:1px solid #E5EAF2;
+    border-radius:16px;
+
+    padding:16px 18px;
+
+    display:inline-block;
+
+    min-height:auto;
+}
+
 /* =========================
    BRAND
 ========================= */
@@ -579,13 +646,18 @@
 }
 
 .primary-btn{
-    display: inline-flex;
+    display:inline-flex;
 
-    align-items: center;
+    align-items:center;
+    justify-content:center;
 
-    justify-content: center;
+    width:fit-content;
 
-    width: fit-content;
+    font-family:inherit;      /* penting */
+    font-size:0.95rem;        /* samakan */
+    line-height:1;
+
+    text-decoration:none;
 }
 
 .import-action{

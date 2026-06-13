@@ -8,7 +8,9 @@ from app.database.db import (
     insert_transaction,
     insert_imported_transactions,
     update_transaction,
-    delete_transaction
+    delete_transaction, 
+    get_filter_options, 
+    filter_transactions
 )
 
 from utils.validation import (
@@ -177,3 +179,48 @@ class TransactionService:
             )
 
         return True
+
+
+    # =====================================================
+    # FILTER OPTIONS
+    # =====================================================
+    @staticmethod
+    def get_filters(
+        db: Session,
+        user_id: int
+    ):
+
+        return get_filter_options(
+            db=db,
+            user_id=user_id
+        )
+
+    # =====================================================
+    # FILTER TRANSACTIONS
+    # =====================================================
+    @staticmethod
+    def filter_transactions(
+        db: Session,
+        user_id: int,
+        period: str | None = None,
+        month: int | None = None, 
+        year: int | None = None, 
+        category: str | None = None,
+        subcategory_id: int | None = None,
+        payment_method: str | None = None,
+        tujuan: str | None = None,
+        keterangan: str | None = None
+    ):
+
+        return filter_transactions(
+            db=db,
+            user_id=user_id,
+            period=period,
+            month=month, 
+            year=year, 
+            category=category,
+            subcategory_id=subcategory_id,
+            payment_method=payment_method,
+            tujuan=tujuan,
+            keterangan=keterangan
+        )

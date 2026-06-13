@@ -11,7 +11,6 @@ document.addEventListener(
         const closeModal =
             document.getElementById("close-modal");
 
-        // ❗ INI YANG KAMU LUPA
         const metadataPreview =
             document.getElementById("metadata-preview");
 
@@ -51,7 +50,7 @@ document.addEventListener(
 
         inputFile?.addEventListener(
             "change",
-            () => {
+            async () => {
 
                 const file = inputFile.files[0];
 
@@ -90,7 +89,7 @@ document.addEventListener(
 
                 const reader = new FileReader();
 
-                reader.onload = function (e) {
+                reader.onload = async function (e) {
 
                     const data = new Uint8Array(e.target.result);
 
@@ -198,16 +197,196 @@ document.addEventListener(
 
                     rawPreview.innerHTML = html;
                     // =====================
-                    // CLEANING (placeholder dulu)
+                    // CLEANING 
                     // =====================
+                    rawPreview.innerHTML = html;
 
-                    cleanPreview.innerHTML =
-                        "<p>Belum ada proses cleaning (next step).</p>";
+                    try {
 
-                    importSummary.innerHTML =
-                        `<p>Total row: ${json.length}</p>`;
+                        const formData =
+                            new FormData();
 
-                };
+                        formData.append(
+                            "file",
+                            file
+                        );
+
+                        const response =
+                            await fetch(
+                                "/transactions/import-preview",
+                                {
+                                    method: "POST",
+                                    body: formData
+                                }
+                            );
+
+                        const result =
+                            await response.json();
+
+                        console.log(
+                            "IMPORT PREVIEW",
+                            result
+                        );
+
+                        const cleanData =
+                            result.clean_preview || [];
+
+                        if (!cleanData.length) {
+
+                            cleanPreview.innerHTML =
+                                "<p>Tidak ada data hasil cleaning.</p>";
+
+                        } else {
+                            const columnAliases = {
+                                tanggal_transaksi:
+                                    "Tanggal",
+
+                                raw_category:
+                                    "Kategori",
+
+                                category_name:
+                                    "Subkategori",
+
+                                transaction_type:
+                                    "Tipe Transaksi",
+
+                                tujuan_transaksi:
+                                    "Tujuan Transaksi",
+
+                                keterangan:
+                                    "Keterangan",
+
+                                payment_method:
+                                    "Metode Pembayaran",
+
+                                amount:
+                                    "Nominal"
+                            };
+
+                            const headers =
+                                Object.keys(cleanData[0]).
+                                    filter(
+                                        header =>
+                                            header != 'transaction_type'
+                                    )
+                                ;
+
+                            let cleanHtml = `
+                                <div
+                                    style="
+                                        overflow-x:auto;
+                                        border-radius:16px;
+                                    "
+                                >
+                                    <table
+                                        style="
+                                            width:100%;
+                                            border-collapse:collapse;
+                                            white-space:nowrap;
+                                            font-size:14px;
+                                        "
+                                    >
+                            `;
+
+                            cleanHtml += "<tr>";
+
+                            headers.forEach(header => {
+
+                                cleanHtml += `
+                                    <th
+                                        style="
+                                            padding:14px 16px;
+                                            text-align:left;
+                                            font-weight:600;
+                                            color:#121314;
+                                            border-bottom:1px solid #e2e8f0;
+                                        "
+                                    >
+                                        ${columnAliases[header] || header}
+                                    </th>
+                                `;
+
+                            });
+
+                            cleanHtml += "</tr>";
+
+                            cleanData.forEach(row => {
+
+                                cleanHtml += "<tr>";
+
+                                headers.forEach(header => {
+
+                                    cleanHtml += `
+                                        <td
+                                            style="
+                                                padding:14px 16px;
+                                                border-bottom:1px solid #f1f5f9;
+                                                color:#334155;
+                                            "
+                                        >
+                                                                      ${
+                                        header === "amount"
+                                            ? Number(
+                                                row[header]
+                                            ).toLocaleString(
+                                                "id-ID",
+                                                {
+                                                    style: "currency",
+                                                    currency: "IDR",
+                                                    minimumFractionDigits: 0
+                                                }
+                                            )
+                                            : (row[header] ?? "")
+                                    }
+                                        </td>
+                                    `;
+
+                                });
+
+                                cleanHtml += "</tr>";
+
+                            });
+
+                            cleanHtml += `
+                                    </table>
+                                </div>
+                            `;
+
+                            cleanPreview.innerHTML =
+                                cleanHtml;
+                        }
+
+                        importSummary.innerHTML = `
+                            <div style="display:grid;gap:8px;">
+                                <div>
+                                    Total Raw:
+                                    ${result.summary.total_raw_rows}
+                                </div>
+
+                                <div>
+                                    Total Clean:
+                                    ${result.summary.total_clean_rows}
+                                </div>
+
+                                <div>
+                                    Removed:
+                                    ${result.summary.removed_rows}
+                                </div>
+                            </div>
+                        `;
+
+                    } catch (error) {
+
+                        console.error(error);
+
+                        cleanPreview.innerHTML = `
+                            <p>
+                                Gagal memuat preview cleaning.
+                            </p>
+                        `;
+
+                    }
+                }
 
                 reader.readAsArrayBuffer(file);
             }
@@ -246,5 +425,292 @@ document.addEventListener(
             }
         );
 
+        // =====================
+        // FILTER TRANSAKSI
+        // =====================
+        loadTransactions();
+        loadFilterOptions();
+
+        document
+            .getElementById(
+                "apply-filter-btn"
+            )
+            ?.addEventListener(
+                "click",
+                applyFilters
+            );
+
     }   
 );
+
+async function loadFilterOptions() {
+
+    const response =
+        await fetch(
+            "/transactions/filter-options"
+        );
+
+    const data =
+        await response.json();
+
+    const paymentSelect =
+        document.getElementById(
+            "filter-payment"
+        );
+    
+    const categorySelect =
+        document.getElementById(
+            "filter-category"
+        );
+
+    const subcategorySelect =
+        document.getElementById(
+            "filter-subcategory"
+        );
+    
+    const monthSelect = 
+        document.getElementById(
+            "filter-month"
+        );
+    
+    const yearSelect = 
+        document.getElementById(
+            "filter-year"
+        );
+
+    data.payment_methods.forEach(
+        method => {
+
+            paymentSelect.innerHTML += `
+                <option value="${method}">
+                    ${method}
+                </option>
+            `;
+        }
+    );
+
+    const categoryAlias = {
+
+        expense: "Pengeluaran",
+
+        income: "Pemasukan",
+
+        topup: "Topup"
+
+    };
+
+    data.categories.forEach(
+        category => {
+
+            categorySelect.innerHTML += `
+                <option value="${category}">
+                    ${categoryAlias[category] || category}
+                </option>
+            `;
+
+        }
+    );
+
+    data.subcategories.forEach(
+        category => {
+
+            subcategorySelect.innerHTML += `
+                <option value="${category.category_id}">
+                    ${category.category_name}
+                </option>
+            `;
+        }
+    );
+
+    data.month.forEach(
+        month => {
+            monthSelect.innerHTML += `
+                <option value="${month}">
+                    ${month}
+                </option>
+            `
+        }
+    );
+
+    data.years.forEach(
+        year => {
+            yearSelect.innerHTML += `
+                <option value="${year}">
+                    ${year}
+                </option>
+            `
+        }
+    );
+
+}
+
+async function applyFilters() {
+
+    const params = new URLSearchParams();
+
+    const period =
+        document.getElementById(
+            "filter-period"
+        ).value;
+
+    const month =
+        document.getElementById(
+            "filter-month"
+        ).value;
+
+    const year =
+        document.getElementById(
+            "filter-year"
+        ).value;
+
+    const category =
+        document.getElementById(
+            "filter-category"
+        ).value;
+
+    const subcategoryId =
+        document.getElementById(
+            "filter-subcategory"
+        ).value;
+
+    if (period)
+        params.append("period", period);
+
+    if (month)
+        params.append("month", month);
+
+    if (year)
+        params.append("year", year);
+
+    if (category)
+        params.append("category", category);
+
+    if (subcategoryId)
+        params.append(
+            "subcategory_id",
+            subcategoryId
+        );
+
+    console.log(
+        `/transactions/filter?${params}`
+    );
+
+    const response =
+        await fetch(
+            `/transactions/filter?${params}`
+        );
+
+    const transactions =
+        await response.json();
+
+    renderTransactionTable(
+        transactions
+    );
+
+}
+
+function renderTransactionTable(
+    transactions
+) {
+
+    const tableBody =
+        document.getElementById(
+            "transaction-table-body"
+        );
+
+    tableBody.innerHTML = "";
+
+    if (!transactions.length) {
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="8">
+                    Tidak ada transaksi ditemukan
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    transactions.forEach(
+        transaction => {
+
+            tableBody.innerHTML += `
+                <tr>
+
+                    <td>
+                        ${
+                            new Date(
+                                transaction.tanggal_transaksi
+                            )
+                            .toLocaleDateString(
+                                "id-ID"
+                            )
+                        }
+                    </td>
+
+                    <td>
+                        ${transaction.raw_category || "-"}
+                    </td>
+
+                    <td>
+                        ${transaction.category_name || "-"}
+                    </td>
+
+                    <td>
+                        ${transaction.tujuan_transaksi || "-"}
+                    </td>
+
+                    <td>
+                        ${transaction.payment_method || "-"}
+                    </td>
+
+                    <td>
+                        ${Number(
+                            transaction.amount
+                        ).toLocaleString(
+                            "id-ID",
+                            {
+                                style: "currency",
+                                currency: "IDR",
+                                minimumFractionDigits: 0
+                            }
+                        )}
+                    </td>
+
+                    <td>
+                        ${transaction.keterangan || "-"}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="delete-btn"
+                            data-id="${transaction.transaction_id}"
+                        >
+                            Hapus
+                        </button>
+
+                    </td>
+
+                </tr>
+            `;
+        }
+    );
+}
+
+async function loadTransactions() {
+
+    const response =
+        await fetch(
+            "/transactions/filter"
+        );
+
+    const transactions =
+        await response.json();
+
+    renderTransactionTable(
+        transactions
+    );
+}
