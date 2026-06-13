@@ -11,19 +11,38 @@
 
 <div class="transaction-page">
 
+    <!-- ========================= -->
+    <!-- HEADER -->
+    <!-- ========================= -->
+
     <div class="transaction-header">
 
-        <h1>
-            Transaction Center
-        </h1>
+        <div>
 
-        <p>
-            Kelola transaksi manual maupun import file.
-        </p>
+            <span class="section-tag">
+                TRANSACTION CENTER
+            </span>
+
+            <h1>
+                Kelola Transaksi
+            </h1>
+
+            <p>
+                Tambahkan transaksi secara manual atau import dari file CSV / Excel.
+            </p>
+
+        </div>
 
     </div>
 
+
+    <!-- ========================= -->
+    <!-- TOP SECTION -->
+    <!-- ========================= -->
+
     <div class="transaction-top">
+
+        <!-- Manual Input -->
 
         <div class="card">
 
@@ -31,7 +50,109 @@
                 Input Transaksi Manual
             </h3>
 
+            <form
+                id="transaction-form"
+                class="transaction-form"
+            >
+
+                <div class="form-group">
+
+                    <label>
+                        Tanggal Transaksi
+                    </label>
+
+                    <input
+                        type="date"
+                        name="tanggal_transaksi"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Kategori
+                    </label>
+
+                    <select
+                        id="category-select"
+                        name="category_id"
+                    >
+                        <option>
+                            Pilih Kategori
+                        </option>
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Tujuan Transaksi
+                    </label>
+
+                    <input
+                        type="text"
+                        name="tujuan_transaksi"
+                        placeholder="Contoh: Makan Siang"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Metode Pembayaran
+                    </label>
+
+                    <input
+                        type="text"
+                        name="payment_method"
+                        placeholder="Cash / E-Wallet / Transfer"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Nominal
+                    </label>
+
+                    <input
+                        type="number"
+                        name="amount"
+                        placeholder="0"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Keterangan
+                    </label>
+
+                    <textarea
+                        name="keterangan"
+                        rows="3"
+                    ></textarea>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+                    Simpan Transaksi
+                </button>
+
+            </form>
+
         </div>
+
+
+        <!-- Import File -->
 
         <div class="card">
 
@@ -39,42 +160,272 @@
                 Import CSV / Excel
             </h3>
 
+            <p class="import-description">
+                Upload file transaksi untuk dibersihkan dan diimport ke database.
+            </p>
+
+            <div class="import-action">
+
+                <input
+                    type="file"
+                    id="import-file"
+                    accept=".csv,.xlsx,.xls"
+                    hidden
+                >
+
+                <label
+                    for="import-file"
+                    class="primary-btn"
+                >
+                    Pilih File
+                </label>
+
+            </div>
+
         </div>
 
     </div>
 
+
+    <!-- ========================= -->
+    <!-- IMPORT SUMMARY -->
+    <!-- ========================= -->
+
     <div class="card">
 
         <h3>
-            Preview Data Asli
+            Statistik Transaksi
         </h3>
+
+        <div class="summary-grid">
+
+            <div class="summary-item">
+
+                <span>Total Transaksi</span>
+
+                <h2 id="summary-total">
+                    0
+                </h2>
+
+            </div>
+
+            <div class="summary-item">
+
+                <span>Pemasukan</span>
+
+                <h2 id="summary-income">
+                    0
+                </h2>
+
+            </div>
+
+            <div class="summary-item">
+
+                <span>Pengeluaran</span>
+
+                <h2 id="summary-expense">
+                    0
+                </h2>
+
+            </div>
+
+            <div class="summary-item">
+
+                <span>Top Up</span>
+
+                <h2 id="summary-topup">
+                    0
+                </h2>
+
+            </div>
+
+        </div>
 
     </div>
 
-    <div class="card">
 
-        <h3>
-            Preview Data Cleaning
-        </h3>
-
-    </div>
+    <!-- ========================= -->
+    <!-- TRANSACTION HISTORY -->
+    <!-- ========================= -->
 
     <div class="card">
 
-        <h3>
-            Import Summary
-        </h3>
+        <div class="table-header">
 
-    </div>
+            <h3>
+                Riwayat Transaksi
+            </h3>
 
-    <div class="card">
+        </div>
 
-        <h3>
-            Riwayat Transaksi
-        </h3>
+        <div class="table-wrapper">
+
+            <table class="transaction-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Tanggal
+                        </th>
+
+                        <th>
+                            Kategori
+                        </th>
+
+                        <th>
+                            Tujuan
+                        </th>
+
+                        <th>
+                            Metode
+                        </th>
+
+                        <th>
+                            Nominal
+                        </th>
+
+                        <th>
+                            Hapus
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="transaction-table-body">
+
+                </tbody>
+
+            </table>
+
+        </div>
 
     </div>
 
 </div>
 
+<!-- ========================= -->
+<!-- IMPORT MODAL -->
+<!-- ========================= -->
+
+<div
+    id="import-modal"
+    class="modal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+                Preview Import
+            </h2>
+
+            <button
+                type="button"
+                id="close-modal"
+                class="close-btn"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- METADATA -->
+        <!-- ========================= -->
+
+        <div class="modal-section">
+
+            <h3>
+                Metadata
+            </h3>
+
+            <div
+                id="metadata-preview"
+                class="preview-box"
+            >
+            </div>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- PREVIEW DATA ASLI -->
+        <!-- ========================= -->
+
+        <div class="modal-section">
+
+            <h3>
+                Preview Data Asli
+            </h3>
+
+            <div
+                id="raw-preview"
+                class="preview-box"
+            >
+            </div>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- PREVIEW CLEANING -->
+        <!-- ========================= -->
+
+        <div class="modal-section">
+
+            <h3>
+                Preview Hasil Cleaning
+            </h3>
+
+            <div
+                id="clean-preview"
+                class="preview-box"
+            >
+            </div>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- RINGKASAN IMPORT -->
+        <!-- ========================= -->
+
+        <div class="modal-section">
+
+            <h3>
+                Ringkasan Import
+            </h3>
+
+            <div
+                id="import-summary"
+                class="preview-box"
+            >
+            </div>
+
+        </div>
+
+        <button
+            id="confirm-import"
+            class="primary-btn"
+        >
+            Import ke Database
+        </button>
+
+    </div>
+
+</div>
+
+
 {% endblock %}
+
+{% block extra_js %}
+
+<!-- SheetJS dulu (WAJIB sebelum transaction.js) -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<!-- script kamu -->
+<script src="/static/js/transaction.js"></script>
+
+{% endblock %}
+
