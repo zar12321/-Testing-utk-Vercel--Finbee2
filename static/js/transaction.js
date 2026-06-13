@@ -572,6 +572,21 @@ async function applyFilters() {
         document.getElementById(
             "filter-subcategory"
         ).value;
+    
+    const paymentMethod = 
+        document.getElementById(
+            "filter-payment"
+        ).value;
+    
+    const tujuan = 
+        document.getElementById(
+            "filter-tujuan"
+        ).value;
+    
+    const keterangan = 
+        document.getElementById(
+            "filter-keterangan"
+        ).value;
 
     if (period)
         params.append("period", period);
@@ -590,11 +605,47 @@ async function applyFilters() {
             "subcategory_id",
             subcategoryId
         );
+    
+    if (paymentMethod)
+        params.append("payment_method", paymentMethod);
+
+    if (tujuan)
+        params.append("tujuan", tujuan);
+
+    if (keterangan)
+        params.append("keterangan", keterangan);
 
     console.log(
-        `/transactions/filter?${params}`
+        document.getElementById("filter-period")
     );
 
+    console.log(
+        document.getElementById("filter-month")
+    );
+
+    console.log(
+        document.getElementById("filter-year")
+    );
+
+    console.log(
+        document.getElementById("filter-category")
+    );
+
+    console.log(
+        document.getElementById("filter-subcategory")
+    );
+
+    console.log(
+        document.getElementById("filter-payment")
+    );
+
+    console.log(
+        document.getElementById("filter-tujuan")
+    );
+
+    console.log(
+        document.getElementById("filter-keterangan")
+    );
     const response =
         await fetch(
             `/transactions/filter?${params}`

@@ -141,7 +141,10 @@ def load_transactions(
             errors="coerce"
         )
 
+    print("PARAMS =", params)
+
     return df
+
 
 
 # =====================================================
@@ -878,8 +881,12 @@ def filter_transactions(
     if payment_method:
 
         query += """
-            AND t.payment_method =
-                :payment_method
+            AND TRIM(
+                LOWER(t.payment_method)
+            ) =
+            TRIM(
+                LOWER(:payment_method)
+            )
         """
 
         params["payment_method"] = payment_method
@@ -890,16 +897,18 @@ def filter_transactions(
 
     if tujuan:
 
-        query += """
-            AND LOWER(
-                t.tujuan_transaksi
-            )
-            LIKE LOWER(
-                :tujuan
-            )
-        """
+        keywords = tujuan.split()
 
-        params["tujuan"] = f"%{tujuan}%"
+        for i, word in enumerate(keywords):
+
+            key = f"tujuan_{i}"
+
+            query += f"""
+                AND LOWER(t.tujuan_transaksi)
+                LIKE LOWER(:{key})
+            """
+
+            params[key] = f"%{word}%"
 
     # =========================================
     # KETERANGAN
@@ -907,19 +916,18 @@ def filter_transactions(
 
     if keterangan:
 
-        query += """
-            AND LOWER(
-                COALESCE(
-                    t.keterangan,
-                    ''
-                )
-            )
-            LIKE LOWER(
-                :keterangan
-            )
-        """
+        keywords = keterangan.split()
 
-        params["keterangan"] = f"%{keterangan}%"
+        for i, word in enumerate(keywords):
+
+            key = f"tujuan_{i}"
+
+            query += f"""
+                AND LOWER(t.keterangan)
+                LIKE LOWER(:{key})
+            """
+
+            params[key] = f"%{word}%"
 
     # =========================================
     # ORDER
@@ -930,6 +938,9 @@ def filter_transactions(
             t.tanggal_transaksi DESC,
             t.transaction_id DESC
     """
+
+    print(query)
+    print(params)
 
     result = db.execute(
         text(query),
