@@ -230,15 +230,24 @@ document.addEventListener(
             "keydown",
             (event) => {
 
-                if (
-                    event.key === "Enter"
-                    &&
-                    !event.shiftKey
-                ) {
+                if (event.key === "Enter" && !event.shiftKey) {
 
-                event.preventDefault();
-                sendMessage(); // ← PANGGIL FUNCTION ASLI
-                 }
+                    event.preventDefault();
+
+                    const message = input.value.trim();
+
+                    if (!message) {
+
+                        window.showToast(
+                            "Pesan tidak boleh kosong.",
+                            true
+                        );
+
+                        return;
+                    }
+
+                    sendMessage();
+                }
             }
         );
 
