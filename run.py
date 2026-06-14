@@ -34,6 +34,9 @@ from app.routers.analytics import(
     router as analytics_router
 )
 
+from app.routers.chatbot import(
+    router as chatbot_router
+)
 
 
 # =====================================================
@@ -78,6 +81,8 @@ app.include_router(profile_router)
 
 app.include_router(analytics_router)
 
+
+app.include_router(chatbot_router)
 # =====================================================
 # HOME
 # =====================================================

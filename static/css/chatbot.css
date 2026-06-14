@@ -1,0 +1,73 @@
+.chatbot-page{
+    display:flex;
+    flex-direction:column;
+    gap:0;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.chatbot-header{
+    padding:40px;
+    border-radius:24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0B1F4D,
+            #162F6B
+        );
+
+    color:white;
+
+    box-shadow:
+        0 12px 30px rgba(
+            16,
+            42,
+            114,
+            0.15
+        );
+
+    margin-bottom:20px;
+}
+
+.section-tag{
+    display:inline-block;
+
+    margin-bottom:12px;
+
+    color:#F4C542;
+
+    font-size:0.85rem;
+    font-weight:700;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
+}
+
+.chatbot-header h1{
+    color:white;
+
+    font-size:2rem;
+    font-weight:700;
+
+    margin-bottom:10px;
+}
+
+.chatbot-header p{
+    color:rgba(
+        255,
+        255,
+        255,
+        0.85
+    );
+}
+
+.brand-logo{
+    width:32px;
+    height:32px;
+
+    object-fit:contain;
+}
