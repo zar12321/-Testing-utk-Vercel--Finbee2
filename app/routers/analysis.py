@@ -17,7 +17,7 @@ from app.dependencies.current_user import (
 )
 
 from app.services.analytics_service import (
-    AnalysisService
+    AnalyticsService
 )
 
 from app.database.db import (
@@ -43,7 +43,7 @@ def get_summary(
         )
     )
 
-    return AnalysisService.get_summary_metrics(
+    return AnalyticsService.get_summary_metrics(
         transactions_df
     )
 
@@ -62,7 +62,7 @@ def analyze_category(
     )
 
     result = (
-        AnalysisService.analyze_by_category(
+        AnalyticsService.analyze_by_category(
             transactions_df
         )
     )
@@ -86,7 +86,7 @@ def analyze_payment_method(
     )
 
     result = (
-        AnalysisService.analyze_by_payment_method(
+        AnalyticsService.analyze_by_payment_method(
             transactions_df
         )
     )
@@ -110,7 +110,7 @@ def get_monthly_trend(
     )
 
     result = (
-        AnalysisService.get_monthly_trend(
+        AnalyticsService.get_monthly_trend(
             transactions_df
         )
     )
@@ -135,7 +135,7 @@ def get_top_transactions(
     )
 
     result = (
-        AnalysisService.get_top_transactions(
+        AnalyticsService.get_top_transactions(
             transactions_df,
             n=limit
         )
@@ -155,7 +155,7 @@ def get_prediction(
     try:
 
         return (
-            AnalysisService.get_prediction(
+            AnalyticsService.get_prediction(
                 db=db,
                 user_id=current_user["user_id"]
             )

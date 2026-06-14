@@ -100,20 +100,47 @@ a{
 }
 
 .brand-logo{
-    width:32px !important;
-    height:32px !important;
+    width:40px !important;
+    height:40px !important;
     object-fit:contain;
     display:block;
 }
 
+
+.brand-content{
+
+    display:flex;
+    flex-direction:column;
+
+    line-height:1.1;
+}
 
 .brand-text{
 
     font-size:24px;
     font-weight:800;
 
-    color:#111827;
+    color:#002159;
+}
 
+.brand-tagline{
+
+    font-size:11px;
+    font-weight:600;
+
+    letter-spacing:.5px;
+
+    margin-top:2px;
+}
+
+.tag-blue{
+
+    color:#002159;
+}
+
+.tag-gold{
+
+    color:#cb9800;
 }
 
 
