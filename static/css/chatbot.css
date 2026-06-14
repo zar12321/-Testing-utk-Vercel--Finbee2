@@ -480,6 +480,14 @@
     background:#ef4444;
 }
 
+.stop-btn {
+    background: #ef4444 !important;
+}
+
+.stop-btn:hover {
+    background: #dc2626 !important;
+}
+
 /* =========================
    RESPONSIVE
 ========================= */

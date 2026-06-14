@@ -236,10 +236,9 @@ document.addEventListener(
                     !event.shiftKey
                 ) {
 
-                    event.preventDefault();
-
-                    sendMessage();
-                }
+                event.preventDefault();
+                sendMessage(); // ← PANGGIL FUNCTION ASLI
+                 }
             }
         );
 
@@ -375,6 +374,12 @@ document.addEventListener(
             const loadingBubble =
                 appendLoadingMessage();
 
+            isLoading = true;
+
+            // ubah icon jadi STOP
+            sendBtn.innerHTML = `<i class="fas fa-square"></i>`;
+            sendBtn.classList.add("stop-btn");
+
             try{
 
                 const response =
@@ -419,12 +424,20 @@ document.addEventListener(
                         result.message
                     );
 
+                    isLoading = false;
+                    sendBtn.innerHTML = `<i class="fas fa-arrow-up"></i>`;
+                    sendBtn.classList.remove("stop-btn");
+
                     return;
                 }
 
                 appendAIMessage(
                     result.response
                 );
+
+                isLoading = false;
+                sendBtn.innerHTML = `<i class="fas fa-arrow-up"></i>`;
+                sendBtn.classList.remove("stop-btn");
 
             }
             catch(error){
@@ -438,6 +451,10 @@ document.addEventListener(
                 console.error(
                     error
                 );
+
+                isLoading = false;
+                sendBtn.innerHTML = `<i class="fas fa-arrow-up"></i>`;
+                sendBtn.classList.remove("stop-btn");
             }
         }
         

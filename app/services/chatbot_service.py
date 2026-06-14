@@ -189,12 +189,12 @@ class ChatbotService:
 
         except Exception as e:
 
-            raise ValueError(
-                ChatbotService.get_friendly_error(
-                    str(e)
-                )
-            )
+            print("===== CHATBOT ERROR =====")
+            print(str(e))
 
+            friendly = ChatbotService.get_friendly_error(str(e))
+
+            return friendly
     # ==========================================
     # FRIENDLY ERROR
     # ==========================================
