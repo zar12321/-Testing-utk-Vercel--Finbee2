@@ -9,6 +9,10 @@
     rel="stylesheet"
     href="/static/css/chatbot.css"
 >
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+/>
 
 {% endblock %}
 
@@ -25,11 +29,11 @@
         <div>
 
             <span class="section-tag">
-                CHATBOT
+                CHATBOT CENTER
             </span>
 
             <h1>
-                Finbee Assistant
+                FinBee Assistant
             </h1>
 
             <p>
@@ -40,12 +44,204 @@
 
     </div>
 
+    <div class="chatbot-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="chatbot-sidebar">
+
+            <div class="card">
+
+                <h3>
+                    AI Settings
+                </h3>
+
+                <form class="transaction-form">
+
+                    <!-- PROVIDER -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Provider
+                        </label>
+
+                        <select id="provider">
+
+                            <option value="">
+                                Pilih Provider
+                            </option>
+
+                            <option value="Gemini">
+                                Gemini
+                            </option>
+
+                            <option value="Groq">
+                                Groq
+                            </option>
+
+                            <option value="OpenRouter">
+                                OpenRouter
+                            </option>
+
+                            <option value="Ollama Local">
+                                Ollama Local
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- MODEL -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Model
+                        </label>
+
+                        <select id="model">
+
+                            <option value="">
+                                Pilih Model
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- API KEY -->
+
+                    <div class="form-group">
+
+                        <label>
+                            API Key
+                        </label>
+
+                        <input
+                            type="password"
+                            id="api-key"
+                            placeholder="Masukkan API Key"
+                        >
+
+                    </div>
+
+                    <!-- TEMPERATURE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Temperature
+                        </label>
+
+                        <input
+                            type="range"
+                            id="temperature"
+                            min="0"
+                            max="1"
+                            step="0.1"
+                            value="0.7"
+                        >
+
+                        <small
+                            id="temperature-value"
+                        >
+                            0.7
+                        </small>
+
+                    </div>
+
+                    <!-- BUTTON -->
+
+                    <button
+                        type="button"
+                        id="test-connection-btn"
+                        class="primary-btn"
+                    >
+                        Test Connection
+                    </button>
+
+                    <button
+                        type="button"
+                        id="clear-chat-btn"
+                        class="primary-btn secondary-btn"
+                    >
+                        Clear Chat
+                    </button>
+
+                    <!-- STATUS -->
+
+                    <div
+                        id="connection-status"
+                        class="connection-status"
+                    >
+                    </div>
+
+                </form>
+
+            </div>
+
+        </aside>
+
+        <!-- CHAT AREA -->
+        <main class="chatbot-main">
+
+            <div class="chatbot-welcome">
+
+                <h2>
+                    👋 Selamat datang di FinBee Assistant
+                </h2>
+
+                <p>
+                    Saya dapat membantu menganalisis
+                    transaksi dan memberikan insight
+                    keuangan Anda.
+                </p>
+
+            </div>
+
+            <div
+                class="chat-messages"
+                id="chat-messages"
+            >
+
+            </div>
+
+            <div class="chat-input-wrapper">
+
+                <div class="chat-input-container">
+
+                    <textarea
+                        id="chat-input"
+                        placeholder="Tanyakan sesuatu kepada FinBee Assistant..."
+                    ></textarea>
+
+                    <div class="chat-input-actions">
+                        <button
+                            id="send-btn"
+                            class="send-btn"
+                        >
+                        <i class="fas fa-arrow-up"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
 </div>
+
+
 
 {% endblock %}
 
 {% block extra_js %}
 
+
 <script src="/static/js/chatbot.js"></script>
+
 
 {% endblock %}

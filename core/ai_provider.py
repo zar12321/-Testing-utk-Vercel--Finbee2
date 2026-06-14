@@ -3,7 +3,7 @@ import requests
 from google import genai
 
 from core.constants import (
-    AI_SYSTEM_PROMPT,
+    FINANCIAL_AI_SYSTEM_PROMPT,
     AI_PROVIDER_GEMINI,
     AI_PROVIDER_GROQ,
     AI_PROVIDER_OLLAMA,
@@ -14,25 +14,42 @@ from core.constants import (
 def call_gemini(
     api_key: str,
     model_name: str,
-    prompt: str
+    prompt: str,
+    temperature: float = 0.7
 ) -> str:
 
     client = genai.Client(
         api_key=api_key
     )
 
-    response = client.models.generate_content(
-        model=model_name,
-        contents=prompt
-    )
+    full_prompt = f"""
+        {FINANCIAL_AI_SYSTEM_PROMPT}
 
-    return response.text
+        User:
+        {prompt}
+        """
+
+    try:
+
+        response = client.models.generate_content(
+            model=model_name,
+            contents=full_prompt
+        )
+
+        return response.text
+
+    except Exception as e:
+
+        raise ValueError(
+            f"Gagal menghubungi Gemini: {str(e)}"
+        )
 
 
 def call_openrouter(
     api_key: str,
     model_name: str,
-    prompt: str
+    prompt: str,
+    temperature: float = 0.7
 ) -> str:
 
     url = (
@@ -47,10 +64,11 @@ def call_openrouter(
 
     payload = {
         "model": model_name,
+        "temperature": temperature,
         "messages": [
             {
                 "role": "system",
-                "content": AI_SYSTEM_PROMPT
+                "content": FINANCIAL_AI_SYSTEM_PROMPT
             },
             {
                 "role": "user",
@@ -59,24 +77,33 @@ def call_openrouter(
         ]
     }
 
-    response = requests.post(
-        url,
-        headers=headers,
-        json=payload,
-        timeout=60
-    )
+    try:
 
-    response.raise_for_status()
+        response = requests.post(
+            url,
+            headers=headers,
+            json=payload,
+            timeout=60
+        )
 
-    result = response.json()
+        response.raise_for_status()
 
-    return result["choices"][0]["message"]["content"]
+        result = response.json()
+
+        return result["choices"][0]["message"]["content"]
+
+    except Exception as e:
+
+        raise ValueError(
+            f"Gagal menghubungi OpenRouter: {str(e)}"
+        )
 
 
 def call_groq(
     api_key: str,
     model_name: str,
-    prompt: str
+    prompt: str,
+    temperature: float = 0.7
 ) -> str:
 
     url = (
@@ -91,10 +118,11 @@ def call_groq(
 
     payload = {
         "model": model_name,
+        "temperature": temperature,
         "messages": [
             {
                 "role": "system",
-                "content": AI_SYSTEM_PROMPT
+                "content": FINANCIAL_AI_SYSTEM_PROMPT
             },
             {
                 "role": "user",
@@ -103,51 +131,80 @@ def call_groq(
         ]
     }
 
-    response = requests.post(
-        url,
-        headers=headers,
-        json=payload,
-        timeout=60
-    )
+    try:
 
-    response.raise_for_status()
+        response = requests.post(
+            url,
+            headers=headers,
+            json=payload,
+            timeout=60
+        )
 
-    result = response.json()
+        response.raise_for_status()
 
-    return result["choices"][0]["message"]["content"]
+        result = response.json()
+
+        return result["choices"][0]["message"]["content"]
+
+    except Exception as e:
+
+        raise ValueError(
+            f"Gagal menghubungi Groq: {str(e)}"
+        )
 
 
 def call_ollama(
     model_name: str,
-    prompt: str
+    prompt: str,
+    temperature: float = 0.7
 ) -> str:
 
     url = "http://localhost:11434/api/generate"
 
     payload = {
         "model": model_name,
-        "prompt": prompt,
-        "stream": False
+
+        "prompt": f"""
+    {FINANCIAL_AI_SYSTEM_PROMPT}
+
+    User:
+    {prompt}
+    """,
+
+        "stream": False,
+
+        "options": {
+            "temperature": temperature
+        }
     }
 
-    response = requests.post(
-        url,
-        json=payload,
-        timeout=120
-    )
+    try:
 
-    response.raise_for_status()
+        response = requests.post(
+            url,
+            json=payload,
+            timeout=120
+        )
 
-    result = response.json()
+        response.raise_for_status()
 
-    return result["response"]
+        result = response.json()
+
+        return result["response"]
+
+    except Exception as e:
+
+        raise ValueError(
+            f"Gagal menghubungi Ollama: {str(e)}"
+        )
 
 
 def generate_ai_response(
     provider: str,
     api_key: str | None,
     model_name: str,
-    prompt: str
+    prompt: str,
+    temperature: float = 0.7
 ) -> str:
 
     if provider == AI_PROVIDER_GEMINI:
@@ -160,7 +217,8 @@ def generate_ai_response(
         return call_gemini(
             api_key=api_key,
             model_name=model_name,
-            prompt=prompt
+            prompt=prompt, 
+            temperature=temperature
         )
 
     if provider == AI_PROVIDER_OPENROUTER:
@@ -173,7 +231,8 @@ def generate_ai_response(
         return call_openrouter(
             api_key=api_key,
             model_name=model_name,
-            prompt=prompt
+            prompt=prompt, 
+            temperature=temperature
         )
 
     if provider == AI_PROVIDER_GROQ:
@@ -186,14 +245,16 @@ def generate_ai_response(
         return call_groq(
             api_key=api_key,
             model_name=model_name,
-            prompt=prompt
+            prompt=prompt, 
+            temperature=temperature
         )
 
     if provider == AI_PROVIDER_OLLAMA:
 
         return call_ollama(
             model_name=model_name,
-            prompt=prompt
+            prompt=prompt, 
+            temperature=temperature
         )
 
     raise ValueError(

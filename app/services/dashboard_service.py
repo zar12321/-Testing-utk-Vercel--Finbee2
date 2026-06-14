@@ -729,11 +729,11 @@ def get_monthly_snapshot(
             )
         }
 
-        return {
-            "top_income": top_income,
-            "top_expense": top_expense, 
-            "top_topup": top_topup
-        }
+    return {
+        "top_income": top_income,
+        "top_expense": top_expense, 
+        "top_topup": top_topup
+    }
     
 # =============================
 # SPENDING ALERTS
