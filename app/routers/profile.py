@@ -3,8 +3,11 @@
 from fastapi import (
     APIRouter,
     Depends,
-    Query
+    Query, 
+    Request
 )
+
+from fastapi.responses import RedirectResponse
 
 from sqlalchemy.orm import Session
 
@@ -41,4 +44,15 @@ def get_profile(
         user_id=current_user["user_id"]
     )
 
+# =====================================================
+# LOGOUT PROFILE
+# =====================================================
 
+@router.get("/logout")
+def logout(request:Request):
+    request.session.clear()
+
+    return RedirectResponse(
+        url="/auth/login", 
+        status_code=303
+    )

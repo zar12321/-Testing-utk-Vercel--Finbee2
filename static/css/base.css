@@ -303,7 +303,7 @@ a{
 }
 
 .profile-dropdown{
-
+    font-family: "Arial";
     display:none;
 
     position:absolute;
@@ -354,6 +354,46 @@ a{
 .dropdown-danger-btn:hover{
 
     background:#fee2e2;
+}
+
+.dropdown-divider{
+
+    height:1px;
+
+    background:#E5E7EB;
+
+    margin:10px 0;
+}
+
+
+.dropdown-logout-link{
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    width:100%;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    text-decoration:none;
+
+    background:#F8FAFC;
+
+    color:#000000;
+
+    font-weight:600;
+
+    transition:.2s;
+}
+
+
+.dropdown-logout-link:hover{
+
+    background:#E2E8F0;
 }
 
 .profile-modal{
