@@ -30,9 +30,11 @@ from app.routers.profile import (
     router as profile_router
 )
 
-from app.routers.analysis import (
-    router as analysis_router
+from app.routers.analytics import(
+    router as analytics_router
 )
+
+
 
 # =====================================================
 # APP
@@ -74,7 +76,7 @@ app.include_router(transaction_router)
 
 app.include_router(profile_router)
 
-app.include_router(analysis_router)
+app.include_router(analytics_router)
 
 # =====================================================
 # HOME

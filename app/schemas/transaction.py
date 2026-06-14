@@ -119,8 +119,13 @@ class TransactionResponse(BaseModel):
 # GENERAL RESPONSE
 # =====================================================
 
-class TransactionActionResponse(BaseModel):
-
+class TransactionActionResponse(
+    BaseModel
+):
     success: bool
-
     message: str
+
+    filename: str | None = None
+
+    inserted_count: int | None = None
+    skipped_count: int | None = None    

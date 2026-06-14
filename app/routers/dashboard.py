@@ -123,7 +123,7 @@ def dashboard_page(
         name="dashboard/dashboard.html",
         context={
             "request": request,
-            "user_name": current_user["nama"],
+            "user_name": current_user["login_identifier"],
             "metrics": formatted_metrics, 
             "months": months, 
             "years": years, 

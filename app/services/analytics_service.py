@@ -10,10 +10,55 @@ from core.prediction import (
     predict_next_month_expense
 )
 
+from app.repositories import (
+    analytics_repository
+)
+
 import pandas as pd
 
 
-class AnalysisService:
+class AnalyticsService:
+    @staticmethod
+    def get_chart_data(
+        db,
+        user_id,
+        month=None,
+        year=None,
+        period=None,
+        category=None,
+        subcategory_id=None
+    ):
+
+        filters = {
+            "month": month,
+            "year": year,
+            "period": period,
+            "category": category,
+            "subcategory_id": subcategory_id
+        }
+
+        return {
+            "cashflow_trend":
+                analytics_repository.get_cashflow_trend(
+                    db=db,
+                    user_id=user_id,
+                    filters=filters
+                ),
+
+            "breakdown_chart":
+                analytics_repository.get_breakdown_chart(
+                    db=db,
+                    user_id=user_id,
+                    filters=filters
+                ), 
+            
+            "breakdown_preview":
+                analytics_repository.get_breakdown_preview(
+                    db=db, 
+                    user_id=user_id, 
+                    filters=filters
+                )
+        }
 
     @staticmethod
     def get_summary_metrics(

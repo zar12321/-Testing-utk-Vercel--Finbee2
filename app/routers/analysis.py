@@ -16,7 +16,7 @@ from app.dependencies.current_user import (
     get_current_user
 )
 
-from app.services.analysis_service import (
+from app.services.analytics_service import (
     AnalysisService
 )
 

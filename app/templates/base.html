@@ -50,7 +50,7 @@
 
 <body>
 
-    {% include "partials/navbar.html" %}
+    {% include "partials/profile.html" %}
 
     <main class="page-container">
 
@@ -59,9 +59,18 @@
 
     </main>
 
+    <script
+        src="/static/js/profile.js"
+    >
+    </script>
+
     {% block extra_js %}
     {% endblock %}
 
+    <div id="success-toast" class="toast">
+        <span id="toast-message"></span>
+    </div>
+    
 </body>
 
 </html>

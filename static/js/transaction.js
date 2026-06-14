@@ -20,8 +20,16 @@ document.addEventListener(
         const cleanPreview =
             document.getElementById("clean-preview");
 
+        const confirmImportBtn =
+            document.getElementById(
+                "confirm-import"
+            );
+
         const importSummary =
             document.getElementById("import-summary");
+        
+        const toast =
+            document.getElementById("success-toast");
 
         // =====================
         // FUNCTION CLOSE MODAL
@@ -404,6 +412,103 @@ document.addEventListener(
                 e.stopPropagation();
 
                 closeImportModal();
+
+            }
+        );
+
+        // =====================
+        // IMPORT KE DATABASE
+        // =====================
+
+        confirmImportBtn?.addEventListener(
+            "click",
+            async () => {
+
+                const file =
+                    inputFile.files?.[0];
+
+                if (!file) {
+
+                    showToast(
+                        "File belum dipilih",
+                        true
+                    );
+
+                    return;
+                }
+
+                try {
+
+                    confirmImportBtn.disabled = true;
+                    confirmImportBtn.textContent =
+                        "Mengimport...";
+
+                    const formData =
+                        new FormData();
+
+                    formData.append(
+                        "file",
+                        file
+                    );
+
+                    const response =
+                        await fetch(
+                            "/transactions/import",
+                            {
+                                method: "POST",
+                                body: formData
+                            }
+                        );
+
+                    const result =
+                        await response.json();
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            result.detail ||
+                            result.message ||
+                            "Gagal import data"
+                        );
+
+                    }
+
+                    // tutup modal
+                    closeImportModal();
+
+                    // refresh tabel transaksi
+                    await loadTransactions();
+
+                    // reset file input
+                    inputFile.value = "";
+
+                    // tampilkan toast hijau
+                    showToast(
+                        result.message
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.error(error);
+
+                    showToast(
+                        error.message,
+                        true
+                    );
+
+                }
+
+                finally {
+
+                    confirmImportBtn.disabled =
+                        false;
+
+                    confirmImportBtn.textContent =
+                        "Import ke Database";
+
+                }
 
             }
         );
@@ -968,7 +1073,7 @@ document.addEventListener(
                                 '[name="keterangan"]'
                             ).value
                     };
-                    
+
                     console.log(
                         "CREATE PAYLOAD",
                         payload
@@ -1062,6 +1167,8 @@ async function loadFilterOptions() {
 
     const data =
         await response.json();
+    
+    console.log(data);
 
     const paymentSelect =
         document.getElementById(
@@ -1158,15 +1265,6 @@ async function loadFilterOptions() {
         }
     );
 
-    data.month.forEach(
-        month => {
-            monthSelect.innerHTML += `
-                <option value="${month}">
-                    ${month}
-                </option>
-            `
-        }
-    );
 
     data.years.forEach(
         year => {
@@ -1436,48 +1534,5 @@ async function loadTransactions() {
 
     renderTransactionTable(
         transactions
-    );
-}
-
-function showToast(
-    message,
-    isError = false
-){
-
-    const toast =
-        document.getElementById(
-            "toast"
-        );
-
-    const text =
-        document.getElementById(
-            "toast-message"
-        );
-
-    text.textContent = message;
-
-    toast.classList.remove(
-        "error"
-    );
-
-    if(isError){
-        toast.classList.add(
-            "error"
-        );
-    }
-
-    toast.classList.add(
-        "show"
-    );
-
-    setTimeout(
-        () => {
-
-            toast.classList.remove(
-                "show"
-            );
-
-        },
-        2500
     );
 }

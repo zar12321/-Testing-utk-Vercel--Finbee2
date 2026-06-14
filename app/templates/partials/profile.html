@@ -1,0 +1,198 @@
+
+
+<nav class="navbar">
+
+    <!-- ========================= -->
+    <!-- LEFT -->
+    <!-- ========================= -->
+
+    <div class="navbar-left">
+
+        <a
+            href="/dashboard"
+            class="navbar-brand"
+        >
+
+            <img
+                src="/static/images/bee_icon.png"
+                alt="FinBee Icon"
+                class="brand-logo"
+            >
+
+            <span class="brand-text">
+                FinBee
+            </span>
+
+        </a>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- CENTER -->
+    <!-- ========================= -->
+
+    <div class="navbar-center">
+
+        <a
+            href="/dashboard"
+            class="nav-link"
+        >
+            Dashboard
+        </a>
+
+        <a
+            href="/transactions/page"
+            class="nav-link"
+        >
+            Transactions
+        </a>
+
+        <a
+            href="/analytics/page"
+            class="nav-link"
+        >
+            Analytics
+        </a>
+
+        <a
+            href="/ai/chatbot"
+            class="nav-link"
+        >
+            AI Assistant
+        </a>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- RIGHT -->
+    <!-- ========================= -->
+
+    <div class="navbar-right">
+
+        <button
+            class="notification-btn"
+            type="button"
+        >
+            🔔
+        </button>
+
+        <!-- PROFILE DROPDOWN -->
+
+        <div class="profile-wrapper">
+
+            <div class="profile-menu">
+
+                <div class="profile-avatar">
+
+                    {{ request.session.get("login_identifier","U")[0] }}
+
+                </div>
+
+                <div class="profile-info">
+
+                    <span class="profile-name">
+
+                        {{ request.session.get("login_identifier","User") }}
+
+                    </span>
+
+                    <span class="profile-role">
+
+                        FinBee User
+
+                    </span>
+
+                </div>
+
+                <span class="profile-arrow">
+                    ▼
+                </span>
+
+            </div>
+
+            <!-- DROPDOWN MENU -->
+
+            <div class="profile-dropdown">
+
+                <button
+                    id="reset-data-btn"
+                    class="dropdown-danger-btn"
+                    type="button"
+                >
+                    🗑 Hapus Semua Data
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<!-- ===================================== -->
+<!-- RESET DATA MODAL -->
+<!-- ===================================== -->
+
+<div
+    id="reset-modal"
+    class="profile-modal"
+>
+
+    <div class="profile-modal-content">
+
+        <div class="profile-modal-icon">
+            ⚠️
+        </div>
+
+        <h3>
+            Hapus Semua Data?
+        </h3>
+
+        <p>
+            Seluruh transaksi yang telah tersimpan
+            akan dihapus secara permanen.
+        </p>
+
+        <p>
+            Tindakan ini tidak dapat dibatalkan.
+        </p>
+
+        <div class="profile-modal-actions">
+
+            <button
+                id="cancel-reset"
+                class="profile-cancel-btn"
+                type="button"
+            >
+                Batal
+            </button>
+
+            <button
+                id="confirm-reset"
+                class="profile-delete-btn"
+                type="button"
+            >
+                Ya, Hapus Semua
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- SUCCESS TOAST -->
+<!-- ===================================== -->
+
+<div
+    id="success-toast"
+    class="toast-success"
+>
+
+    <span id="toast-message">
+        Data berhasil dihapus.
+    </span>
+
+</div>

@@ -331,7 +331,6 @@ def update_transaction(
 # =====================================================
 # IMPORT TRANSACTIONS
 # =====================================================
-
 def insert_imported_transactions(
     db: Session,
     user_id: int,
@@ -346,6 +345,54 @@ def insert_imported_transactions(
             categories_df["category_id"]
         )
     )
+
+    # =========================
+    # HAPUS DUPLIKAT DALAM FILE
+    # =========================
+
+    imported_df = imported_df.drop_duplicates(
+        subset=[
+            "tanggal_transaksi",
+            "transaction_type",
+            "category_name",
+            "tujuan_transaksi",
+            "payment_method",
+            "amount"
+        ]
+    )
+
+    # =========================
+    # AMBIL TRANSAKSI USER
+    # =========================
+
+    existing_transactions = db.execute(
+        text("""
+            SELECT
+                tanggal_transaksi,
+                transaction_type,
+                category_id,
+                tujuan_transaksi,
+                payment_method,
+                amount
+            FROM transactions
+            WHERE user_id = :user_id
+        """),
+        {
+            "user_id": user_id
+        }
+    ).fetchall()
+
+    existing_keys = {
+        (
+            str(row.tanggal_transaksi),
+            row.transaction_type,
+            row.category_id,
+            row.tujuan_transaksi,
+            row.payment_method,
+            float(row.amount)
+        )
+        for row in existing_transactions
+    }
 
     query = text("""
         INSERT INTO transactions
@@ -376,6 +423,9 @@ def insert_imported_transactions(
         )
     """)
 
+    inserted_count = 0
+    skipped_count = 0
+
     for _, row in imported_df.iterrows():
 
         category_name = str(
@@ -391,6 +441,24 @@ def insert_imported_transactions(
             category_id = category_map.get(
                 "Other"
             )
+
+        transaction_key = (
+            str(row["tanggal_transaksi"]),
+            row["transaction_type"],
+            category_id,
+            row["tujuan_transaksi"],
+            row["payment_method"],
+            float(row["amount"])
+        )
+
+        # =========================
+        # CEK DUPLIKAT DATABASE
+        # =========================
+
+        if transaction_key in existing_keys:
+
+            skipped_count += 1
+            continue
 
         db.execute(
             query,
@@ -411,7 +479,18 @@ def insert_imported_transactions(
             }
         )
 
+        existing_keys.add(
+            transaction_key
+        )
+
+        inserted_count += 1
+
     db.commit()
+
+    return {
+        "inserted_count": inserted_count,
+        "skipped_count": skipped_count
+    }
 
 # =====================================================
 # PASSWORD
@@ -692,34 +771,26 @@ def get_filter_options(
         }
     ).fetchall()
 
-    payment_methods = db.execute(
-        text("""
-            SELECT DISTINCT
-                payment_method
-            FROM transactions
-            WHERE user_id = :user_id
-            AND payment_method IS NOT NULL
-            ORDER BY payment_method
-        """),
-        {
-            "user_id": user_id
-        }
-    ).fetchall()
+    PAYMENT_METHODS = [
+        "Cash",
+        "Bank BCA",
+        "Bank BRI",
+        "Bank BNI",
+        "Bank Mandiri",
+        "OVO",
+        "GoPay",
+        "DANA",
+        "ShopeePay"
+    ]
 
     subcategories = db.execute(
         text("""
-            SELECT DISTINCT
-                c.category_id,
-                c.category_name
-            FROM transactions t
-            JOIN categories c
-                ON t.category_id = c.category_id
-            WHERE t.user_id = :user_id
-            ORDER BY c.category_name
-        """),
-        {
-            "user_id": user_id
-        }
+            SELECT
+                category_id,
+                category_name
+            FROM categories
+            ORDER BY category_name
+        """)
     ).fetchall()
 
     years = db.execute(
@@ -743,10 +814,7 @@ def get_filter_options(
             for row in categories
         ],
 
-        "payment_methods": [
-            row[0]
-            for row in payment_methods
-        ],
+        "payment_methods": PAYMENT_METHODS,
 
         "subcategories": [
             {
@@ -812,33 +880,38 @@ def filter_transactions(
     # =========================================
     # PERIODE
     # =========================================
+    print("periode=", period)
 
     if period == "today":
 
         query += """
             AND DATE(t.tanggal_transaksi)
-                = CURRENT_DATE
+                = date(CURRENT_DATE + interval '1 day')
         """
 
     elif period == "yesterday":
 
         query += """
             AND DATE(t.tanggal_transaksi)
-                = CURRENT_DATE - INTERVAL '1 day'
+                = date(current_date)
         """
 
     elif period == "7days":
 
         query += """
             AND t.tanggal_transaksi >=
-                CURRENT_DATE - INTERVAL '7 day'
+                date(CURRENT_DATE + interval '1 day' - INTERVAL '7 day')
+            AND t.tanggal_transaksi <=
+                date(CURRENT_DATE + interval '1 day')
         """
 
     elif period == "30days":
 
         query += """
             AND t.tanggal_transaksi >=
-                CURRENT_DATE - INTERVAL '30 day'
+                date(CURRENT_DATE + interval '1 day' - INTERVAL '30 day')
+            and t.tanggal_transaksi <=
+                date(CURRENT_DATE + interval '1 day')
         """
 
     # =========================================

@@ -116,13 +116,13 @@ class TransactionService:
                 "File transaksi kosong."
             )
 
-        insert_imported_transactions(
+        result=insert_imported_transactions(
             db=db,
             user_id=user_id,
             imported_df=imported_df
         )
 
-        return True
+        return result
 
     @staticmethod
     def edit_transaction(

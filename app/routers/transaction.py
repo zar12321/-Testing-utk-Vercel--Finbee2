@@ -188,6 +188,40 @@ def update_transaction_data(
         message="Transaksi berhasil diperbarui."
     )
 
+
+# =====================================================
+# DELETE ALL TRANSACTIONS
+# =====================================================
+from sqlalchemy import text
+@router.delete(
+    "/reset",
+    response_model=TransactionActionResponse
+)
+def reset_transactions(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+
+    db.execute(
+        text("""
+            DELETE FROM transactions
+            WHERE user_id = :user_id
+        """),
+        {
+            "user_id":
+                current_user["user_id"]
+        }
+    )
+
+    db.commit()
+
+    return TransactionActionResponse(
+        success=True,
+        message=(
+            "Seluruh transaksi berhasil dihapus."
+        )
+    )
+
 # =====================================================
 # DELETE TRANSACTION
 # =====================================================
@@ -263,20 +297,22 @@ async def import_transactions(
             )
         )
 
-        TransactionService.import_transactions(
-            db=db,
-            user_id=current_user["user_id"],
+        result = TransactionService.import_transactions(
+            db=db, 
+            user_id=current_user["user_id"], 
             imported_df=cleaned_df
         )
 
         return TransactionActionResponse(
             success=True,
             message=(
-                f"{len(cleaned_df)} transaksi "
-                f"berhasil diimport."
-            )
+                f"{result['inserted_count']} transaksi berhasil diimport. "
+                f"{result['skipped_count']} transaksi duplikat dilewati."
+            ),
+            inserted_count=result["inserted_count"],
+            skipped_count=result["skipped_count"]
         )
-
+    
     except Exception as e:
 
         raise HTTPException(
@@ -439,6 +475,7 @@ def filter_transactions(
     return transactions.to_dict(
         orient="records"
     )
+
 
 # =====================================================
 # EDIT TRANSAKSI
