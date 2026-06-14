@@ -374,7 +374,64 @@ function renderCashflowChart(
 
                     responsive: true,
 
-                    maintainAspectRatio: false
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        datalabels: false,
+
+                        legend: {
+
+                            labels: {
+
+                                color: "#787878",
+
+                                font: {
+                                    size: 12,
+                                    family:"Arial"
+                                }
+
+                            }
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        x: {
+
+                            ticks: {
+
+                                color: "#626161",
+
+                                font: {
+                                    size: 12,
+                                    weight: "600", 
+                                    family:"inherit"
+                                }
+
+                            }
+
+                        },
+
+                        y: {
+
+                            ticks: {
+
+                                color: "#494848",
+
+                                font: {
+                                    size: 12,
+                                    weight: "600", 
+                                    family:"inherit"
+                                }
+
+                            }
+
+                        }
+
+                    }
 
                 }
 
@@ -502,18 +559,40 @@ function renderBreakdownChart(
 
                                 return value >
                                     maxValue * 0.75
-                                    ? "#424242"
-                                    : "#1f3724";
+                                    ? "#151515"
+                                    : "#161616";
 
                             },
 
                             font: {
                                 weight: "bold",
-                                size: 11
+                                size: 11, 
+                                family: "inherit"
                             }
 
                         }
 
+                    }, 
+
+                    scales: {
+                        x: {
+                            ticks:{
+                                color:"#626161", 
+                                font: {
+                                    size:12, 
+                                    family:"inherit"
+                                }
+                            }
+                        }, 
+                        y: {
+                            ticks:{
+                                color:"#494848", 
+                                font:{
+                                    size:12, 
+                                    family:"inherit"
+                                }
+                            }
+                        }
                     }
 
                 }
