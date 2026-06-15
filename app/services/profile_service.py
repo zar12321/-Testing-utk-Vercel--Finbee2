@@ -13,10 +13,6 @@ from app.database.db import (
     reset_user_password
 )
 
-from app.schemas.profile import (
-    ProfileUpdateRequest,
-    ProfileUpdateResponse
-)
 
 from utils.validation import (
     validate_password, 
@@ -80,13 +76,7 @@ class ProfileService:
                 raise ValueError(
                     "Konfirmasi password wajib diisi."
                 )
-            
-            reset_user_password(
-                db=db, 
-                login_identifier=user.login_identifier, 
-                new_password=payload.password
-                
-            )
+
             valid_confirm, message = (
                 validate_confirm_password(
                     payload.password,
@@ -96,6 +86,12 @@ class ProfileService:
 
             if not valid_confirm:
                 raise ValueError(message)
+
+            reset_user_password(
+                db=db,
+                login_identifier=user.login_identifier,
+                new_password=payload.password
+            )
 
         update_user_profile(
             db=db,

@@ -75,24 +75,34 @@ def update_profile(
     current_user=Depends(get_current_user)
 ):
 
-    result = ProfileService.update_profile(
-        db=db,
-        user_id=current_user["user_id"],
-        payload=payload
-    )
+    try:
 
-    request.session["nama"] = payload.nama
+        result = ProfileService.update_profile(
+            db=db,
+            user_id=current_user["user_id"],
+            payload=payload
+        )
 
-    request.session["login_identifier"] = (
-        payload.login_identifier
-    )
+        request.session["nama"] = (
+            payload.nama
+        )
 
-    request.session["pekerjaan"] = (
-        payload.pekerjaan
-    )
+        request.session["login_identifier"] = (
+            payload.login_identifier
+        )
 
+        request.session["pekerjaan"] = (
+            payload.pekerjaan
+        )
 
-    return result
+        return result
+
+    except Exception as e:
+
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
 
 
 # =====================================================

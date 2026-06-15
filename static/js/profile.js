@@ -72,6 +72,16 @@ document.addEventListener(
                 "close-reset-password-modal"
             );
 
+        const toggleNewPassword =
+            document.getElementById(
+                "toggle-new-password"
+            );
+
+        const toggleConfirmPassword =
+            document.getElementById(
+                "toggle-confirm-password"
+            );
+            
         const uploadPhotoBtn =
             document.getElementById(
                 "upload-photo-btn"
@@ -122,6 +132,31 @@ document.addEventListener(
                 "settings-trigger"
             );
 
+        const saveResetPasswordBtn =
+            document.getElementById(
+                "save-reset-password"
+            );
+
+        const newPasswordInput =
+            document.getElementById(
+                "new-password"
+            );
+
+        const confirmPasswordInput =
+            document.getElementById(
+                "confirm-password"
+            );
+
+        const resetPasswordMsg =
+            document.getElementById(
+                "reset-password-msg"
+            );
+
+        const resetConfirmMsg =
+            document.getElementById(
+                "reset-confirm-msg"
+            );
+
         let settingsPinned = false;
         let profilePinned = false;
 
@@ -167,6 +202,97 @@ document.addEventListener(
             );
 
         };
+
+        function validateResetPassword(){
+
+            if(
+                !newPasswordInput ||
+                !confirmPasswordInput
+            ){
+                return false;
+            }
+
+            const password =
+                newPasswordInput.value.trim();
+
+            const confirm =
+                confirmPasswordInput.value.trim();
+
+            let valid = true;
+
+            // PASSWORD
+
+            if(password === ""){
+
+                resetPasswordMsg.innerHTML = "";
+
+                valid = false;
+
+            }
+            else if(password.length < 8){
+
+                resetPasswordMsg.style.color =
+                    "red";
+
+                resetPasswordMsg.innerHTML =
+                    "✗ Password minimal 8 karakter";
+
+                valid = false;
+
+            }
+            else{
+
+                resetPasswordMsg.style.color =
+                    "green";
+
+                resetPasswordMsg.innerHTML =
+                    "✓ Password memenuhi syarat";
+
+            }
+
+            // KONFIRMASI
+
+            if(confirm === ""){
+
+                resetConfirmMsg.innerHTML = "";
+
+                valid = false;
+
+            }
+            else if(password !== confirm){
+
+                resetConfirmMsg.style.color =
+                    "red";
+
+                resetConfirmMsg.innerHTML =
+                    "✗ Password tidak sama";
+
+                valid = false;
+
+            }
+            else{
+
+                resetConfirmMsg.style.color =
+                    "green";
+
+                resetConfirmMsg.innerHTML =
+                    "✓ Password sesuai";
+
+            }
+
+            return valid;
+
+        };
+
+        newPasswordInput?.addEventListener(
+            "input",
+            validateResetPassword
+        );
+
+        confirmPasswordInput?.addEventListener(
+            "input",
+            validateResetPassword
+        );
 
         settingsTrigger?.addEventListener(
             "click",
@@ -239,8 +365,13 @@ document.addEventListener(
 
                 e.stopPropagation();
 
-                profilePinned = true;
+                newPasswordInput.value = "";
+                confirmPasswordInput.value = "";
 
+                resetPasswordMsg.innerHTML = "";
+                resetConfirmMsg.innerHTML = "";
+
+                profilePinned = true;
                 settingsPinned = true;
 
                 dropdown.classList.add(
@@ -256,7 +387,7 @@ document.addEventListener(
                 );
 
             }
-        );
+);
 
         closeProfileModal?.addEventListener(
             "click",
@@ -940,6 +1071,166 @@ document.addEventListener(
                 }
 
             }
+        );
+
+        saveResetPasswordBtn?.addEventListener(
+            "click",
+            async () => {
+
+                if(
+                    !validateResetPassword()
+                ){
+
+                    showToast(
+                        "Periksa kembali password.",
+                        true
+                    );
+
+                    return;
+                }
+
+                try{
+
+                    const response =
+                        await fetch(
+                            "/profile/update",
+                            {
+                                method: "PUT",
+
+                                headers:{
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+
+                                    nama:
+                                        document
+                                        .getElementById(
+                                            "profile-nama"
+                                        )?.value,
+
+                                    login_identifier:
+                                        document
+                                        .getElementById(
+                                            "profile-username"
+                                        )?.value,
+
+                                    pekerjaan:
+                                        document
+                                        .getElementById(
+                                            "profile-pekerjaan"
+                                        )?.value,
+
+                                    umur: null,
+
+                                    password:
+                                        newPasswordInput.value,
+
+                                    confirm_password:
+                                        confirmPasswordInput.value
+
+                                })
+
+                            }
+                        );
+
+                    const result =
+                        await response.json();
+
+                    if(!response.ok){
+
+                        throw new Error(
+                            result.message ||
+                            "Gagal reset password."
+                        );
+
+                    }
+
+                    resetPasswordModal.classList.remove(
+                        "show"
+                    );
+
+                    dropdown.classList.add(
+                        "show"
+                    );
+
+                    settingsWrapper?.classList.add(
+                        "pinned"
+                    );
+
+                    profilePinned = true;
+                    settingsPinned = true;
+
+                    showToast(
+                        "Password berhasil diubah."
+                    );
+
+                }
+                catch(error){
+
+                    showToast(
+                        error.message,
+                        true
+                    );
+
+                }
+
+            }
+        );
+
+        function setupPasswordToggle(
+            button,
+            input
+        ){
+
+            if(
+                !button ||
+                !input
+            ){
+                return;
+            }
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const isPassword =
+                        input.type ===
+                        "password";
+
+                    input.type =
+                        isPassword
+                            ? "text"
+                            : "password";
+
+                    const icon =
+                        button.querySelector(
+                            "i"
+                        );
+
+                    if(!icon){
+                        return;
+                    }
+
+                    icon.className =
+                        isPassword
+                            ? "fa-solid fa-eye-slash"
+                            : "fa-solid fa-eye";
+
+                }
+            );
+
+        }
+
+        setupPasswordToggle(
+            toggleNewPassword,
+            newPasswordInput
+        );
+
+        setupPasswordToggle(
+            toggleConfirmPassword,
+            confirmPasswordInput
         );
 
     }

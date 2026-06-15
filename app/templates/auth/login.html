@@ -24,6 +24,11 @@
         href="/static/css/auth.css"
     >
 
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,7 +92,7 @@
 
                 </div>
 
-                <div class="form-group - password-wrapper">
+                <div class="form-group password-wrapper">
 
                     <input
                         type="password"
@@ -97,12 +102,14 @@
                         autocomplete="current-password"
                         required
                     >
-                    <span
+
+                    <button
+                        type="button"
                         class="toggle-password"
-                        onclick="togglePassword('newPassword', this)"
+                        data-target="newPassword"
                     >
-                        👁️
-                    </span>
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
 
                 </div>
 
@@ -137,23 +144,43 @@
 
 <script>
 
-    function togglePassword(inputId, icon){
+document
+.querySelectorAll(
+    ".toggle-password"
+)
+.forEach(
+    button => {
 
-        const input =
-            document.getElementById(inputId);
+        button.addEventListener(
+            "click",
+            () => {
 
-        if(input.type === "password"){
+                const input =
+                    document.getElementById(
+                        button.dataset.target
+                    );
 
-            input.type = "text";
-            icon.innerHTML = "🙈";
+                const icon =
+                    button.querySelector("i");
 
-        }else{
+                const isPassword =
+                    input.type === "password";
 
-            input.type = "password";
-            icon.innerHTML = "👁️";
+                input.type =
+                    isPassword
+                        ? "text"
+                        : "password";
 
-        }
+                icon.className =
+                    isPassword
+                        ? "fa-solid fa-eye-slash"
+                        : "fa-solid fa-eye";
+
+            }
+        );
+
     }
+);
 
 </script>
 

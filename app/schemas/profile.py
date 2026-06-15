@@ -65,32 +65,22 @@ class ProfileUpdateRequest(BaseModel):
 
     confirm_password: Optional[str] = None
 
+    @model_validator(mode="after")
+    def validate_password_pair(self):
+
+        if self.password:
+
+            if len(self.password) < 8:
+                raise ValueError(
+                    "Password minimal 8 karakter."
+                )
+
+            if self.password != self.confirm_password:
+                raise ValueError(
+                    "Konfirmasi password tidak cocok."
+                )
+
+        return self
 
 
 
-# =====================================================
-# CHANGE PASSWORD REQUEST
-# =====================================================
-
-class ChangePasswordRequest(BaseModel):
-
-    current_password: str
-
-    new_password: str = Field(
-        ...,
-        min_length=8,
-        max_length=128
-    )
-
-
-# =====================================================
-# PROFILE RESPONSE MESSAGE
-# =====================================================
-
-class ProfileUpdateResponse(BaseModel):
-
-    success: bool
-
-    message: str
-
-    profile: Optional[ProfileResponse] = None

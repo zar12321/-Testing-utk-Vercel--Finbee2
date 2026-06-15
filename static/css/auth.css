@@ -184,22 +184,51 @@ PASSWORD
 ========================= */
 
 .password-wrapper{
-position:relative;
+    position:relative;
 }
 
 .password-wrapper input{
-padding-right:55px;
+    padding-right:55px;
 }
 
 .toggle-password{
+
     position:absolute;
-    right:18px;
+
     top:22px;
-    transform:translateY(-50%);
+    right:18px;
+
+    border:none;
+    outline:none;
+
+    background:transparent;
+
     cursor:pointer;
+
+    color:#666;
+
     font-size:18px;
+
+    padding:0;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
 }
 
+.toggle-password:hover{
+    color:#071633;
+}
+
+.form-error-msg{
+    color:red;
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:12px;
+    text-align:center;
+}
 
 /* =========================
 BUTTON
@@ -362,12 +391,64 @@ MOBILE
     height: auto;
 }
 
+
 /* =========================
-VALIDATION
-========================V= */
-.validation-msg{
+TOAST
+========================= */
+
+.toast-success{
+
+    position:fixed;
+
+    top:20px;
+    right:20px;
+
+    background:#22c55e;
+    color:white;
+
+    padding:14px 18px;
+
+    border-radius:12px;
+
     font-size:14px;
     font-weight:600;
-    margin-top:6px;
-    min-height:18px;
+
+    box-shadow:
+        0 10px 25px rgba(
+            0,
+            0,
+            0,
+            .25
+        );
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transform:
+        translateX(120%);
+
+    transition:
+        .3s;
+
+    z-index:9999;
 }
+
+.toast-success.show{
+
+    opacity:1;
+
+    visibility:visible;
+
+    transform:
+        translateX(0);
+
+}
+
+.toast-success.error{
+
+    background:#ef4444;
+
+}
+
+

@@ -23,6 +23,11 @@
         href="/static/css/auth.css"
     >
 
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
     <style>
 
         .validation-msg {
@@ -120,12 +125,15 @@
                     placeholder="Password"
                     required
                 >
-                <span
+
+                <button
+                    type="button"
                     class="toggle-password"
-                    onclick="togglePassword('password', this)"
+                    data-target="password"
                 >
-                    👁️
-                </span>
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+
                 <div 
                 id="passwordMsg"
                 class="validation-msg"
@@ -140,12 +148,15 @@
                     placeholder="Konfirmasi Password"
                     required
                 >
-                <span
+
+                <button
+                    type="button"
                     class="toggle-password"
-                    onclick="togglePassword('confirmPassword', this)"
+                    data-target="confirmPassword"
                 >
-                    👁️
-                </span>
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+
                 <div 
                 id="confirmMsg"
                 class="validation-msg"
@@ -217,274 +228,332 @@
 
 </div>
 
-
-
-
-
 <script>
 
+// =====================================
+// TOGGLE PASSWORD
+// =====================================
 
-function togglePassword(
-    id,
-    icon
+document
+.querySelectorAll(".toggle-password")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            const input =
+                document.getElementById(
+                    button.dataset.target
+                );
+
+            const icon =
+                button.querySelector("i");
+
+            const isPassword =
+                input.type === "password";
+
+            input.type =
+                isPassword
+                    ? "text"
+                    : "password";
+
+            icon.className =
+                isPassword
+                    ? "fa-solid fa-eye-slash"
+                    : "fa-solid fa-eye";
+
+        }
+    );
+
+});
+
+
+// =====================================
+// TOAST
+// =====================================
+
+function showToast(
+    message,
+    isError = false
 ){
 
-    const input = document.getElementById(id);
+    const toast =
+        document.getElementById(
+            "success-toast"
+        );
 
+    const text =
+        document.getElementById(
+            "toast-message"
+        );
 
-    if(input.type === "password"){
+    text.textContent =
+        message;
 
-        input.type = "text";
-        icon.innerHTML = "🙈";
+    toast.classList.remove(
+        "error"
+    );
 
-    }else{
+    if(isError){
 
-        input.type = "password";
-        icon.innerHTML = "👁️";
+        toast.classList.add(
+            "error"
+        );
 
     }
+
+    toast.classList.add(
+        "show"
+    );
+
+    setTimeout(
+        () => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        3000
+    );
 
 }
 
 
+// =====================================
+// ELEMENT
+// =====================================
+
+const username =
+    document.getElementById(
+        "username"
+    );
+
+const usernameMsg =
+    document.getElementById(
+        "usernameMsg"
+    );
+
+const password =
+    document.getElementById(
+        "password"
+    );
+
+const confirmPassword =
+    document.getElementById(
+        "confirmPassword"
+    );
+
+const passwordMsg =
+    document.getElementById(
+        "passwordMsg"
+    );
+
+const confirmMsg =
+    document.getElementById(
+        "confirmMsg"
+    );
+
+const pekerjaan =
+    document.getElementById(
+        "pekerjaan"
+    );
 
 
-
-// ======================
-// Username Validation
-// ======================
-
-
-const username = document.getElementById(
-    "username"
-);
-
-
-const usernameMsg = document.getElementById(
-    "usernameMsg"
-);
-
+// =====================================
+// USERNAME VALIDATION
+// =====================================
 
 let usernameTimer;
 
-
+let usernameAvailable =
+    false;
 
 username.addEventListener(
     "input",
-    function(){
+    () => {
 
-        clearTimeout(usernameTimer);
-
-
-        usernameTimer = setTimeout(
-            async function(){
-
-
-                if(username.value.length < 3){
-
-                    usernameMsg.innerHTML = "";
-
-                    return;
-
-                }
-
-
-
-                const response = await fetch(
-                    `/auth/check-username?login_identifier=${encodeURIComponent(username.value)}`
-                );
-
-
-
-                const data = await response.json();
-
-
-
-                if(data.available){
-
-
-                    usernameMsg.style.color = "green";
-
-                    usernameMsg.innerHTML =
-                        "✓ Username dapat digunakan";
-
-
-                }else{
-
-
-                    usernameMsg.style.color = "red";
-
-                    usernameMsg.innerHTML =
-                        "✗ Username tidak dapat digunakan";
-
-
-                }
-
-
-
-            },
-            400
+        clearTimeout(
+            usernameTimer
         );
 
+        usernameAvailable =
+            false;
+
+        usernameTimer =
+            setTimeout(
+                async () => {
+
+                    const value =
+                        username.value.trim();
+
+                    if(
+                        value.length < 3
+                    ){
+
+                        usernameMsg.style.color =
+                            "red";
+
+                        usernameMsg.innerHTML =
+                            "✗ Username minimal 3 karakter";
+
+                        return;
+                    }
+
+                    try{
+
+                        const response =
+                            await fetch(
+                                `/auth/check-username?login_identifier=${encodeURIComponent(value)}`
+                            );
+
+                        const data =
+                            await response.json();
+
+                        if(
+                            data.available
+                        ){
+
+                            usernameAvailable =
+                                true;
+
+                            usernameMsg.style.color =
+                                "green";
+
+                            usernameMsg.innerHTML =
+                                "✓ Username dapat digunakan";
+
+                        }
+                        else{
+
+                            usernameAvailable =
+                                false;
+
+                            usernameMsg.style.color =
+                                "red";
+
+                            usernameMsg.innerHTML =
+                                "✗ Username sudah digunakan";
+
+                        }
+
+                    }
+                    catch(error){
+
+                        usernameAvailable =
+                            false;
+
+                        usernameMsg.style.color =
+                            "red";
+
+                        usernameMsg.innerHTML =
+                            "✗ Gagal memeriksa username";
+
+                    }
+
+                },
+                400
+            );
 
     }
 );
 
 
+// =====================================
+// PASSWORD VALIDATION
+// =====================================
 
+function validatePassword(){
 
+    if(
+        password.value.trim() === ""
+    ){
 
+        passwordMsg.innerHTML =
+            "";
 
-
-
-// ======================
-// Password Validation
-// ======================
-
-
-const password = document.getElementById(
-    "password"
-);
-
-
-const confirmPassword = document.getElementById(
-    "confirmPassword"
-);
-
-
-const passwordMsg = document.getElementById(
-    "passwordMsg"
-);
-
-
-const confirmMsg = document.getElementById(
-    "confirmMsg"
-);
-
-
-
-
-
-function checkPassword(){
-
-
-    if(password.value === ""){
-
-        passwordMsg.innerHTML = "";
-
-        return;
-
+        return false;
     }
 
+    if(
+        password.value.length < 8
+    ){
 
-
-    if(password.value.length < 8){
-
-
-        passwordMsg.style.color = "red";
-
+        passwordMsg.style.color =
+            "red";
 
         passwordMsg.innerHTML =
             "✗ Password minimal 8 karakter";
 
-
-
-    }else{
-
-
-        passwordMsg.style.color = "green";
-
-
-        passwordMsg.innerHTML =
-            "✓ Password memenuhi syarat";
-
-
+        return false;
     }
 
+    passwordMsg.style.color =
+        "green";
 
+    passwordMsg.innerHTML =
+        "✓ Password memenuhi syarat";
+
+    return true;
 }
 
 
+function validateConfirmPassword(){
 
-
-
-function checkConfirmPassword(){
-
-
-    if(confirmPassword.value === ""){
-
-        confirmMsg.innerHTML = "";
-
-        return;
-
-    }
-
-
-
-    if(password.value === confirmPassword.value){
-
-
-        confirmMsg.style.color = "green";
-
+    if(
+        confirmPassword.value.trim() === ""
+    ){
 
         confirmMsg.innerHTML =
-            "✓ Password sesuai";
+            "";
 
+        return false;
+    }
 
+    if(
+        password.value !==
+        confirmPassword.value
+    ){
 
-    }else{
-
-
-        confirmMsg.style.color = "red";
-
+        confirmMsg.style.color =
+            "red";
 
         confirmMsg.innerHTML =
             "✗ Password tidak sama";
 
-
+        return false;
     }
 
+    confirmMsg.style.color =
+        "green";
 
+    confirmMsg.innerHTML =
+        "✓ Password sesuai";
+
+    return true;
 }
-
-
-
 
 
 password.addEventListener(
     "input",
-    function(){
+    () => {
 
-        checkPassword();
-
-        checkConfirmPassword();
+        validatePassword();
+        validateConfirmPassword();
 
     }
 );
 
-
-
 confirmPassword.addEventListener(
     "input",
-    checkConfirmPassword
+    validateConfirmPassword
 );
 
 
-
-
-
-
-
-// ======================
-// Pekerjaan
-// ======================
-
-
-const pekerjaan = document.getElementById(
-    "pekerjaan"
-);
-
-
+// =====================================
+// PEKERJAAN
+// =====================================
 
 pekerjaan.addEventListener(
     "input",
@@ -499,47 +568,75 @@ pekerjaan.addEventListener(
     }
 );
 
-document.querySelector("form")
-.addEventListener("submit", function(e){
 
-    let valid = true;
+// =====================================
+// FORM SUBMIT
+// =====================================
 
-    if(password.value.length < 8){
+document
+.querySelector(".auth-form")
+.addEventListener(
+    "submit",
+    function(e){
 
-        passwordMsg.style.color = "red";
+        let valid = true;
 
-        passwordMsg.innerHTML =
-            "✗ Password minimal 8 karakter";
+        if(
+            username.value.trim().length < 3
+        ){
 
-        valid = false;
+            usernameMsg.style.color =
+                "red";
+
+            usernameMsg.innerHTML =
+                "✗ Username minimal 3 karakter";
+
+            valid = false;
+        }
+
+        if(
+            !usernameAvailable
+        ){
+
+            valid = false;
+        }
+
+        if(
+            !validatePassword()
+        ){
+
+            valid = false;
+        }
+
+        if(
+            !validateConfirmPassword()
+        ){
+
+            valid = false;
+        }
+
+        if(!valid){
+
+            e.preventDefault();
+
+            showToast(
+                "Periksa kembali data registrasi.",
+                true
+            );
+
+        }
+
     }
-
-    if(password.value !== confirmPassword.value){
-
-        confirmMsg.style.color = "red";
-
-        confirmMsg.innerHTML =
-            "✗ Password tidak sama";
-
-        valid = false;
-    }
-
-    if(
-        usernameMsg.innerHTML.includes(
-            "tidak dapat digunakan"
-        )
-    ){
-        valid = false;
-    }
-
-    if(!valid){
-        e.preventDefault();
-    }
-
-});
+);
 
 </script>
 
+<div
+    id="success-toast"
+    class="toast-success"
+>
+    <span id="toast-message"></span>
+</div>
 
 </body>
 
