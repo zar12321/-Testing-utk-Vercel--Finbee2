@@ -132,21 +132,47 @@
 
             <div class="profile-dropdown">
 
-                <button
-                    id="profile-settings-btn"
-                    class="dropdown-profile-btn"
-                    type="button"
-                >
+                <div class="settings-wrapper">
 
-                    <span>
-                        👤 Profile Settings
-                    </span>
+                    <button
+                        id="settings-trigger"
+                        class="dropdown-profile-btn settings-trigger"
+                        type="button"
+                    >
 
-                    <span>
-                        ›
-                    </span>
+                         <span>
+                            ◀
+                        </span>
 
-                </button>
+                        <span>
+                            ⚙️ Settings
+                        </span>
+
+
+
+                    </button>
+
+                    <div class="settings-submenu">
+
+                        <button
+                            id="profile-settings-btn"
+                            class="submenu-btn"
+                            type="button"
+                        >
+                            👤 Profile Settings
+                        </button>
+
+                        <button
+                            id="reset-password-btn"
+                            class="submenu-btn"
+                            type="button"
+                        >
+                            🔑 Reset Password
+                        </button>
+
+                    </div>
+
+                </div>
 
                 <div class="dropdown-divider"></div>
 
@@ -268,6 +294,8 @@
 
         </div>
 
+
+
         <div class="profile-form-group">
 
             <label>
@@ -306,6 +334,73 @@
                 type="button"
             >
                 Simpan Perubahan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- RESET PASSWORD MODAL -->
+<!-- ===================================== -->
+
+<div
+    id="reset-password-modal"
+    class="profile-modal"
+>
+
+    <div class="profile-modal-content">
+
+        <h2>
+            Reset Password
+        </h2>
+
+        <div class="profile-form-group">
+
+            <label>
+                Password Baru
+            </label>
+
+            <input
+                type="password"
+                id="new-password"
+                class="profile-input"
+            >
+
+        </div>
+
+        <div class="profile-form-group">
+
+            <label>
+                Konfirmasi Password
+            </label>
+
+            <input
+                type="password"
+                id="confirm-password"
+                class="profile-input"
+            >
+
+        </div>
+
+        <div class="profile-modal-actions">
+
+            <button
+                id="close-reset-password-modal"
+                class="profile-cancel-btn"
+                type="button"
+            >
+                Batal
+            </button>
+
+            <button
+                id="save-reset-password"
+                class="profile-save-btn"
+                type="button"
+            >
+                Simpan
             </button>
 
         </div>

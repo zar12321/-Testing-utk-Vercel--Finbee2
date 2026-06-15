@@ -218,7 +218,7 @@ def reset_transactions(
     return TransactionActionResponse(
         success=True,
         message=(
-            "Seluruh transaksi berhasil dihapus."
+            "Seluruh data berhasil dihapus."
         )
     )
 

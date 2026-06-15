@@ -34,6 +34,7 @@ class ProfileResponse(BaseModel):
 # =====================================================
 # UPDATE PROFILE REQUEST
 # =====================================================
+from pydantic import model_validator
 
 class ProfileUpdateRequest(BaseModel):
 
@@ -60,7 +61,11 @@ class ProfileUpdateRequest(BaseModel):
         max_length=100
     )
 
-    
+    password: Optional[str] = None
+
+    confirm_password: Optional[str] = None
+
+
 
 
 # =====================================================

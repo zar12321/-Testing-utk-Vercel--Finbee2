@@ -304,15 +304,31 @@ a{
     position:relative;
 }
 
+.profile-wrapper:hover .profile-dropdown{
+
+    opacity:1;
+
+    visibility:visible;
+
+    pointer-events:auto;
+
+    transform:translateY(0);
+}
+
 .profile-menu{
     cursor:pointer;
 }
 
 .profile-dropdown{
-    display:none;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    pointer-events:none;
 
     position:absolute;
-    top:110%;
+    top:100%;
     right:0;
 
     width:220px;
@@ -326,13 +342,21 @@ a{
     padding:10px;
 
     z-index:1000;
+
+    transform:translateY(8px);
+
+    transition:.25s;
 }
-
-
 
 .profile-dropdown.show{
 
-    display:block;
+    opacity:1;
+
+    visibility:visible;
+
+    pointer-events:auto;
+
+    transform:translateY(0);
 }
 
 .profile-settings-content{
@@ -352,6 +376,90 @@ a{
     opacity:0;
 
     transition:all .3s ease;
+}
+
+.settings-wrapper{
+
+    position:relative;
+
+}
+
+.settings-submenu{
+
+    position:absolute;
+
+    top:0;
+    right:100%;
+
+    margin-right:10px;
+
+    width:220px;
+
+    background:white;
+
+    border-radius:14px;
+
+    padding:10px;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.12);
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transform:translateX(10px);
+
+    transition:.25s;
+
+}
+
+.settings-wrapper:hover .settings-submenu,
+.settings-wrapper.pinned .settings-submenu{
+
+    opacity:1;
+
+    visibility:visible;
+
+    transform:translateX(0);
+}
+
+.submenu-btn{
+
+    width:100%;
+
+    border:none;
+
+    background:#F8FAFC;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    text-align:left;
+
+    font-weight:600;
+
+    margin-bottom:8px;
+
+    transition:.25s;
+
+}
+
+.submenu-btn:last-child{
+
+    margin-bottom:0;
+
+}
+
+.submenu-btn:hover{
+
+    background:#EFF6FF;
+
+    color:#002159;
+
 }
 
 .profile-picture-section{
@@ -525,20 +633,19 @@ a{
 
 }
 
-
 .dropdown-profile-btn{
 
     width:100%;
 
     display:flex;
-
     align-items:center;
-    justify-content:space-between;
+    justify-content:center;
+
+    gap:8px;
 
     padding:12px 14px;
 
     border:none;
-
     border-radius:12px;
 
     background:#F8FAFC;

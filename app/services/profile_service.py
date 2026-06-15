@@ -9,12 +9,18 @@ from app.database.db import (
     get_transactions_by_user_id,
     load_monthly_plan,
     save_monthly_plan, 
-    update_profile_photo
+    update_profile_photo, 
+    reset_user_password
 )
 
 from app.schemas.profile import (
     ProfileUpdateRequest,
     ProfileUpdateResponse
+)
+
+from utils.validation import (
+    validate_password, 
+    validate_confirm_password
 )
 
 import cloudinary.uploader
@@ -58,6 +64,38 @@ class ProfileService:
             raise ValueError(
                 "User tidak ditemukan."
             )
+                
+        if payload.password:
+
+            valid_password, message = (
+                validate_password(
+                    payload.password
+                )
+            )
+
+            if not valid_password:
+                raise ValueError(message)
+
+            if not payload.confirm_password:
+                raise ValueError(
+                    "Konfirmasi password wajib diisi."
+                )
+            
+            reset_user_password(
+                db=db, 
+                login_identifier=user.login_identifier, 
+                new_password=payload.password
+                
+            )
+            valid_confirm, message = (
+                validate_confirm_password(
+                    payload.password,
+                    payload.confirm_password
+                )
+            )
+
+            if not valid_confirm:
+                raise ValueError(message)
 
         update_user_profile(
             db=db,

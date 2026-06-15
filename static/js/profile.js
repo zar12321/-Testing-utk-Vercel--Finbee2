@@ -47,6 +47,31 @@ document.addEventListener(
                 "close-profile-modal"
             );
 
+        const settingsBtn =
+            document.getElementById(
+                "settings-btn"
+            );
+
+        const settingsPanel =
+            document.getElementById(
+                "settings-panel"
+            );
+
+        const resetPasswordBtn =
+            document.getElementById(
+                "reset-password-btn"
+            );
+
+        const resetPasswordModal =
+            document.getElementById(
+                "reset-password-modal"
+            );
+
+        const closeResetPasswordModal =
+            document.getElementById(
+                "close-reset-password-modal"
+            );
+
         const uploadPhotoBtn =
             document.getElementById(
                 "upload-photo-btn"
@@ -86,6 +111,21 @@ document.addEventListener(
             document.getElementById(
                 "pekerjaan-msg"
             );
+
+        const settingsWrapper =
+            document.querySelector(
+                ".settings-wrapper"
+            );
+
+        const settingsTrigger =
+            document.getElementById(
+                "settings-trigger"
+            );
+
+        let settingsPinned = false;
+        let profilePinned = false;
+
+        
 
         let usernameAvailable = true;
         let usernameTimer;
@@ -128,10 +168,51 @@ document.addEventListener(
 
         };
 
+        settingsTrigger?.addEventListener(
+            "click",
+            (e) => {
+
+                e.stopPropagation();
+
+                settingsPinned =
+                    !settingsPinned;
+
+                settingsWrapper.classList.toggle(
+                    "pinned",
+                    settingsPinned
+                );
+
+                if(settingsPinned){
+
+                    profilePinned = true;
+
+                    dropdown.classList.add(
+                        "show"
+                    );
+
+                };
+
+            }
+        );
+
 
         profileSettingsBtn?.addEventListener(
             "click",
-            () => {
+            (e) => {
+
+                e.stopPropagation();
+
+                profilePinned = true;
+
+                settingsPinned = true;
+
+                dropdown.classList.add(
+                    "show"
+                );
+
+                settingsWrapper?.classList.add(
+                    "pinned"
+                );
 
                 originalNama =
                     namaInput?.value || "";
@@ -142,14 +223,35 @@ document.addEventListener(
                 originalPekerjaan =
                     pekerjaanInput?.value || "";
 
-                originalPhotoHtml = 
+                originalPhotoHtml =
                     profilePreview.innerHTML;
 
                 profileSettingsModal.classList.add(
                     "show"
                 );
 
-                dropdown.classList.remove(
+            }
+        );
+
+        resetPasswordBtn?.addEventListener(
+            "click",
+            (e) => {
+
+                e.stopPropagation();
+
+                profilePinned = true;
+
+                settingsPinned = true;
+
+                dropdown.classList.add(
+                    "show"
+                );
+
+                settingsWrapper?.classList.add(
+                    "pinned"
+                );
+
+                resetPasswordModal.classList.add(
                     "show"
                 );
 
@@ -158,7 +260,9 @@ document.addEventListener(
 
         closeProfileModal?.addEventListener(
             "click",
-            () => {
+            (e) => {
+
+                e.stopPropagation();
 
                 namaInput.value =
                     originalNama;
@@ -168,18 +272,56 @@ document.addEventListener(
 
                 pekerjaanInput.value =
                     originalPekerjaan;
-                
+
                 selectedPhotoFile = null;
 
-                profilePreview.innerHTML = 
+                profilePreview.innerHTML =
                     originalPhotoHtml;
 
                 profileSettingsModal.classList.remove(
                     "show"
                 );
 
+                dropdown.classList.add(
+                    "show"
+                );
+
+                settingsWrapper?.classList.add(
+                    "pinned"
+                );
+
+                profilePinned = true;
+
+                settingsPinned = true;
+
             }
         );
+
+        closeResetPasswordModal?.addEventListener(
+            "click",
+            (e) => {
+
+                e.stopPropagation();
+
+                resetPasswordModal.classList.remove(
+                    "show"
+                );
+
+                dropdown.classList.add(
+                    "show"
+                );
+
+                settingsWrapper?.classList.add(
+                    "pinned"
+                );
+
+                profilePinned = true;
+                settingsPinned = true;
+
+            }
+        );
+
+
 
         uploadPhotoBtn?.addEventListener(
             "click",
@@ -251,19 +393,46 @@ document.addEventListener(
 
                 e.stopPropagation();
 
+                profilePinned =
+                    !profilePinned;
+
                 dropdown.classList.toggle(
-                    "show"
+                    "show",
+                    profilePinned
                 );
+
             }
         );
 
         document.addEventListener(
             "click",
-            () => {
+            (e) => {
 
-                dropdown.classList.remove(
-                    "show"
-                );
+                if(
+                    profileSettingsModal.classList.contains("show") ||
+                    resetPasswordModal.classList.contains("show")
+                ){
+                    return;
+                }
+
+                if(
+                    !e.target.closest(".profile-wrapper")
+                ){
+
+                    profilePinned = false;
+
+                    settingsPinned = false;
+
+                    dropdown.classList.remove(
+                        "show"
+                    );
+
+                    settingsWrapper?.classList.remove(
+                        "pinned"
+                    );
+
+                }
+
             }
         );
 
@@ -273,23 +442,41 @@ document.addEventListener(
 
                 e.stopPropagation();
 
-                dropdown.classList.remove(
+                settingsPinned = false;
+
+                settingsWrapper?.classList.remove(
+                    "pinned"
+                );
+
+                profilePinned = true;
+
+                dropdown.classList.add(
                     "show"
                 );
 
                 modal.classList.add(
                     "show"
                 );
+
             }
         );
 
         cancelBtn?.addEventListener(
             "click",
-            () => {
+            (e) => {
+
+                e.stopPropagation();
 
                 modal.classList.remove(
                     "show"
                 );
+
+                profilePinned = true;
+
+                dropdown.classList.add(
+                    "show"
+                );
+
             }
         );
 
@@ -304,6 +491,13 @@ document.addEventListener(
                     modal.classList.remove(
                         "show"
                     );
+
+                    profilePinned = true;
+
+                    dropdown.classList.add(
+                        "show"
+                    );
+
                 }
             }
         );
@@ -383,6 +577,12 @@ document.addEventListener(
                     }
 
                     modal.classList.remove(
+                        "show"
+                    );
+
+                    profilePinned = true;
+
+                    dropdown.classList.add(
                         "show"
                     );
 
@@ -716,6 +916,18 @@ document.addEventListener(
                         .remove(
                             "show"
                         );
+
+                    dropdown.classList.add(
+                            "show"
+                        );
+
+                        settingsWrapper?.classList.add(
+                            "pinned"
+                        );
+
+                        profilePinned = true;
+
+                        settingsPinned = true;
 
                 }
                 catch(error){
