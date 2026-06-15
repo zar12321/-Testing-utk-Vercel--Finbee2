@@ -27,6 +27,9 @@ class ProfileResponse(BaseModel):
 
     created_at: Optional[datetime] = None
 
+    profile_photo: Optional[str] = None
+
+
 
 # =====================================================
 # UPDATE PROFILE REQUEST
@@ -56,6 +59,8 @@ class ProfileUpdateRequest(BaseModel):
         ...,
         max_length=100
     )
+
+    
 
 
 # =====================================================

@@ -587,7 +587,8 @@ def login_user_by_identifier(
                 login_identifier,
                 pekerjaan,
                 login_type,
-                password_hash
+                password_hash, 
+             profile_photo
             FROM users
             WHERE login_identifier = :login_identifier
             LIMIT 1
@@ -648,7 +649,8 @@ def get_user_by_id(
                 login_type,
                 umur,
                 pekerjaan,
-                created_at
+                created_at, 
+                profile_photo
             FROM users
             WHERE user_id = :user_id
             LIMIT 1
@@ -691,6 +693,30 @@ def update_user_profile(
             "user_id": user_id
         }
     )
+
+    db.commit()
+
+# =====================================================
+# UPDATE PROFILE PHOTO
+# =====================================================
+def update_profile_photo(
+    db: Session, 
+    user_id: int, 
+    profile_photo: str
+):
+    result=db.execute(
+        text("""
+            update users
+            set profile_photo = :profile_photo
+            where user_id = :user_id
+        """),
+        {
+            "profile_photo": profile_photo, 
+            "user_id": user_id
+        }    
+    )
+
+    print("updated", result.rowcount)
 
     db.commit()
 

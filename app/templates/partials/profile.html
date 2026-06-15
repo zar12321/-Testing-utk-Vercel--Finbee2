@@ -95,7 +95,14 @@
 
                 <div class="profile-avatar">
 
-                    {{ request.session.get("login_identifier","U")[0] }}
+                    {% if request.session.get("profile_photo") %}
+                        <img
+                            src="{{ request.session.get('profile_photo') }}"
+                            alt="Profile Photo"
+                        >
+                    {% else %}
+                        {{ request.session.get("login_identifier","U")[0] }}
+                    {% endif %}
 
                 </div>
 
@@ -193,7 +200,16 @@
                 id="profile-picture-preview"
                 class="profile-picture-preview"
             >
-                👤
+
+                {% if request.session.get("profile_photo") %}
+                    <img
+                        src="{{ request.session.get('profile_photo') }}"
+                        alt="Profile Photo"
+                    >
+                {% else %}
+                    👤
+                {% endif %}
+
             </div>
 
             <input
@@ -225,6 +241,10 @@
                 class="profile-input"
                 value="{{ request.session.get('nama','') }}"
             >
+            <div
+                id="profile-nama-msg"
+                class="validation-msg"
+            ></div>
 
         </div>
 
@@ -241,6 +261,11 @@
                 value="{{ request.session.get('login_identifier','User') }}"
             >
 
+            <div
+                id="profile-username-msg"
+                class="validation-msg"
+            ></div>
+
         </div>
 
         <div class="profile-form-group">
@@ -256,22 +281,14 @@
                 value="{{ request.session.get('pekerjaan', '') }}"
             >
 
-        </div>
-
-        <div class="profile-form-group">
-
-            <label>
-                Password
-            </label>
-
-            <button
-                type="button"
-                class="change-password-btn"
-            >
-                Ubah Password
-            </button>
+            <div
+                id="profile-pekerjaan-msg"
+                class="validation-msg"
+            ></div>
 
         </div>
+
+
 
         <div class="profile-modal-actions">
 

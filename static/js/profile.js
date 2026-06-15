@@ -72,15 +72,78 @@ document.addEventListener(
                 "profile-username"
             );
 
+        const usernameMsg =
+            document.getElementById(
+                "profile-username-msg"
+            );
+                
+        const pekerjaanInput =
+            document.getElementById(
+                "profile-pekerjaan"
+            );
+
+        const pekerjaanMsg =
+            document.getElementById(
+                "pekerjaan-msg"
+            );
+
+        let usernameAvailable = true;
+        let usernameTimer;
+        let namaValid = true;
+        let pekerjaanValid = true;
+
+        let originalNama = "";
+        let originalUsername = "";
+        let originalPekerjaan = "";
+
+        let selectedPhotoFile = null;
+
+        let originalPhotoHtml = "";
+
+
         const namaInput =
             document.getElementById(
                 "profile-nama"
-            )?.value?.trim();
+            );
+        
+        const namaMsg = 
+            document.getElementById(
+                "profile-nama-msg"
+            )
+
+        function validateProfileForm(){
+
+            const isValid =
+                usernameAvailable &&
+                namaValid &&
+                pekerjaanValid;
+
+            saveProfileBtn.disabled =
+                !isValid;
+
+            saveProfileBtn.classList.toggle(
+                "disabled",
+                !isValid
+            );
+
+        };
 
 
         profileSettingsBtn?.addEventListener(
             "click",
             () => {
+
+                originalNama =
+                    namaInput?.value || "";
+
+                originalUsername =
+                    usernameInput?.value || "";
+
+                originalPekerjaan =
+                    pekerjaanInput?.value || "";
+
+                originalPhotoHtml = 
+                    profilePreview.innerHTML;
 
                 profileSettingsModal.classList.add(
                     "show"
@@ -96,6 +159,20 @@ document.addEventListener(
         closeProfileModal?.addEventListener(
             "click",
             () => {
+
+                namaInput.value =
+                    originalNama;
+
+                usernameInput.value =
+                    originalUsername;
+
+                pekerjaanInput.value =
+                    originalPekerjaan;
+                
+                selectedPhotoFile = null;
+
+                profilePreview.innerHTML = 
+                    originalPhotoHtml;
 
                 profileSettingsModal.classList.remove(
                     "show"
@@ -132,6 +209,8 @@ document.addEventListener(
                 if(!file){
                     return;
                 }
+
+                selectedPhotoFile = file;
 
                 const reader =
                     new FileReader();
@@ -339,6 +418,154 @@ document.addEventListener(
             }
         );
 
+        namaInput?.addEventListener(
+            "input",
+            () => {
+
+                const nama =
+                    namaInput.value.trim();
+
+                if(nama.length < 3){
+
+                    namaValid = false;
+
+                    namaMsg.style.color =
+                        "red";
+
+                    namaMsg.innerHTML =
+                        "✗ Nama minimal 3 karakter";
+
+                }
+                else{
+
+                    namaValid = true;
+
+                    namaMsg.style.color =
+                        "green";
+
+                    namaMsg.innerHTML =
+                        "✓ Nama valid";
+
+                }
+
+                validateProfileForm();
+
+            }
+        );
+
+        usernameInput?.addEventListener(
+            "input",
+            () => {
+
+                clearTimeout(
+                    usernameTimer
+                );
+
+                usernameTimer =
+                    setTimeout(
+                        async () => {
+
+                            const username =
+                                usernameInput.value.trim();
+
+                            if(username.length < 3){
+
+                                usernameAvailable = false;
+
+                                usernameMsg.style.color = "red";
+
+                                usernameMsg.innerHTML =
+                                    "✗ Username minimal 3 karakter";
+
+                                validateProfileForm();
+
+                                return;
+                            }
+
+                            const response =
+                                await fetch(
+                                    `/auth/check-username?login_identifier=${encodeURIComponent(username)}`
+                                );
+
+                            const data =
+                                await response.json();
+
+                            if(data.available){
+
+                                usernameAvailable = true;
+
+                                validateProfileForm();
+
+                                usernameMsg.style.color =
+                                    "green";
+
+                                usernameMsg.innerHTML =
+                                    "✓ Username dapat digunakan";
+
+                            }
+                            else{
+
+                                usernameAvailable = false;
+
+                                validateProfileForm();
+
+                                usernameMsg.style.color =
+                                    "red";
+
+                                usernameMsg.innerHTML =
+                                    "✗ Username sudah digunakan";
+
+                            }
+
+                        },
+                        400
+                    );
+
+            }
+        );
+
+        pekerjaanInput?.addEventListener(
+            "input",
+            () => {
+
+                const pekerjaan =
+                    pekerjaanInput.value.trim();
+
+                if(
+                    pekerjaan.length > 0 &&
+                    !/^[A-Za-z\s]+$/.test(
+                        pekerjaan
+                    )
+                ){
+
+                    pekerjaanValid = false;
+
+                    pekerjaanMsg.style.color =
+                        "red";
+
+                    pekerjaanMsg.innerHTML =
+                        "✗ Hanya huruf yang diperbolehkan";
+
+                }
+                else{
+
+                    pekerjaanValid = true;
+
+                    pekerjaanMsg.style.color =
+                        "green";
+
+                    pekerjaanMsg.innerHTML =
+                        pekerjaan.length
+                            ? "✓ Pekerjaan valid"
+                            : "";
+
+                }
+
+                validateProfileForm();
+
+            }
+        );
+
         saveProfileBtn?.addEventListener(
             "click",
             async () => {
@@ -407,12 +634,82 @@ document.addEventListener(
                             "Gagal menyimpan profile."
                         );
 
-                    }
+                    };
+
+                    if(selectedPhotoFile){
+
+                        const formData =
+                            new FormData();
+
+                        formData.append(
+                            "file",
+                            selectedPhotoFile
+                        );
+
+                        const photoResponse =
+                            await fetch(
+                                "/profile/upload-photo",
+                                {
+                                    method:"POST",
+                                    body:formData
+                                }
+                            );
+
+                        const photoResult =
+                            await photoResponse.json();
+
+                        if(!photoResponse.ok){
+
+                            throw new Error(
+                                photoResult.detail ||
+                                photoResult.message ||
+                                "Gagal upload foto"
+                            );
+                        }
+
+                        const navbarAvatar =
+                            document.querySelector(
+                                ".profile-avatar"
+                            );
+
+                        if(navbarAvatar){
+
+                            navbarAvatar.innerHTML = `
+                                <img
+                                    src="${photoResult.profile_photo}"
+                                    alt="Profile Photo"
+                                >
+                            `;
+                        }
+
+                        selectedPhotoFile = null;
+                    };
 
                     showToast(
                         result.message ||
                         "Profile berhasil diperbarui."
                     );
+
+                    const heroTitle =
+                        document.getElementById(
+                            "hero-title"
+                        );
+
+                    if(heroTitle){
+
+                        heroTitle.textContent =
+                            `Halo, ${username}`;
+                    };
+
+                    const profileName =
+                        document.querySelector(
+                            ".profile-name"
+                        );
+
+                    if(profileName){
+                        profileName.textContent =
+                            username;
+                    };
 
                     profileSettingsModal
                         ?.classList

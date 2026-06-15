@@ -8,13 +8,17 @@ from app.database.db import (
     update_user_profile,
     get_transactions_by_user_id,
     load_monthly_plan,
-    save_monthly_plan
+    save_monthly_plan, 
+    update_profile_photo
 )
 
 from app.schemas.profile import (
     ProfileUpdateRequest,
     ProfileUpdateResponse
 )
+
+import cloudinary.uploader
+
 
 
 
@@ -68,8 +72,57 @@ class ProfileService:
             "success": True,
             "message": "Profile berhasil diperbarui."
         }  
-        
+    
+    @staticmethod
+    def upload_profile_photo(
+        db: Session, 
+        user_id: int, 
+        file_contents: bytes, 
+        filename: str
+    ):
+        user = get_user_by_id(
+            db=db, 
+            user_id=user_id
+        )
 
+        if not user:
+            raise ValueError(
+                "User tidak ditemukan"
+            )
+        
+        upload_result = (
+            cloudinary.uploader.upload(
+                file_contents, 
+                folder="finbee/profile_photos", 
+                public_id=f"user_{user_id}", 
+                overwrite=True, 
+                resource_type="image"
+            )
+        )
+
+        print(upload_result)
+
+
+        profile_photo = (
+            upload_result["secure_url"]
+        )   
+
+        print("URL PHOTO", profile_photo)
+
+
+        update_profile_photo(
+            db=db, 
+            user_id=user_id, 
+            profile_photo=profile_photo
+        )
+
+
+        return {
+            "success": True, 
+            "message": "Foto profile berhasil diperbarui", 
+            "profile_photo": profile_photo
+        }
+    
     @staticmethod
     def get_financial_summary(
         db: Session,

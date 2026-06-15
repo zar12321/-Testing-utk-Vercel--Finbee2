@@ -307,3 +307,22 @@ def get_dashboard_data(
         "monthly_snapshot": monthly_snapshot,
         "spending_alert": spending_alert
     }
+
+@router.get("/dashboard")
+async def dashboard(
+    request: Request
+):
+
+    print(
+        "SESSION PROFILE PHOTO =",
+        request.session.get(
+            "profile_photo"
+        )
+    )
+
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request
+        }
+    )

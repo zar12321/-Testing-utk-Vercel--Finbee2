@@ -99,6 +99,10 @@ def login_process(
             user.login_type
         )
 
+        request.session["profile_photo"] = (
+            user.profile_photo
+        )
+
         return RedirectResponse(
             url="/dashboard",
             status_code=status.HTTP_303_SEE_OTHER

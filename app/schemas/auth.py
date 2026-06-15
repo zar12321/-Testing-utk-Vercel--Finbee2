@@ -89,6 +89,10 @@ class UserResponse(BaseModel):
 
     created_at: Optional[datetime] = None
 
+    profile_photo: Optional[str] = None
+
+
+
 
 # =====================================================
 # AUTH RESPONSE
