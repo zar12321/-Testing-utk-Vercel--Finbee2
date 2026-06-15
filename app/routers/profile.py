@@ -23,6 +23,10 @@ from app.services.profile_service import (
     ProfileService
 )
 
+from app.schemas.profile import (
+    ProfileUpdateRequest
+)
+
 router = APIRouter(
     prefix="/profile",
     tags=["Profile"]
@@ -56,3 +60,25 @@ def logout(request:Request):
         url="/auth/login", 
         status_code=303
     )
+
+# =====================================================
+# UPDATE PROFILE
+# =====================================================
+
+@router.put("/update")
+def update_profile(
+    payload: ProfileUpdateRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+
+    print(payload)
+
+    result = ProfileService.update_profile(
+        db=db,
+        user_id=current_user["user_id"],
+        payload=payload
+    )
+
+    return result

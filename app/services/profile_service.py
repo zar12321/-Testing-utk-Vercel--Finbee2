@@ -5,10 +5,17 @@ from sqlalchemy.orm import Session
 
 from app.database.db import (
     get_user_by_id,
+    update_user_profile,
     get_transactions_by_user_id,
     load_monthly_plan,
     save_monthly_plan
 )
+
+from app.schemas.profile import (
+    ProfileUpdateRequest,
+    ProfileUpdateResponse
+)
+
 
 
 class ProfileService:
@@ -30,6 +37,38 @@ class ProfileService:
             )
 
         return user
+    
+    @staticmethod
+    def update_profile(
+        db: Session,
+        user_id: int,
+        payload
+    ):
+
+        user = get_user_by_id(
+            db=db,
+            user_id=user_id
+        )
+
+        if not user:
+            raise ValueError(
+                "User tidak ditemukan."
+            )
+
+        update_user_profile(
+            db=db,
+            user_id=user_id,
+            nama=payload.nama,
+            login_identifier=payload.login_identifier,
+            umur=payload.umur,
+            pekerjaan=payload.pekerjaan
+        )
+
+        return {
+            "success": True,
+            "message": "Profile berhasil diperbarui."
+        }  
+        
 
     @staticmethod
     def get_financial_summary(

@@ -31,6 +31,130 @@ document.addEventListener(
             document.getElementById(
                 "confirm-reset"
             );
+        
+        const profileSettingsBtn =
+            document.getElementById(
+                "profile-settings-btn"
+            );
+
+        const profileSettingsModal =
+            document.getElementById(
+                "profile-settings-modal"
+            );
+
+        const closeProfileModal =
+            document.getElementById(
+                "close-profile-modal"
+            );
+
+        const uploadPhotoBtn =
+            document.getElementById(
+                "upload-photo-btn"
+            );
+
+        const photoInput =
+            document.getElementById(
+                "profile-photo-input"
+            );
+
+        const profilePreview =
+            document.getElementById(
+                "profile-picture-preview"
+            );
+
+        const saveProfileBtn =
+            document.getElementById(
+                "save-profile-btn"
+            );
+
+        const usernameInput =
+            document.getElementById(
+                "profile-username"
+            );
+
+        const namaInput =
+            document.getElementById(
+                "profile-nama"
+            )?.value?.trim();
+
+
+        profileSettingsBtn?.addEventListener(
+            "click",
+            () => {
+
+                profileSettingsModal.classList.add(
+                    "show"
+                );
+
+                dropdown.classList.remove(
+                    "show"
+                );
+
+            }
+        );
+
+        closeProfileModal?.addEventListener(
+            "click",
+            () => {
+
+                profileSettingsModal.classList.remove(
+                    "show"
+                );
+
+            }
+        );
+
+        uploadPhotoBtn?.addEventListener(
+            "click",
+            () => {
+
+                photoInput?.click();
+
+            }
+        );
+
+        profilePreview?.addEventListener(
+            "click",
+            () => {
+
+                photoInput?.click();
+
+            }
+        );
+
+        photoInput?.addEventListener(
+            "change",
+            (event) => {
+
+                const file =
+                    event.target.files?.[0];
+
+                if(!file){
+                    return;
+                }
+
+                const reader =
+                    new FileReader();
+
+                reader.onload =
+                    function(e){
+
+                        profilePreview.innerHTML =
+                            `
+                            <img
+                                src="${e.target.result}"
+                                alt="Profile Photo"
+                            >
+                            `;
+
+                    };
+
+                reader.readAsDataURL(
+                    file
+                );
+
+            }
+        );
 
         // paksa hidden saat load
 
@@ -210,6 +334,100 @@ document.addEventListener(
                         error.message,
                         true
                     );
+                }
+
+            }
+        );
+
+        saveProfileBtn?.addEventListener(
+            "click",
+            async () => {
+
+                const nama = 
+                    namaInput?.value?.trim();
+
+                const username =
+                    usernameInput?.value?.trim();
+
+                const pekerjaan =
+                    document.getElementById(
+                        "profile-pekerjaan"
+                    )?.value?.trim();
+
+                console.log({
+                    nama,
+                    login_identifier: username,
+                    umur: null,
+                    pekerjaan
+                });
+
+
+                if(!username){
+
+                    showToast(
+                        "Username wajib diisi.",
+                        true
+                    );
+
+                    return;
+                }
+
+                try{
+
+                    const response =
+                        await fetch(
+                            "/profile/update",
+                            {
+                                method:"PUT",
+
+                                headers:{
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:JSON.stringify({
+                                    
+                                    nama:nama,
+                                    login_identifier:username,
+                                    umur:null,
+                                    pekerjaan:pekerjaan
+
+                                })
+
+                            }
+                        );
+
+                    const result =
+                        await response.json();
+
+                    if(!response.ok){
+
+                        throw new Error(
+                            result.message ||
+                            "Gagal menyimpan profile."
+                        );
+
+                    }
+
+                    showToast(
+                        result.message ||
+                        "Profile berhasil diperbarui."
+                    );
+
+                    profileSettingsModal
+                        ?.classList
+                        .remove(
+                            "show"
+                        );
+
+                }
+                catch(error){
+
+                    showToast(
+                        error.message,
+                        true
+                    );
+
                 }
 
             }

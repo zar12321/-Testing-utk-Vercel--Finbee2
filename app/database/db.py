@@ -585,6 +585,7 @@ def login_user_by_identifier(
                 user_id,
                 nama,
                 login_identifier,
+                pekerjaan,
                 login_type,
                 password_hash
             FROM users
@@ -658,6 +659,40 @@ def get_user_by_id(
     )
 
     return result.fetchone()
+
+# =====================================================
+# UPDATE USER PROFILE
+# =====================================================
+
+def update_user_profile(
+    db: Session,
+    user_id: int,
+    nama: str,
+    login_identifier: str, 
+    umur: int | None,
+    pekerjaan: str | None
+):
+
+    db.execute(
+        text("""
+            UPDATE users
+            SET
+                nama = :nama,
+                login_identifier =:login_identifier,
+                umur = :umur,
+                pekerjaan = :pekerjaan
+            WHERE user_id = :user_id
+        """),
+        {
+            "nama": nama,
+            "login_identifier": login_identifier,
+            "umur": umur,
+            "pekerjaan": pekerjaan,
+            "user_id": user_id
+        }
+    )
+
+    db.commit()
 
 # =====================================================
 # LOAD MONTHLY PLAN

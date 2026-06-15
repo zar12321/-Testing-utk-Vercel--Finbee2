@@ -126,6 +126,24 @@
             <div class="profile-dropdown">
 
                 <button
+                    id="profile-settings-btn"
+                    class="dropdown-profile-btn"
+                    type="button"
+                >
+
+                    <span>
+                        👤 Profile Settings
+                    </span>
+
+                    <span>
+                        ›
+                    </span>
+
+                </button>
+
+                <div class="dropdown-divider"></div>
+
+                <button
                     id="reset-data-btn"
                     class="dropdown-danger-btn"
                     type="button"
@@ -148,6 +166,136 @@
     </div>
 
 </nav>
+
+<!-- ===================================== -->
+<!-- PROFILE SETTINGS MODAL -->
+<!-- ===================================== -->
+
+<div
+    id="profile-settings-modal"
+    class="profile-modal"
+>
+
+    <div
+        class="
+            profile-modal-content
+            profile-settings-content
+        "
+    >
+
+        <h2>
+            Profile Settings
+        </h2>
+
+        <div class="profile-picture-section">
+
+            <div
+                id="profile-picture-preview"
+                class="profile-picture-preview"
+            >
+                👤
+            </div>
+
+            <input
+                type="file"
+                id="profile-photo-input"
+                accept="image/*"
+                hidden
+            >
+
+            <button
+                type="button"
+                id="upload-photo-btn"
+                class="upload-photo-btn"
+            >
+                Upload Photo
+            </button>
+
+        </div>
+
+        <div class="profile-form-group">
+
+            <label>
+                Nama Lengkap
+            </label>
+
+            <input
+                type="text"
+                id="profile-nama"
+                class="profile-input"
+                value="{{ request.session.get('nama','') }}"
+            >
+
+        </div>
+
+        <div class="profile-form-group">
+
+            <label>
+                Username
+            </label>
+
+            <input
+                type="text"
+                id="profile-username"
+                class="profile-input"
+                value="{{ request.session.get('login_identifier','User') }}"
+            >
+
+        </div>
+
+        <div class="profile-form-group">
+
+            <label>
+                Pekerjaan
+            </label>
+
+            <input
+                type="text"
+                id="profile-pekerjaan"
+                class="profile-input"
+                value="{{ request.session.get('pekerjaan', '') }}"
+            >
+
+        </div>
+
+        <div class="profile-form-group">
+
+            <label>
+                Password
+            </label>
+
+            <button
+                type="button"
+                class="change-password-btn"
+            >
+                Ubah Password
+            </button>
+
+        </div>
+
+        <div class="profile-modal-actions">
+
+            <button
+                id="close-profile-modal"
+                class="profile-cancel-btn"
+                type="button"
+            >
+                Batal
+            </button>
+
+            <button
+                id="save-profile-btn"
+                class="profile-save-btn"
+                type="button"
+            >
+                Simpan Perubahan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 <!-- ===================================== -->
 <!-- RESET DATA MODAL -->

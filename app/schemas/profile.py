@@ -35,6 +35,12 @@ class ProfileResponse(BaseModel):
 class ProfileUpdateRequest(BaseModel):
 
     nama: str = Field(
+        ..., 
+        min_length=1, 
+        max_length=100
+    )
+
+    login_identifier: str = Field(
         ...,
         min_length=1,
         max_length=100
@@ -47,7 +53,7 @@ class ProfileUpdateRequest(BaseModel):
     )
 
     pekerjaan: Optional[str] = Field(
-        default=None,
+        ...,
         max_length=100
     )
 

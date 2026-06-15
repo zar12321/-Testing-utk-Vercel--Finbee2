@@ -83,12 +83,16 @@ def login_process(
             user.user_id
         )
 
-        request.session["user_name"] = (
+        request.session["nama"] = (
             user.nama
         )
 
         request.session["login_identifier"] = (
             user.login_identifier
+        )
+
+        request.session["pekerjaan"] = (
+            user.pekerjaan
         )
 
         request.session["login_type"] = (
