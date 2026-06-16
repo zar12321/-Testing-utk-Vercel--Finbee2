@@ -512,7 +512,7 @@ function renderCashflowChart(
                         x: {
                             type: 'number',
                             easing: 'linear',
-                            duration: 0.0005,
+                            duration: 0,
                             from: NaN,
                             delay(ctx) {
 
@@ -532,7 +532,7 @@ function renderCashflowChart(
                         y: {
                             type: 'number',
                             easing: 'linear',
-                            duration: 0.0005,
+                            duration: 0,
                             from(ctx){
 
                                 if(
