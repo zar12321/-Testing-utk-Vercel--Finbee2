@@ -72,3 +72,33 @@ def get_chart_data(
         category=category,
         subcategory_id=subcategory_id
     )
+
+# ==========================================
+# FORECAST PREDICTION
+# ==========================================
+
+@router.get("/prediction")
+def get_prediction(
+    days: int = 30,
+    category_id: int | None = None,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+
+    if days not in [7, 14, 30]:
+
+        return {
+            "success": False,
+            "message": (
+                "Periode prediksi "
+                "hanya boleh 7, 14, atau 30 hari."
+            ),
+            "data": None
+        }
+
+    return AnalyticsService.get_prediction(
+        db=db,
+        user_id=current_user["user_id"],
+        days=days,
+        category_id=category_id
+    )

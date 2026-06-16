@@ -10,6 +10,8 @@ document.addEventListener(
 
         await loadAnalytics();
 
+        await loadPrediction();
+
         document
             .getElementById(
                 "apply-filter-btn"
@@ -28,6 +30,23 @@ document.addEventListener(
                 resetFilters
             );
 
+        document
+            .getElementById(
+                "apply-prediction-btn"
+            )
+            ?.addEventListener(
+                "click",
+                loadPrediction
+            );
+
+        document
+            .getElementById(
+                "reset-prediction-btn"
+            )
+            ?.addEventListener(
+                "click",
+                resetPredictionFilters
+            );
     }
 );
 
@@ -35,6 +54,7 @@ let cashflowChart = null;
 let breakdownChart = null;
 let paymentBarChart = null;
 let paymentDoughnutChart = null;
+let predictionChart = null;
 
 let breakdownPreviewData = {};
 
@@ -68,6 +88,10 @@ async function loadFilterOptions() {
                 "filter-subcategory"
             );
 
+        const predictionSubCategorySelect = 
+            document.getElementById(
+                "prediction-subcategory"
+            )
         // =====================
         // YEAR
         // =====================
@@ -94,20 +118,24 @@ async function loadFilterOptions() {
         // =====================
         // SUBCATEGORY
         // =====================
-
-        if (
-            subcategorySelect &&
-            data.subcategories
-        ) {
+        if(data.subcategories){
 
             data.subcategories.forEach(
                 sub => {
 
-                    subcategorySelect.innerHTML += `
+                    const option = `
                         <option value="${sub.category_id}">
                             ${sub.category_name}
                         </option>
                     `;
+
+                    if(subcategorySelect){
+                        subcategorySelect.innerHTML += option;
+                    }
+
+                    if(predictionSubCategorySelect){
+                        predictionSubCategorySelect.innerHTML += option;
+                    }
 
                 }
             );
@@ -304,6 +332,95 @@ async function loadAnalytics(
 
 }
 
+// ======================================
+// LOAD PREDICTION
+// ======================================
+
+async function loadPrediction(){
+
+    try{
+
+        const days =
+            document.getElementById(
+                "prediction-days"
+            )?.value || "7";
+
+        const subcategory =
+            document.getElementById(
+                "prediction-subcategory"
+            )?.value;
+
+        const params =
+            new URLSearchParams();
+
+        params.append(
+            "days",
+            days
+        );
+
+        if(subcategory){
+
+            params.append(
+                "category_id",
+                subcategory
+            );
+
+        }
+
+        const response =
+            await fetch(
+                `/analytics/prediction?${params}`
+            );
+
+        const result =
+            await response.json();
+
+        console.log(
+            "Prediction:",
+            result
+        );
+
+        if(
+            result.success &&
+            result.data
+        ){
+
+            renderPredictionChart(
+                result.data
+            );
+
+        }
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Prediction Error:",
+            error
+        );
+
+    }
+
+}
+
+// ======================================
+// RESET PREDICTION FILTER
+// ======================================
+
+async function resetPredictionFilters(){
+
+    document.getElementById(
+        "prediction-days"
+    ).value = "7";
+
+    document.getElementById(
+        "prediction-subcategory"
+    ).value = "";
+
+    await loadPrediction();
+
+}
 
 // ======================================
 // CASHFLOW TREND CHART
@@ -715,6 +832,10 @@ function renderPaymentDoughnutChart(
                     responsive:true,
 
                     maintainAspectRatio:false,
+                    animation:{
+                        duration: 2000, 
+                        easing: "easeOutQuart"
+                    },
 
                     plugins:{
 
@@ -838,6 +959,11 @@ function renderPaymentBarChart(
 
                     maintainAspectRatio:false,
 
+                    animation:{
+                        duration: 2000, 
+                        easing: "easeOutQuart"
+                    },
+
                     plugins:{
 
                         datalabels:{
@@ -916,6 +1042,152 @@ function renderPaymentBarChart(
                         layout:{
                             padding:{
                                 right:50
+                            }
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+// ======================================
+// PREDICTION CHART
+// ======================================
+
+function renderPredictionChart(
+    data
+){
+
+    const canvas =
+        document.getElementById(
+            "prediction-chart"
+        );
+
+    if(!canvas) return;
+
+    if(predictionChart){
+
+        predictionChart.destroy();
+
+    }
+
+    const history =
+        data.history || [];
+
+    const forecast =
+        data.predictions || [];
+
+    const labels = [
+
+        ...history.map(
+            x => x.date
+        ),
+
+        ...forecast.map(
+            x => x.date
+        )
+
+    ];
+
+    const historicalData = [
+
+        ...history.map(
+            x => x.amount
+        ),
+
+        ...Array(
+            forecast.length
+        ).fill(null)
+
+    ];
+
+    const forecastData = [
+
+        ...Array(
+            history.length - 1
+        ).fill(null),
+
+        history.length
+            ? history[
+                history.length - 1
+              ].amount
+            : null,
+
+        ...forecast.map(
+            x =>
+                x.predicted_amount
+        )
+
+    ];
+
+    predictionChart =
+        new Chart(
+            canvas,
+            {
+                type:"line",
+
+                data:{
+
+                    labels,
+
+                    datasets:[
+
+                        {
+                            label:
+                                "Histori Pengeluaran",
+
+                            data:
+                                historicalData,
+
+                            tension:0.4
+                        },
+
+                        {
+                            label:
+                                "Prediksi",
+
+                            data:
+                                forecastData,
+
+                            tension:0.4,
+
+                            borderDash:[
+                                8,
+                                8
+                            ]
+                        }
+
+                    ]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    plugins:{
+
+                        datalabels:false
+
+                    },
+
+                    scales:{
+
+                        x:{
+                            ticks:{
+                                color:"#626161"
+                            }
+                        },
+
+                        y:{
+                            ticks:{
+                                color:"#494848"
                             }
                         }
 

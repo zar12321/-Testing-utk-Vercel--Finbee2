@@ -336,6 +336,114 @@
 
     </div>
 
+    <!-- ================================= -->
+    <!-- PREDICTION FILTER -->
+    <!-- ================================= -->
+
+    <div class="card prediction-filter-card">
+
+        <div class="table-header">
+
+            <h3>
+                Prediksi Pengeluaran
+            </h3>
+
+        </div>
+
+        <div class="prediction-filters">
+
+            <!-- PERIODE -->
+
+            <div class="filter-card">
+
+                <span class="filter-title">
+                    Periode Prediksi
+                </span>
+
+                <select id="prediction-days">
+
+                    <option value="7">
+                        7 Hari
+                    </option>
+
+                    <option value="14">
+                        14 Hari
+                    </option>
+
+                    <option value="30" selected>
+                        30 Hari
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- SUBCATEGORY -->
+
+            <div class="filter-card">
+
+                <span class="filter-title">
+                    Subkategori
+                </span>
+
+                <select id="prediction-subcategory">
+
+                    <option value="">
+                        Semua Subkategori
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="analytics-filter-actions">
+
+            <button
+                id="apply-prediction-btn"
+                class="primary-btn"
+                type="button"
+            >
+                Apply Filter
+            </button>
+
+            <button
+                id="reset-prediction-btn"
+                class="danger-outline-btn"
+                type="button"
+            >
+                Reset Filter
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ================================= -->
+    <!-- PREDICTION CHART -->
+    <!-- ================================= -->
+
+    <div class="card prediction-chart-card">
+
+        <div class="chart-header">
+
+            <h3>
+                Prediksi Tren Pengeluaran
+            </h3>
+
+            <span>
+                Prediksi pengeluaran menggunakan Gradient Boosting
+            </span>
+
+        </div>
+
+        <canvas
+            id="prediction-chart"
+        ></canvas>
+
+    </div>
+
 </div>
 
 {% endblock %}

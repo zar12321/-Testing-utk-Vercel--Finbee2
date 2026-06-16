@@ -6,8 +6,8 @@ from app.database.db import (
     get_transactions_by_user_id
 )
 
-from core.prediction import (
-    predict_next_month_expense
+from ml.prediction.forecast_expense import(
+    forecast_expense
 )
 
 from app.repositories import (
@@ -212,20 +212,43 @@ class AnalyticsService:
             )
             .head(n)
         )
-
+    
     @staticmethod
     def get_prediction(
         db: Session,
-        user_id: int
+        user_id: int,
+        days: int = 30,
+        category_id: int | None = None
     ) -> dict:
 
-        transactions_df = (
-            get_transactions_by_user_id(
-                db=db,
-                user_id=user_id
-            )
-        )
+        try:
 
-        return predict_next_month_expense(
-            transactions_df
-        )
+            result = forecast_expense(
+                db=db,
+                user_id=user_id,
+                days=days,
+                category_id=category_id
+            )
+
+            return {
+                "success": True,
+                "message": "Forecast berhasil dibuat.",
+                "data": result
+            }
+
+        except ValueError as e:
+
+            return {
+                "success": False,
+                "message": str(e),
+                "data": None
+            }
+
+        except Exception as e:
+
+            return {
+                "success": False,
+                "message": f"Forecast gagal: {str(e)}",
+                "data": None
+            }
+
