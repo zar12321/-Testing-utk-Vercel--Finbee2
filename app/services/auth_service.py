@@ -10,7 +10,6 @@ from app.database.db import (
 
 from utils.validation import (
     validate_name,
-    validate_email,
     validate_username,
     validate_password,
     validate_confirm_password
@@ -35,10 +34,7 @@ class AuthService:
         if not valid_name:
             raise ValueError(message)
 
-        if login_type.lower() == "email":
-            valid_login, message = validate_email(
-                login_identifier
-            )
+
         else:
             valid_login, message = validate_username(
                 login_identifier

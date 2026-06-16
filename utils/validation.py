@@ -189,16 +189,3 @@ def validate_transaction_form(
     return True, ""
 
 
-def validate_login_identifier(
-    login_identifier,
-    login_type
-) -> tuple[bool, str]:
-
-    if login_type == "Email":
-        return validate_email(
-            login_identifier
-        )
-
-    return validate_username(
-        login_identifier
-    )
