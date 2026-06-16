@@ -74,10 +74,13 @@ def load_categories(db: Session):
 # =====================================================
 # TRANSACTIONS
 # =====================================================
+import math
 
 def load_transactions(
     db: Session,
-    user_id: int | None = None
+    user_id: int | None = None, 
+    page: int=1,
+    page_size: int=20
 ):
 
     query = """
@@ -107,6 +110,10 @@ def load_transactions(
 
     params = {}
 
+    offset = (
+        page - 1
+    ) * page_size
+
     if user_id is not None:
 
         query += """
@@ -114,11 +121,29 @@ def load_transactions(
         """
 
         params["user_id"] = user_id
+    
+    count_query = f"""
+        select count(*)
+        from (
+            {query}
+        ) as counted_transactions
+    """
+
+    total_records = db.execute(
+        text(count_query), 
+        params
+    ).scalar()
 
     query += """
         ORDER BY
-            t.tanggal_transaksi DESC
+            t.tanggal_transaksi DESC, 
+            t.transaction_id desc
+        limit :limit
+        offset :offset
     """
+
+    params["limit"] = page_size
+    params["offset"] = offset
 
     result = db.execute(
         text(query),
@@ -143,8 +168,61 @@ def load_transactions(
 
     print("PARAMS =", params)
 
-    return df
+    return {
+        "data": df, 
+        "page": page, 
+        "page_size": page_size, 
+        "total_records": total_records, 
+        "total_pages": math.ceil(
+            total_records / page_size
+        ) if total_records else 1
+    }
 
+# =====================================================
+# GET ALL TRANSACTIONS
+# =====================================================
+def get_all_transactions_by_user_id(
+    db: Session,
+    user_id: int
+):
+    query = text("""
+        SELECT
+            t.transaction_id,
+            t.user_id,
+            u.nama AS user_name,
+            t.category_id,
+            c.category_name,
+            t.raw_category,
+            t.import_id,
+            t.tanggal_input,
+            t.tanggal_transaksi,
+            t.transaction_type,
+            t.tujuan_transaksi,
+            t.keterangan,
+            t.payment_method,
+            t.amount,
+            t.source,
+            t.created_at
+        FROM transactions t
+        JOIN users u
+            ON t.user_id = u.user_id
+        LEFT JOIN categories c
+            ON t.category_id = c.category_id
+        WHERE t.user_id = :user_id
+        ORDER BY
+            t.tanggal_transaksi DESC,
+            t.transaction_id DESC
+    """)
+
+    result = db.execute(
+        query,
+        {"user_id": user_id}
+    )
+
+    return pd.DataFrame(
+        result.fetchall(),
+        columns=result.keys()
+    )
 
 
 # =====================================================
@@ -246,12 +324,16 @@ def delete_transaction(
 
 def get_transactions_by_user_id(
     db: Session,
-    user_id: int
+    user_id: int, 
+    page: int=1, 
+    page_size: int=20
 ):
 
     return load_transactions(
         db=db,
-        user_id=user_id
+        user_id=user_id, 
+        page=page, 
+        page_size=page_size
     )
 
 # =====================================================
@@ -875,6 +957,8 @@ def get_filter_options(
 def filter_transactions(
     db: Session,
     user_id: int,
+    page: int=1, 
+    page_size: int=20,
     period: str | None = None,
     month: int | None = None, 
     year: int | None = None, 
@@ -914,6 +998,10 @@ def filter_transactions(
     params = {
         "user_id": user_id
     }
+
+    offset = (
+        page - 1
+    ) * page_size
 
     # =========================================
     # PERIODE
@@ -1063,12 +1151,28 @@ def filter_transactions(
     # =========================================
     # ORDER
     # =========================================
+    count_query = f"""
+        select count(*)
+        from (
+            {query}    
+        ) as filtered_transactions
+    """
+
+    total_records = db.execute(
+        text(count_query), 
+        params
+    ).scalar()
 
     query += """
         ORDER BY
             t.tanggal_transaksi DESC,
             t.transaction_id DESC
+        limit :limit
+        offset :offset
     """
+    
+    params["limit"] = page_size
+    params["offset"] = offset
 
     print(query)
     print(params)
@@ -1094,7 +1198,15 @@ def filter_transactions(
             errors="coerce"
         )
 
-    return df
+    return {
+        "data": df, 
+        "page": page, 
+        "page_size": page_size, 
+        "total_records": total_records, 
+        "total_pages": math.ceil(
+            total_records / page_size
+        ) if total_records else 1
+    }
 
 # =========================================
 # GET TRANSACTION BY ID

@@ -61,21 +61,16 @@ templates = Jinja2Templates(
     response_model=list[TransactionResponse]
 )
 def get_transactions(
-
     period: str | None = Query(None),
-
     raw_category: str | None = Query(None),
-
     category_id: int | None = Query(None),
-
     payment_method: str | None = Query(None),
-
     tujuan_transaksi: str | None = Query(None),
-
     keterangan: str | None = Query(None),
 
+    page: int=Query(1, ge=1), 
+    page_size: int=Query(20, ge=1, le=100),
     db: Session = Depends(get_db),
-
     current_user=Depends(get_current_user)
 ):
 
@@ -83,23 +78,34 @@ def get_transactions(
         TransactionService.get_transactions(
             db=db,
             user_id=current_user["user_id"],
+            page=page, 
+            page_size=page_size,
 
             period=period,
-
             raw_category=raw_category,
-
             category_id=category_id,
-
             payment_method=payment_method,
-
             tujuan_transaksi=tujuan_transaksi,
-
             keterangan=keterangan
         )
     )
 
-    return transactions
+    return {
+        "data": transactions["data"]
+            .fillna("")
+            .to_dict(orient="records"),
 
+        "page": transactions["page"],
+
+        "page_size":
+            transactions["page_size"],
+
+        "total_records":
+            transactions["total_records"],
+
+        "total_pages":
+            transactions["total_pages"]
+    }
 
 # =====================================================
 # GET CATEGORIES
@@ -126,8 +132,7 @@ def get_categories(
 # =====================================================
 
 @router.post(
-    "/",
-    response_model=TransactionActionResponse
+    "/"
 )
 def create_transaction(
     request: TransactionCreateRequest,
@@ -451,6 +456,7 @@ def get_filter_options(
 def filter_transactions(
     db: Session = Depends(get_db), 
     current_user = Depends(get_current_user), 
+
     period: str | None = None,
     month: int | None = None, 
     year: int | None = None,
@@ -458,12 +464,16 @@ def filter_transactions(
     subcategory_id: int | None = None,
     payment_method: str | None = None,
     tujuan: str | None = None,
-    keterangan: str | None = None
+    keterangan: str | None = None,
+
+    page: int = Query(1, ge=1), 
+    page_size: int = Query(20, ge=1, le=100)
 ):
     transactions=(
         TransactionService.filter_transactions(
             db=db,
             user_id=current_user["user_id"],
+
             period=period,
             month=month, 
             year=year,
@@ -471,12 +481,29 @@ def filter_transactions(
             subcategory_id=subcategory_id,
             payment_method=payment_method,
             tujuan=tujuan,
-            keterangan=keterangan
+            keterangan=keterangan, 
+
+            page=page, 
+            page_size=page_size
         )
     )
-    return transactions.to_dict(
-        orient="records"
-    )
+
+    return {
+        "data": transactions["data"]
+            .fillna("")
+            .to_dict(orient="records"),
+
+        "page": transactions["page"],
+
+        "page_size":
+            transactions["page_size"],
+
+        "total_records":
+            transactions["total_records"],
+
+        "total_pages":
+            transactions["total_pages"]
+    }
 
 
 # =====================================================

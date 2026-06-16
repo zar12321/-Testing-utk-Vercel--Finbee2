@@ -8,6 +8,20 @@ const categoryAlias = {
 
 };
 
+let allTransactions = [];
+
+let currentPage = 1;
+
+let totalPages = 1;
+
+let totalRecords = 0;
+
+let currentFilters = 
+    new URLSearchParams();
+
+const rowsPerPage = 20;
+
+
 document.addEventListener(
     "DOMContentLoaded",
     () => {
@@ -1384,18 +1398,35 @@ async function applyFilters() {
     console.log(
         document.getElementById("filter-keterangan")
     );
-    const response =
-        await fetch(
-            `/transactions/filter?${params}`
-        );
 
-    const transactions =
-        await response.json();
-
-    renderTransactionTable(
-        transactions
+    params.set(
+        "page",
+        1
     );
 
+    currentFilters =
+        new URLSearchParams(params);
+
+    const response =
+        await fetch(
+            `/transactions/filter?${currentFilters}`
+        );
+
+    const result =
+        await response.json();
+
+    currentPage =
+        result.page;
+
+    totalPages =
+        result.total_pages;
+
+    totalRecords =
+        result.total_records;
+
+    renderTransactionTable(
+        result.data
+    );
 }
 
 function resetFilters() {
@@ -1411,6 +1442,9 @@ function resetFilters() {
 
     document.getElementById("filter-tujuan").value = "";
     document.getElementById("filter-keterangan").value = "";
+
+    currentFilters = 
+        new URLSearchParams();
 
     loadTransactions();
 
@@ -1430,6 +1464,10 @@ function renderTransactionTable(
         );
 
     tableBody.innerHTML = "";
+
+    allTransactions = transactions;
+
+
 
     if (!transactions.length) {
 
@@ -1534,19 +1572,274 @@ function renderTransactionTable(
             `;
         }
     );
+    renderPagination();
 }
 
-async function loadTransactions() {
+function renderPagination() {
+
+    const container =
+        document.getElementById(
+            "pagination-container"
+        );
+
+    if (!container)
+        return;
+
+    container.innerHTML = "";
+
+    const pageInfo =
+        document.createElement(
+            "span"
+        );
+
+    pageInfo.className =
+        "pagination-info";
+
+    pageInfo.innerHTML =
+        `Halaman ${currentPage} / ${totalPages}`;
+
+    container.appendChild(
+        pageInfo
+    );
+
+    if (totalPages <= 1)
+        return;
+
+    // PREV
+
+    const prevBtn =
+        document.createElement(
+            "button"
+        );
+
+    prevBtn.innerHTML = "←";
+
+    prevBtn.className =
+        "pagination-btn";
+
+    prevBtn.disabled =
+        currentPage === 1;
+
+    prevBtn.onclick =
+        () => loadTransactions(
+            currentPage - 1
+        );
+
+    container.appendChild(
+        prevBtn
+    );
+
+    // PAGE NUMBERS
+
+    const visiblePages = 10;
+
+    let startPage =
+        Math.max(
+            1,
+            currentPage - Math.floor(
+                visiblePages / 2
+            )
+        );
+
+    let endPage =
+        startPage +
+        visiblePages - 1;
+
+    if (endPage > totalPages) {
+
+        endPage =
+            totalPages;
+
+        startPage =
+            Math.max(
+                1,
+                endPage -
+                visiblePages +
+                1
+            );
+
+    }
+
+    // HALAMAN PERTAMA + ...
+
+    if (startPage > 1) {
+
+        const firstBtn =
+            document.createElement(
+                "button"
+            );
+
+        firstBtn.className =
+            "pagination-btn";
+
+        firstBtn.innerHTML = "1";
+
+        firstBtn.onclick =
+            () => loadTransactions(
+                1
+            );
+
+        container.appendChild(
+            firstBtn
+        );
+
+        if (startPage > 2) {
+
+            const dots =
+                document.createElement(
+                    "span"
+                );
+
+            dots.innerHTML =
+                "...";
+
+            container.appendChild(
+                dots
+            );
+
+        }
+
+    }
+
+    // HALAMAN YANG DITAMPILKAN
+
+    for (
+        let i = startPage;
+        i <= endPage;
+        i++
+    ) {
+
+        const btn =
+            document.createElement(
+                "button"
+            );
+
+        btn.className =
+            "pagination-btn";
+
+        if (
+            i === currentPage
+        ) {
+
+            btn.classList.add(
+                "active"
+            );
+
+        }
+
+        btn.innerHTML = i;
+
+        btn.onclick =
+            () => loadTransactions(
+                i
+            );
+
+        container.appendChild(
+            btn
+        );
+
+    }
+
+    // HALAMAN TERAKHIR + ...
+
+    if (
+        endPage <
+        totalPages
+    ) {
+
+        if (
+            endPage <
+            totalPages - 1
+        ) {
+
+            const dots =
+                document.createElement(
+                    "span"
+                );
+
+            dots.innerHTML =
+                "...";
+
+            container.appendChild(
+                dots
+            );
+
+        }
+
+        const lastBtn =
+            document.createElement(
+                "button"
+            );
+
+        lastBtn.className =
+            "pagination-btn";
+
+        lastBtn.innerHTML =
+            totalPages;
+
+        lastBtn.onclick =
+            () => loadTransactions(
+                totalPages
+            );
+
+        container.appendChild(
+            lastBtn
+        );
+
+    }
+
+    // NEXT
+
+    const nextBtn =
+        document.createElement(
+            "button"
+        );
+
+    nextBtn.innerHTML = "→";
+
+    nextBtn.className =
+        "pagination-btn";
+
+    nextBtn.disabled =
+        currentPage === totalPages;
+
+    nextBtn.onclick =
+        () => loadTransactions(
+            currentPage + 1
+        );
+
+    container.appendChild(
+        nextBtn
+    );
+}
+
+async function loadTransactions(
+    page = 1
+) {
+
+    currentFilters.set(
+        "page",
+        page
+    );
 
     const response =
         await fetch(
-            "/transactions/filter"
+            `/transactions/filter?${currentFilters}`
         );
 
-    const transactions =
+    const result =
         await response.json();
 
+    currentPage =
+        result.page;
+
+    totalPages =
+        result.total_pages;
+
+    totalRecords =
+        result.total_records;
+
     renderTransactionTable(
-        transactions
+        result.data
     );
 }

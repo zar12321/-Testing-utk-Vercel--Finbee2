@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 import pandas as pd
 
 from app.database.db import (
-    get_transactions_by_user_id
+    get_all_transactions_by_user_id
 )
 
 from utils.format_currency import (
@@ -25,7 +25,7 @@ def load_dashboard_transactions(
     year: int | None = None
 ) -> pd.DataFrame:
 
-    df = get_transactions_by_user_id(
+    df = get_all_transactions_by_user_id(
         db=db,
         user_id=user_id, 
     )

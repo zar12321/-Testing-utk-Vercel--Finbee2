@@ -29,6 +29,32 @@ def validate_name(
     return True, ""
 
 
+def validate_email(
+    email
+) -> tuple[bool, str]:
+
+    if not email:
+        return False, "Email wajib diisi."
+
+    email = str(email).strip()
+
+    pattern = (
+        r"^[A-Za-z0-9._%+-]+"
+        r"@[A-Za-z0-9.-]+"
+        r"\.[A-Za-z]{2,}$"
+    )
+
+    if not re.match(
+        pattern,
+        email
+    ):
+        return (
+            False,
+            "Format email tidak valid."
+        )
+
+    return True, ""
+
 
 def validate_username(
     username
@@ -189,3 +215,16 @@ def validate_transaction_form(
     return True, ""
 
 
+def validate_login_identifier(
+    login_identifier,
+    login_type
+) -> tuple[bool, str]:
+
+    if login_type == "Email":
+        return validate_email(
+            login_identifier
+        )
+
+    return validate_username(
+        login_identifier
+    )

@@ -346,6 +346,45 @@
 }
 
 /* =========================
+   PAGINATION
+========================= */
+
+.pagination-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+
+    margin-top:24px;
+}
+
+.pagination-btn{
+    min-width:40px;
+    height:40px;
+
+    border:none;
+    border-radius:12px;
+
+    background:#ffffff;
+    border:1px solid #d9e1ec;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:.2s;
+}
+
+.pagination-btn:hover{
+    background:#f8fafc;
+}
+
+.pagination-btn.active{
+    background:#163C8C;
+    color:white;
+    border-color:#163C8C;
+}
+/* =========================
    TRANSACTION FILTERS
 ========================= */
 
