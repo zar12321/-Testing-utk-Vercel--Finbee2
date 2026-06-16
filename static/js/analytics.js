@@ -33,6 +33,8 @@ document.addEventListener(
 
 let cashflowChart = null;
 let breakdownChart = null;
+let paymentBarChart = null;
+let paymentDoughnutChart = null;
 
 let breakdownPreviewData = {};
 
@@ -273,6 +275,14 @@ async function loadAnalytics(
             data.breakdown_chart
         );
 
+        renderPaymentDoughnutChart (
+            data.payment_method_chart
+        );
+
+        renderPaymentBarChart (
+            data.payment_method_chart
+        );
+
         breakdownPreviewData = 
             data.breakdown_preview || {};
 
@@ -371,10 +381,63 @@ function renderCashflowChart(
                 },
 
                 options: {
-
                     responsive: true,
 
                     maintainAspectRatio: false,
+
+                    animation: false,
+
+                    animation: {
+                        duration: 100
+                    },
+
+                    animations: {
+                        x: {
+                            type: 'number',
+                            easing: 'linear',
+                            duration: 0.0005,
+                            from: NaN,
+                            delay(ctx) {
+
+                                if(
+                                    ctx.type !== 'data' ||
+                                    ctx.xStarted
+                                ){
+                                    return 0;
+                                }
+
+                                ctx.xStarted = true;
+
+                                return ctx.index * 40;
+                            }
+                        },
+
+                        y: {
+                            type: 'number',
+                            easing: 'linear',
+                            duration: 0.0005,
+                            from(ctx){
+
+                                if(
+                                    ctx.index === 0
+                                ){
+                                    return ctx.chart.scales.y.getPixelForValue(0);
+                                }
+
+                                return ctx.chart
+                                    .getDatasetMeta(
+                                        ctx.datasetIndex
+                                    )
+                                    .data[
+                                        ctx.index - 1
+                                    ]
+                                    .getProps(
+                                        ['y'],
+                                        true
+                                    ).y;
+                            }
+                        }
+                    },
 
                     plugins: {
 
@@ -480,7 +543,7 @@ function renderBreakdownChart(
 
                     datasets: [
                         {
-                            label: "Total",
+                            label: "Nominal",
 
                             data:
                                 chartData.map(
@@ -493,6 +556,12 @@ function renderBreakdownChart(
                 },
 
                 options: {
+                    animation:{
+                        y:{
+
+                            from: 0
+                        }
+                    },
 
                     responsive: true,
 
@@ -559,13 +628,13 @@ function renderBreakdownChart(
 
                                 return value >
                                     maxValue * 0.75
-                                    ? "#151515"
+                                    ? "#000000"
                                     : "#161616";
 
                             },
 
                             font: {
-                                weight: "bold",
+                                weight: "600",
                                 size: 11, 
                                 family: "inherit"
                             }
@@ -593,6 +662,263 @@ function renderBreakdownChart(
                                 }
                             }
                         }
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+// ======================================
+// DOUGHNUT CHART
+// ======================================
+function renderPaymentDoughnutChart(
+    chartData
+){
+
+    const canvas =
+        document.getElementById(
+            "payment-doughnut-chart"
+        );
+
+    if(!canvas) return;
+
+    if(paymentDoughnutChart){
+        paymentDoughnutChart.destroy();
+    }
+
+    paymentDoughnutChart =
+        new Chart(
+            canvas,
+            {
+                type:"doughnut",
+
+                data:{
+                    labels:
+                        chartData.map(
+                            item => item.label
+                        ),
+
+                    datasets:[
+                        {
+                            data:
+                                chartData.map(
+                                    item => item.total
+                                )
+                        }
+                    ]
+                },
+
+                options:{
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    plugins:{
+
+                        legend:{
+                            position:"top"
+                        },
+
+
+                        datalabels:{
+
+                            display:(context)=>{
+
+                                const value =
+                                    context.dataset.data[
+                                        context.dataIndex
+                                    ];
+
+                                const total =
+                                    context.dataset.data.reduce(
+                                        (a,b)=>a+b,
+                                        0
+                                    );
+
+                                const percent =
+                                    (value / total) * 100;
+
+                                return percent >= 5;
+                            },
+
+                            color: "#000000", 
+                            font: {
+                                weight:"600", 
+                                size:11
+                            },
+
+                            formatter:(value, context)=>{
+
+                                const total =
+                                    context.dataset.data
+                                    .reduce(
+                                        (a,b)=>a+b,
+                                        0
+                                    );
+
+                                const percent =
+                                    (
+                                        value / total
+                                    ) * 100;
+
+                                return percent.toFixed(1) + "%";
+                            }
+
+                        }, 
+
+                        layout:{
+                            padding:{
+                                top:10,
+                                right:20,
+                                left:20,
+                                bottom:10
+                            }
+                        }
+                    }
+                }
+            }
+        );
+
+
+}
+
+// ======================================
+// HORIZONTAL BAR CHART
+// ======================================
+function renderPaymentBarChart(
+    chartData
+){
+
+    const canvas =
+        document.getElementById(
+            "payment-bar-chart"
+        );
+
+    if(!canvas) return;
+
+    if(paymentBarChart){
+        paymentBarChart.destroy();
+    }
+
+    paymentBarChart =
+        new Chart(
+            canvas,
+            {
+                type:"bar",
+
+                data:{
+
+                    labels:
+                        chartData.map(
+                            item => item.label
+                        ),
+
+                    datasets:[
+                        {
+                            label:"Nominal",
+
+                            data:
+                                chartData.map(
+                                    item => item.total
+                                ),
+
+                            borderRadius:10
+                        }
+                    ]
+                },
+
+                options:{
+
+                    indexAxis:"y",
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    plugins:{
+
+                        datalabels:{
+
+                            formatter:(value)=>{
+
+                                return (
+                                    "Rp " +
+                                    Number(value)
+                                    .toLocaleString(
+                                        "id-ID"
+                                    )
+                                );
+
+                            },
+
+                            anchor:(context)=>{
+
+                                const value =
+                                    context.dataset.data[
+                                        context.dataIndex
+                                    ];
+
+                                const maxValue =
+                                    Math.max(
+                                        ...context.dataset.data
+                                    );
+
+                                return value >
+                                    maxValue * 0.75
+                                    ? "center"
+                                    : "end";
+                            },
+
+                            align:(context)=>{
+
+                                const value =
+                                    context.dataset.data[
+                                        context.dataIndex
+                                    ];
+
+                                const maxValue =
+                                    Math.max(
+                                        ...context.dataset.data
+                                    );
+
+                                return value >
+                                    maxValue * 0.75
+                                    ? "center"
+                                    : "right";
+                            },
+
+                            color:(context)=>{
+
+                                const value =
+                                    context.dataset.data[
+                                        context.dataIndex
+                                    ];
+
+                                const maxValue =
+                                    Math.max(
+                                        ...context.dataset.data
+                                    );
+
+                                return value >
+                                    maxValue * 0.75
+                                    ? "#000000"
+                                    : "#374151";
+                            },
+
+                            font:{
+                                size:11,
+                                weight:"600"
+                            }
+                        }, 
+                        layout:{
+                            padding:{
+                                right:50
+                            }
+                        }
+
                     }
 
                 }

@@ -98,6 +98,8 @@ def get_transactions(
         )
     )
 
+    return transactions
+
 
 # =====================================================
 # GET CATEGORIES

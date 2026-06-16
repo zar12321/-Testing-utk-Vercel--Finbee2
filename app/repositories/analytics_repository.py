@@ -414,3 +414,48 @@ def get_breakdown_preview(
         )
 
     return preview
+
+# =====================================================
+# PAYMENT ANALYTICS
+# =====================================================
+
+def get_payment_method_chart(
+    db: Session,
+    user_id: int,
+    filters: dict
+):
+
+    query = """
+        SELECT
+            payment_method AS label,
+            SUM(amount) AS total
+
+        FROM transactions
+
+        WHERE user_id = :user_id
+    """
+
+    params = {
+        "user_id": user_id
+    }
+
+    query, params = build_filter_query(
+        query,
+        params,
+        filters
+    )
+
+    query += """
+        GROUP BY payment_method
+        ORDER BY total DESC
+    """
+
+    result = db.execute(
+        text(query),
+        params
+    )
+
+    return [
+        dict(row._mapping)
+        for row in result
+    ]

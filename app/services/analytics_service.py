@@ -57,6 +57,13 @@ class AnalyticsService:
                     db=db, 
                     user_id=user_id, 
                     filters=filters
+                ), 
+
+            "payment_method_chart":
+                analytics_repository.get_payment_method_chart(
+                    db=db, 
+                    user_id=user_id, 
+                    filters=filters
                 )
         }
 

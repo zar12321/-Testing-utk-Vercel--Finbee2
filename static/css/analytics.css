@@ -227,7 +227,7 @@
 
 .chart-card{
     min-height:450px;
-    position: inherit;
+    position: relative;
 }
 
 .chart-header{
@@ -248,9 +248,7 @@
     height:350px !important;
 }
 
-.chart-card{
-    position:relative;
-}
+
 
 .breakdown-preview{
 
@@ -297,7 +295,71 @@
 
 
 
+/* =======================================
+   PAYMENT ANALYTICS
+======================================= */
 
+.payment-analytics-card{
+    grid-column:1 / -1;
+
+    margin-top:-5px;
+
+    overflow:hidden;
+
+    padding-bottom: 36px;
+}
+
+.payment-chart-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:32px;
+
+    padding-top:24px;
+
+    border-top:
+        1px solid #E5EAF2;
+}
+
+.payment-chart-item{
+
+    min-width:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    min-height: 420px;
+}
+
+.payment-chart-item canvas{
+
+    width:100% !important;
+
+    height:400px !important;
+}
+
+
+
+
+@media(max-width:900px){
+
+    .payment-chart-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
 
 
 

@@ -1,3 +1,13 @@
+const categoryAlias = {
+
+    expense: "Pengeluaran",
+
+    income: "Pemasukan",
+
+    topup: "Topup"
+
+};
+
 document.addEventListener(
     "DOMContentLoaded",
     () => {
@@ -30,6 +40,9 @@ document.addEventListener(
         
         const toast =
             document.getElementById("success-toast");
+
+    
+
 
         // =====================
         // FUNCTION CLOSE MODAL
@@ -1219,15 +1232,6 @@ async function loadFilterOptions() {
         }
     );
 
-    const categoryAlias = {
-
-        expense: "Pengeluaran",
-
-        income: "Pemasukan",
-
-        topup: "Topup"
-
-    };
 
     data.categories.forEach(
         category => {
@@ -1415,6 +1419,10 @@ function resetFilters() {
 function renderTransactionTable(
     transactions
 ) {
+    console.log(
+        "Transactions", 
+        transactions
+    )
 
     const tableBody =
         document.getElementById(
@@ -1454,7 +1462,13 @@ function renderTransactionTable(
                     </td>
 
                     <td>
-                        ${transaction.raw_category || "-"}
+                        ${
+                            categoryAlias[
+                                transaction.raw_category
+                            ] ||
+                            transaction.raw_category ||
+                            "-"
+                        }
                     </td>
 
                     <td>
