@@ -295,6 +295,20 @@ async function loadAnalytics(
             data
         );
 
+        console.log(
+            "Cashflow:",
+            data.cashflow_trend
+        );
+
+        console.log(
+            "Breakdown:",
+            data.breakdown_chart
+        );
+
+        console.log(
+            "Payment:",
+            data.payment_method_chart
+        );
         renderCashflowChart(
             data.cashflow_trend
         );
@@ -382,11 +396,34 @@ async function loadPrediction(){
 
         if(
             result.success &&
-            result.data
+            result.data &&
+            result.data.history?.length
         ){
+
+            toggleEmptyState(
+                "prediction-chart",
+                "prediction-empty",
+                true
+            );
 
             renderPredictionChart(
                 result.data
+            );
+
+        }
+        else{
+
+            if(predictionChart){
+
+                predictionChart.destroy();
+
+                predictionChart = null;
+            }
+
+            toggleEmptyState(
+                "prediction-chart",
+                "prediction-empty",
+                false
             );
 
         }
@@ -398,6 +435,19 @@ async function loadPrediction(){
         console.error(
             "Prediction Error:",
             error
+        );
+
+        if(predictionChart){
+
+            predictionChart.destroy();
+
+            predictionChart = null;
+        }
+
+        toggleEmptyState(
+            "prediction-chart",
+            "prediction-empty",
+            false
         );
 
     }
@@ -426,24 +476,46 @@ async function resetPredictionFilters(){
 // CASHFLOW TREND CHART
 // ======================================
 
-function renderCashflowChart(
-    chartData
-){
+function renderCashflowChart(chartData){
 
     const canvas =
         document.getElementById(
             "cashflow-chart"
         );
 
-    if(
-        !canvas
-    ) return;
+    if(!canvas) return;
+
+    if(cashflowChart){
+        cashflowChart.destroy();
+        cashflowChart = null;
+    }
 
     if(
-        cashflowChart
+        !chartData ||
+        chartData.length === 0
     ){
-        cashflowChart.destroy();
+
+        toggleEmptyState(
+            "cashflow-chart",
+            "cashflow-empty",
+            false
+        );
+
+        if(cashflowChart){
+
+            cashflowChart.destroy();
+
+            cashflowChart = null;
+        }
+
+        return;
     }
+
+    toggleEmptyState(
+        "cashflow-chart",
+        "cashflow-empty",
+        true
+    );
 
     cashflowChart =
         new Chart(
@@ -617,8 +689,11 @@ function renderCashflowChart(
 
             }
         );
-
 }
+
+
+
+
 
 
 
@@ -644,7 +719,33 @@ function renderBreakdownChart(
     ){
         breakdownChart.destroy();
     }
+    
+    if(
+    !chartData ||
+    chartData.length === 0
+    ){
 
+        toggleEmptyState(
+            "breakdown-chart",
+            "breakdown-empty",
+            false
+        );
+
+        if(breakdownChart){
+
+            breakdownChart.destroy();
+
+            breakdownChart = null;
+        }
+
+        return;
+    }
+
+    toggleEmptyState(
+        "breakdown-chart",
+        "breakdown-empty",
+        true
+    );
     breakdownChart =
         new Chart(
             canvas,
@@ -806,6 +907,33 @@ function renderPaymentDoughnutChart(
         paymentDoughnutChart.destroy();
     }
 
+    if(
+    !chartData ||
+    chartData.length === 0
+    ){
+
+        toggleEmptyState(
+            "payment-doughnut-chart",
+            "payment-doughnut-empty",
+            false
+        );
+
+        if(paymentDoughnutChart){
+
+            paymentDoughnutChart.destroy();
+
+            paymentDoughnutChart = null;
+        }
+
+        return;
+    }
+
+    toggleEmptyState(
+        "payment-doughnut-chart",
+        "payment-doughnut-empty",
+        true
+    );
+
     paymentDoughnutChart =
         new Chart(
             canvas,
@@ -923,6 +1051,33 @@ function renderPaymentBarChart(
     if(paymentBarChart){
         paymentBarChart.destroy();
     }
+
+    if(
+    !chartData ||
+    chartData.length === 0
+    ){
+
+        toggleEmptyState(
+            "payment-bar-chart",
+            "payment-bar-empty",
+            false
+        );
+
+        if(paymentBarChart){
+
+            paymentBarChart.destroy();
+
+            paymentBarChart = null;
+        }
+
+        return;
+    }
+
+    toggleEmptyState(
+        "payment-bar-chart",
+        "payment-bar-empty",
+        true
+    );
 
     paymentBarChart =
         new Chart(
@@ -1197,5 +1352,52 @@ function renderPredictionChart(
 
             }
         );
+
+}
+
+function toggleEmptyState(
+    chartId,
+    emptyId,
+    hasData
+){
+
+    const canvas =
+        document.getElementById(
+            chartId
+        );
+
+    const empty =
+        document.getElementById(
+            emptyId
+        );
+
+    if(
+        !canvas ||
+        !empty
+    ){
+        return;
+    }
+
+    if(hasData){
+
+        canvas.style.display =
+            "block";
+
+        empty.classList.remove(
+            "show"
+        );
+
+    }
+
+    else{
+
+        canvas.style.display =
+            "none";
+
+        empty.classList.add(
+            "show"
+        );
+
+    }
 
 }

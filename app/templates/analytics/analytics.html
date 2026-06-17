@@ -10,6 +10,11 @@
     href="/static/css/analytics.css"
 >
 
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+>
+
 {% endblock %}
 
 {% block content %}
@@ -232,9 +237,31 @@
 
             </div>
 
-            <canvas
-                id="cashflow-chart"
-            ></canvas>
+            <div class="chart-wrapper">
+
+                <canvas
+                    id="cashflow-chart"
+                ></canvas>
+
+                <div
+                    id="cashflow-empty"
+                    class="chart-empty-state"
+                >
+                    <i class="fas fa-triangle-exclamation"></i>
+
+                    <h3>
+                        Tidak Ada Data
+                    </h3>
+
+                    <p>
+                        Tidak ada transaksi yang dapat ditampilkan.
+                        <br>
+                        Periksa kembali filter Anda.
+                    </p>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -260,9 +287,31 @@
                 class="breakdown-preview"
             ></div>
 
-            <canvas
-                id="breakdown-chart"
-            ></canvas>
+            <div class="chart-wrapper">
+
+                <canvas
+                    id="breakdown-chart"
+                ></canvas>
+
+                <div
+                    id="breakdown-empty"
+                    class="chart-empty-state"
+                >
+                    <i class="fas fa-triangle-exclamation"></i>
+
+                    <h3>
+                        Tidak Ada Data
+                    </h3>
+
+                    <p>
+                        Tidak ada transaksi yang dapat ditampilkan.
+                        <br>
+                        Periksa kembali filter Anda.
+                    </p>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -302,9 +351,31 @@
 
                     </div>
 
-                    <canvas
-                        id="payment-doughnut-chart"
-                    ></canvas>
+                    <div class="chart-wrapper">
+
+                        <canvas
+                            id="payment-doughnut-chart"
+                        ></canvas>
+
+                        <div
+                            id="payment-doughnut-empty"
+                            class="chart-empty-state"
+                        >
+                            <i class="fas fa-triangle-exclamation"></i>
+
+                            <h3>
+                                Tidak Ada Data
+                            </h3>
+
+                            <p>
+                                Tidak ada transaksi yang dapat ditampilkan.
+                                <br>
+                                Periksa kembali filter Anda.
+                            </p>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -324,9 +395,31 @@
 
                     </div>
 
-                    <canvas
-                        id="payment-bar-chart"
-                    ></canvas>
+                    <div class="chart-wrapper">
+
+                        <canvas
+                            id="payment-bar-chart"
+                        ></canvas>
+
+                        <div
+                            id="payment-bar-empty"
+                            class="chart-empty-state"
+                        >
+                            <i class="fas fa-triangle-exclamation"></i>
+
+                            <h3>
+                                Tidak Ada Data
+                            </h3>
+
+                            <p>
+                                Tidak ada transaksi yang dapat ditampilkan.
+                                <br>
+                                Periksa kembali filter Anda.
+                            </p>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -438,9 +531,33 @@
 
         </div>
 
-        <canvas
-            id="prediction-chart"
-        ></canvas>
+        <div class="chart-wrapper">
+
+            <canvas
+                id="prediction-chart"
+            ></canvas>
+
+            <div
+                id="prediction-empty"
+                class="chart-empty-state"
+            >
+                <i class="fas fa-triangle-exclamation"></i>
+
+                <h3>
+                    Data Belum Mencukupi
+                </h3>
+
+                <p>
+                    Prediksi hanya dapat dibuat jika subkategori memiliki
+                    minimal <b>90 hari transaksi aktif</b>.
+                    <br>
+                    Tambahkan lebih banyak riwayat transaksi
+                    atau pilih subkategori lain.
+                </p>
+
+            </div>
+
+        </div>
 
     </div>
 
