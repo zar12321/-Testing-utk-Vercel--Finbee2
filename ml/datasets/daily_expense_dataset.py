@@ -5,7 +5,7 @@ import pandas as pd
 from sqlalchemy.orm import Session
 
 from app.database.db import (
-    get_transactions_by_user_id
+    get_all_transactions_by_user_id
 )
 
 def build_daily_expense_dataset(
@@ -26,7 +26,7 @@ def build_daily_expense_dataset(
     # ================================
     # Load transaksi user
     # ================================
-    df = get_transactions_by_user_id(
+    df = get_all_transactions_by_user_id(
         db=db, 
         user_id=user_id
     )
