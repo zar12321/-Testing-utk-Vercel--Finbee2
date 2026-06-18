@@ -576,7 +576,7 @@ function renderCashflowChart(chartData){
 
                     animation: false,
 
-                
+                    
 
                     plugins: {
 

@@ -90,7 +90,7 @@ def parse_flexible_date(
     value: Any
 ):
     if pd.isna(value):
-        return pd.NaT
+        return pd.Timestamp.today().normalize()
 
     for fmt in SUPPORTED_DATE_FORMATS:
         try:
@@ -102,10 +102,15 @@ def parse_flexible_date(
         except Exception:
             continue
 
-    return pd.to_datetime(
+    parsed_date = pd.to_datetime(
         value,
         errors="coerce"
     )
+
+    if pd.isna(parsed_date):
+        return pd.Timestamp.today().normalize()
+
+    return parsed_date
 
 
 def normalize_transaction_type(
@@ -483,6 +488,11 @@ def auto_clean_financial_file(
             .str.strip()
         )
 
+        cleaned_df.loc[
+            cleaned_df["keterangan"] == "", 
+            "keterangan"
+        ] = "-"
+
     else:
         cleaned_df["keterangan"] = ""
 
@@ -495,25 +505,38 @@ def auto_clean_financial_file(
             .str.strip()
         )
 
+
     else:
 
         cleaned_df["tujuan_transaksi"] = (
             cleaned_df["keterangan"]
         )
 
+    cleaned_df["tujuan_transaksi"] = (
+        df[tujuan_col]
+        .fillna("")
+        .astype(str)
+        .str.strip()
+    )
+
     cleaned_df.loc[
         cleaned_df["tujuan_transaksi"] == "",
         "tujuan_transaksi"
-    ] = cleaned_df["keterangan"]
+    ] = "-"
 
     if payment_col:
 
         cleaned_df["payment_method"] = (
             df[payment_col]
-            .fillna(DEFAULT_PAYMENT_METHOD)
+            .fillna("-")
             .astype(str)
             .str.strip()
         )
+
+        cleaned_df.loc[
+            cleaned_df["payment_method"] == "",
+            "payment_method"
+        ] = "-"
 
     else:
 
@@ -554,6 +577,11 @@ def auto_clean_financial_file(
             .astype(str)
             .str.strip()
         )
+
+        cleaned_df.loc[
+            cleaned_df["raw_category"] == "",
+            "raw_category"
+        ] = "-"
 
     else:
 
