@@ -576,57 +576,7 @@ function renderCashflowChart(chartData){
 
                     animation: false,
 
-                    animation: {
-                        duration: 100
-                    },
-
-                    animations: {
-                        x: {
-                            type: 'number',
-                            easing: 'linear',
-                            duration: 0,
-                            from: NaN,
-                            delay(ctx) {
-
-                                if(
-                                    ctx.type !== 'data' ||
-                                    ctx.xStarted
-                                ){
-                                    return 0;
-                                }
-
-                                ctx.xStarted = true;
-
-                                return ctx.index * 40;
-                            }
-                        },
-
-                        y: {
-                            type: 'number',
-                            easing: 'linear',
-                            duration: 0,
-                            from(ctx){
-
-                                if(
-                                    ctx.index === 0
-                                ){
-                                    return ctx.chart.scales.y.getPixelForValue(0);
-                                }
-
-                                return ctx.chart
-                                    .getDatasetMeta(
-                                        ctx.datasetIndex
-                                    )
-                                    .data[
-                                        ctx.index - 1
-                                    ]
-                                    .getProps(
-                                        ['y'],
-                                        true
-                                    ).y;
-                            }
-                        }
-                    },
+                
 
                     plugins: {
 

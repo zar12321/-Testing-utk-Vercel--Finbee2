@@ -6,31 +6,6 @@ from typing import Optional
 from pydantic import BaseModel
 from pydantic import Field
 
-
-# =====================================================
-# PROFILE RESPONSE
-# =====================================================
-
-class ProfileResponse(BaseModel):
-
-    user_id: int
-
-    nama: str
-
-    login_identifier: str
-
-    login_type: str
-
-    umur: Optional[int] = None
-
-    pekerjaan: Optional[str] = None
-
-    created_at: Optional[datetime] = None
-
-    profile_photo: Optional[str] = None
-
-
-
 # =====================================================
 # UPDATE PROFILE REQUEST
 # =====================================================
