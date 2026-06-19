@@ -548,6 +548,15 @@ a{
     transform:translateY(-1px);
 }
 
+.photo-upload-note{
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #94a3b8;
+    text-align: center;
+    letter-spacing: 0.2px;
+}
+
 .profile-form-group{
 
     display:flex;

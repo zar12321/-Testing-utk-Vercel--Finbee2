@@ -735,6 +735,12 @@
     min-height:auto;
 }
 
+.import-note{
+    margin-top: 6px;
+    font-size: 12px;
+    color: #828995;
+    line-height: 1.6;
+}
 /* =========================
    BRAND
 ========================= */
