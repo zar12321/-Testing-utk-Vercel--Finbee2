@@ -10,6 +10,10 @@ from app.services.dashboard_service import (
     get_spending_alert
 )
 
+from app.database.db import (
+    get_user_by_id
+)
+
 from app.services.analytics_service import (
     AnalyticsService
 )
@@ -37,6 +41,14 @@ class RAGService:
                 belum dapat dilakukan karena data
                 transaksi masih kosong.
                 """.strip()
+
+        # =====================================
+        # PROFILE USER
+        # =====================================    
+        profile = get_user_by_id(
+            db=db, 
+            user_id=user_id
+        )
 
         # =====================================
         # DASHBOARD METRICS
@@ -80,6 +92,45 @@ class RAGService:
         )
 
         # =====================================
+        # SUMMARY METRICS
+        # =====================================
+
+        summary_metrics = (
+            AnalyticsService
+            .get_summary_metrics(df)
+        )
+
+        # =====================================
+        # PAYMENT METHOD ANALYSIS
+        # =====================================
+
+        payment_analysis = (
+            AnalyticsService
+            .analyze_by_payment_method(df)
+        )
+
+        # =====================================
+        # MONTHLY TREND
+        # =====================================
+
+        monthly_trend = (
+            AnalyticsService
+            .get_monthly_trend(df)
+        )
+
+        # =====================================
+        # CHART DATA
+        # =====================================
+
+        chart_data = (
+            AnalyticsService
+            .get_chart_data(
+                db=db,
+                user_id=user_id
+            )
+        )
+
+        # =====================================
         # TOP TRANSACTIONS
         # =====================================
 
@@ -89,6 +140,13 @@ class RAGService:
                 transactions_df=df,
                 n=5
             )
+        )
+
+        # =====================================
+        # Recent Transactions
+        # =====================================
+        recent_transactions = (
+            df.head(10)
         )
 
         # =====================================
@@ -109,6 +167,20 @@ class RAGService:
 
         context = f"""
             FINANCIAL SUMMARY
+            Profile User:
+
+            Nama: 
+            {profile.nama if profile else "-"}
+
+            Username: 
+            {profile.login_identifier if profile else "-"}
+
+            Umur:
+            {profile.umur if profile else "-"}
+
+            Pekerjaan:
+            {profile.pekerjaan if profile else "-"}
+            --------------------------------------------------
 
             Total Income:
             {metrics.get("total_income", 0)}
@@ -130,11 +202,11 @@ class RAGService:
 
             Average Transaction:
             {metrics.get("avg_transaction", 0)}
-
+            --------------------------------------------------
             Total Transaction:
             {metrics.get("total_transaction", 0)}
 
-            --------------------------------------------------
+            
 
             FINANCIAL HEALTH
 
@@ -175,6 +247,31 @@ class RAGService:
 
             --------------------------------------------------
 
+            SUMMARY METRICS
+
+            {summary_metrics}
+
+            --------------------------------------------------
+
+            PAYMENT METHOD ANALYSIS
+
+            {
+                payment_analysis.to_dict("records")
+                if not payment_analysis.empty
+                else []
+            }
+
+            --------------------------------------------------
+
+            MONTHLY TREND
+
+            {
+                monthly_trend.tail(30)
+                .to_dict("records")
+                if not monthly_trend.empty
+                else []
+            }
+
             TOP TRANSACTIONS
 
             {
@@ -185,9 +282,48 @@ class RAGService:
 
             --------------------------------------------------
 
+            CASHFLOW TREND
+
+            {chart_data.get("cashflow_trend", [])}
+
+            --------------------------------------------------
+
+            BREAKDOWN PREVIEW
+
+            {chart_data.get("breakdown_preview", [])}
+
+            --------------------------------------------------
+
+            PAYMENT METHOD CHART
+
+            {chart_data.get("payment_method_chart", [])}
+
+            --------------------------------------------------
+
+            RECENT TRANSACTION
+
+            {
+                recent_transactions.to_dict("records")
+                if not recent_transactions.empty
+                else []
+            }
+
             PREDICTION
 
-            {prediction}
+            Status:
+            {prediction.get("success", False)}
+
+            Message:
+            {prediction.get("message", "-")}
+
+            Forecast Data:
+            {
+                prediction.get("data")
+                if prediction.get("success")
+                else "-"
+            }
             """
+        
+
 
         return context.strip()
