@@ -1012,32 +1012,30 @@ def filter_transactions(
 
         query += """
             AND DATE(t.tanggal_transaksi)
-                = date(CURRENT_DATE + interval '1 day')
+                = CURRENT_DATE
         """
 
     elif period == "yesterday":
 
         query += """
             AND DATE(t.tanggal_transaksi)
-                = date(current_date)
+                = current_date - INTERVAL '1 day'
         """
 
     elif period == "7days":
 
         query += """
-            AND t.tanggal_transaksi >=
-                date(CURRENT_DATE + interval '1 day' - INTERVAL '7 day')
-            AND t.tanggal_transaksi <=
-                date(CURRENT_DATE + interval '1 day')
+            AND date(t.tanggal_transaksi)
+                between current_date - interval '7 day'
+                and current_date 
         """
 
     elif period == "30days":
 
         query += """
-            AND t.tanggal_transaksi >=
-                date(CURRENT_DATE + interval '1 day' - INTERVAL '30 day')
-            and t.tanggal_transaksi <=
-                date(CURRENT_DATE + interval '1 day')
+            AND date(t.tanggal_transaksi)
+                between current_date - interval '31 day'
+                and current_date 
         """
 
     # =========================================
