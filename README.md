@@ -1,4 +1,4 @@
-# 🐝 FinBee
+# FinBee
 
 ### Smart Finance Busy Bee
 
@@ -10,7 +10,7 @@ FinBee is an AI-powered personal finance management platform designed to help us
 
 ### 💰 Transaction Management
 
-- Record income, expenses, and top-up transactions
+- Record income, expenses, and topup transactions
 - Edit and delete transaction history
 - Filter transactions by date and category
 - Transaction detail management
@@ -24,8 +24,8 @@ FinBee is an AI-powered personal finance management platform designed to help us
 ### 📊 Financial Analytics
 
 - Monthly financial overview
-- Income and expense trends
-- Spending distribution by category
+- Income, expense, and topup trends
+- Spending distribution by category and payment method
 - Financial performance insights
 
 ### 🤖 AI Financial Assistant
@@ -78,13 +78,13 @@ FastAPI Backend
 
 ### AI Integration
 
-- Google Gemini API
 - RAG (Retrieval-Augmented Generation)
 
 ### Deployment
 
 - Vercel
 - Neon Database
+- Cloudinary
 
 ---
 
@@ -98,7 +98,6 @@ Provides a comprehensive overview of:
 - Monthly income
 - Monthly expenses
 - Financial summaries
-- Analytics visualization
 
 ### Transactions
 
@@ -107,16 +106,17 @@ Allows users to:
 - Add transactions
 - Update transactions
 - Delete transactions
+- Filter transactions
 - Import transactions via CSV
 
 ### Analytics
 
 Provides:
 
-- Spending insights
+- Spending insights trend
 - Category analysis
+- Payment method analysis
 - Monthly financial trends
-- Financial behavior monitoring
 
 ### AI Assistant
 
