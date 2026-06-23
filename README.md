@@ -1,4 +1,4 @@
-# FinBeeeeeeeeeeeee
+# FinBee
 
 ### Smart Finance Busy Bee
 
